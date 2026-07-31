@@ -1,5 +1,5 @@
 const Project = require("../models/Project");
-
+const Employee = require("../models/Employee");
 
 // ============================
 // Get All Projects
@@ -46,16 +46,47 @@ const getProject = async (req, res) => {
             return res.status(404).json({
 
                 success: false,
-                message: "Project not found"
+                message: "Project not found",
 
             });
 
         }
 
+        const employees = await Employee.find({
+            "assignments.project": project._id,
+        });
+
+        const employeeList = employees.map(employee => {
+
+            const assignment = employee.assignments.find(
+                assignment =>
+                    assignment.project.toString() ===
+                    project._id.toString()
+            );
+
+            return {
+
+                _id: employee._id,
+                empId: employee.empId,
+                name: employee.name,
+                position: employee.position,
+                experience: employee.experience,
+                endDate: assignment?.endDate || null,
+
+            };
+
+        });
+
         res.status(200).json({
 
             success: true,
-            data: project
+
+            data: {
+
+                project,
+                employees: employeeList,
+
+            },
 
         });
 
@@ -64,7 +95,7 @@ const getProject = async (req, res) => {
         res.status(500).json({
 
             success: false,
-            message: error.message
+            message: error.message,
 
         });
 
