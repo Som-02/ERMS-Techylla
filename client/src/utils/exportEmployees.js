@@ -23,7 +23,7 @@ const exportEmployees = async (employees) => {
     // REPORT TITLE
     // =========================
 
-    worksheet.mergeCells("A1:K1");
+    worksheet.mergeCells("A1:J1");
 
     const titleCell = worksheet.getCell("A1");
 
@@ -56,7 +56,6 @@ const exportEmployees = async (employees) => {
         "ID",
         "Name",
         "Position",
-        "WWID",
         "Email",
         "Experience",
         "Reporting Manager",
@@ -68,7 +67,7 @@ const exportEmployees = async (employees) => {
 
     const headerRow = worksheet.getRow(2);
 
-for (let i = 1; i <= 11; i++) {
+for (let i = 1; i <= 10; i++) {
 
     const cell = headerRow.getCell(i);
 
@@ -106,7 +105,6 @@ worksheet.getColumn(7).width = 25;
 worksheet.getColumn(8).width = 35;
 worksheet.getColumn(9).width = 25;
 worksheet.getColumn(10).width = 30;
-worksheet.getColumn(11).width = 20;
 
     // =========================
     // EMPLOYEE DATA
@@ -167,7 +165,6 @@ worksheet.getColumn(11).width = 20;
             employee.empId,
             employee.name,
             employee.position,
-            employee.wwid || "-",
             employee.email || "-",
             employee.experience,
             employee.reportingManager?.name || "-",
@@ -222,7 +219,7 @@ worksheet.getColumn(11).width = 20;
     ];
 
     // Enable Filters
-    worksheet.autoFilter = "A2:K2";
+    worksheet.autoFilter = "A2:J2";
 
     // =========================
     // DOWNLOAD
