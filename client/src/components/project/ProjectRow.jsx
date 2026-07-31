@@ -89,7 +89,7 @@ const ProjectRow = ({
                         onClick={() => onDelete(project)}
                     >
 
-                        <Trash2 size={17} />
+                        <span>Delete</span>
 
                     </button>
 

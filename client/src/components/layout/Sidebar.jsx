@@ -15,7 +15,7 @@ const Sidebar = () => {
 
     <div className="sidebar-logo">
 
-        ERMS
+        ERMS, TECHYLLA
 
     </div>
 
