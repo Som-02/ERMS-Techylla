@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loader from "../../components/common/Loader";
 import { getEmployee } from "../../services/employeeService";
-import "./employeeDetails.css";
+import "./employeedetails.css";
 const EmployeeDetails = () => {
     const { id } = useParams();
 
