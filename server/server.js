@@ -26,10 +26,14 @@ connectDB();
 // Global Middleware
 // =======================
 app.use(
-    cors({
-        origin:"https://erms-techylla-som-02s-projects.vercel.app",
-        credentials: true,
-    })
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://erms-techylla.vercel.app",
+      "https://erms-techylla-som-02s-projects.vercel.app",
+    ],
+    credentials: true,
+  })
 );
 
 app.use(
