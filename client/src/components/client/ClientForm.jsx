@@ -7,6 +7,8 @@ import {
     updateClient,
 } from "../../services/clientService";
 
+import "./client.css";
+
 const ClientForm = ({
     mode = "add",
     client = null,
@@ -19,7 +21,9 @@ const ClientForm = ({
     useEffect(() => {
 
         if (mode === "edit" && client) {
+
             setName(client.name);
+
         }
 
     }, [client, mode]);
@@ -29,8 +33,11 @@ const ClientForm = ({
         e.preventDefault();
 
         if (!name.trim()) {
+
             toast.error("Client Name is required");
+
             return;
+
         }
 
         try {
@@ -57,7 +64,7 @@ const ClientForm = ({
 
             toast.error(
                 error.response?.data?.message ||
-                    "Something went wrong"
+                "Something went wrong"
             );
 
         }
@@ -66,28 +73,94 @@ const ClientForm = ({
 
     return (
 
-        <form onSubmit={submitHandler}>
+        <div
+            style={{
+                maxWidth: "650px",
+                background: "#fff",
+                borderRadius: "14px",
+                padding: "30px",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 3px 12px rgba(0,0,0,.05)"
+            }}
+        >
 
-            <input
-                type="text"
-                placeholder="Client Name"
-                value={name}
-                onChange={(e) =>
-                    setName(e.target.value)
-                }
-            />
+            <form onSubmit={submitHandler}>
 
-            <br /><br />
+                <div
+                    style={{
+                        marginBottom: "22px"
+                    }}
+                >
 
-            <button type="submit">
+                    <label
+                        style={{
+                            display: "block",
+                            marginBottom: "8px",
+                            fontWeight: "600",
+                            color: "#374151"
+                        }}
+                    >
 
-                {mode === "add"
-                    ? "Add Client"
-                    : "Update Client"}
+                        Client Name
 
-            </button>
+                    </label>
 
-        </form>
+                    <input
+                        type="text"
+                        value={name}
+                        placeholder="Enter Client Name"
+                        onChange={(e) =>
+                            setName(e.target.value)
+                        }
+                        style={{
+                            width: "100%",
+                            padding: "12px 14px",
+                            borderRadius: "8px",
+                            border: "1px solid #d1d5db",
+                            fontSize: "15px"
+                        }}
+                    />
+
+                </div>
+
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: "12px"
+                    }}
+                >
+
+                    <button
+                        type="button"
+                        onClick={() => navigate("/clients")}
+                        className="client-btn view-btn"
+                    >
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        className="client-btn edit-btn"
+                    >
+
+                        {
+
+                            mode === "add"
+                                ? "Add Client"
+                                : "Update Client"
+
+                        }
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     );
 

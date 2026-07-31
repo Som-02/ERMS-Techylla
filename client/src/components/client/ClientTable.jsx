@@ -1,4 +1,5 @@
 import ClientRow from "./ClientRow";
+import "./client.css";
 
 const ClientTable = ({
     clients,
@@ -7,34 +8,72 @@ const ClientTable = ({
 
     return (
 
-        <table border="1" cellPadding="10" width="100%">
+        <div className="client-table-wrapper">
 
-            <thead>
+            <table className="client-table">
 
-                <tr>
+                <thead>
 
-                    <th>Client Name</th>
-                    <th>Actions</th>
+                    <tr>
 
-                </tr>
+                        <th>Client</th>
 
-            </thead>
+                        <th
+                            style={{
+                                width:"270px"
+                            }}
+                        >
+                            Actions
+                        </th>
 
-            <tbody>
+                    </tr>
 
-                {(clients || []).map((client) => (
+                </thead>
 
-                    <ClientRow
-                        key={client._id}
-                        client={client}
-                        onDelete={onDelete}
-                    />
+                <tbody>
 
-                ))}
+                    {
 
-            </tbody>
+                        clients.length===0 ? (
 
-        </table>
+                            <tr>
+
+                                <td
+                                    colSpan="2"
+                                    style={{
+                                        textAlign:"center",
+                                        padding:"40px",
+                                        color:"#6b7280"
+                                    }}
+                                >
+
+                                    No Clients Found
+
+                                </td>
+
+                            </tr>
+
+                        ) : (
+
+                            clients.map(client=>(
+
+                                <ClientRow
+                                    key={client._id}
+                                    client={client}
+                                    onDelete={onDelete}
+                                />
+
+                            ))
+
+                        )
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     );
 

@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
+import { User, Shield } from "lucide-react";
+import "./settings.css";
 import Loader from "../../components/common/Loader";
+import PageHeader from "../../components/common/PageHeader";
 import useAuth from "../../hooks/useAuth";
+
 import {
     getProfile,
     updateProfile,
     changePassword,
 } from "../../services/authService";
 
-
 const Settings = () => {
+
     const { updateAdmin } = useAuth();
+
     const [editingProfile, setEditingProfile] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -73,33 +77,33 @@ const Settings = () => {
 
     const saveProfile = async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    try {
+        try {
 
-        const res = await updateProfile(profile);
+            const res = await updateProfile(profile);
 
-updateAdmin(res.admin);
+            updateAdmin(res.admin);
 
-setProfile({
-    name: res.admin.name,
-    email: res.admin.email
-});
+            setProfile({
+                name: res.admin.name,
+                email: res.admin.email,
+            });
 
-setEditingProfile(false);
+            setEditingProfile(false);
 
-toast.success(res.message);
+            toast.success(res.message);
 
-    } catch (error) {
+        } catch (error) {
 
-        toast.error(
-            error.response?.data?.message ||
-            "Unable to update profile"
-        );
+            toast.error(
+                error.response?.data?.message ||
+                "Unable to update profile"
+            );
 
-    }
+        }
 
-};
+    };
 
     const updatePassword = async (e) => {
 
@@ -128,197 +132,274 @@ toast.success(res.message);
 
     };
 
-    if (loading) return <Loader />;
+    if (loading) {
+
+        return <Loader />;
+
+    }
 
     return (
 
         <div className="settings-page">
 
-    <h1 className="settings-title">
-        Settings
-    </h1>
+            <PageHeader
+                title="Settings"
+                subtitle="Manage your account information and security."
+            />
 
-    <p className="settings-subtitle">
-        Manage your account information and password.
-    </p>
+            <div className="settings-card">
 
-    <div className="settings-card">
+                <div className="profile-header">
 
-    <h3>Account Information</h3>
+                    <div className="profile-user">
 
-    {!editingProfile ? (
+                        <div className="profile-avatar">
 
-        <>
-            <div className="info-row">
+                            {profile.name.charAt(0).toUpperCase()}
 
-                <div className="info-label">
-                    Name
+                        </div>
+
+                        <div>
+
+                            <div className="profile-name">
+
+                                {profile.name}
+
+                            </div>
+
+                            <div className="profile-email">
+
+                                {profile.email}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div className="info-value">
-                    {profile.name}
-                </div>
+                <h3>
 
-            </div>
+                    <User size={20} />
 
-            <div className="info-row">
+                    Account Information
 
-                <div className="info-label">
-                    Email
-                </div>
+                </h3>
 
-                <div className="info-value">
-                    {profile.email}
-                </div>
+                {
 
-            </div>
+                    !editingProfile ? (
 
-            <button
-                className="edit-btn"
-                onClick={() => setEditingProfile(true)}
-            >
-                Edit Profile
-            </button>
-        </>
+                        <>
 
-    ) : (
+                            <div className="info-row">
 
-       <form
-    className="settings-form"
-    onSubmit={saveProfile}
->
+                                <div className="info-label">
 
-            <div>
+                                    Full Name
 
-                <label>Name</label>
+                                </div>
 
-                <input
-                    type="text"
-                    name="name"
-                    value={profile.name}
-                    onChange={profileChangeHandler}
-                />
+                                <div className="info-value">
 
-            </div>
+                                    {profile.name}
 
-            <div>
+                                </div>
 
-                <label>Email</label>
+                            </div>
 
-                <input
-                    type="email"
-                    name="email"
-                    value={profile.email}
-                    onChange={profileChangeHandler}
-                />
+                            <div className="info-row">
 
-            </div>
+                                <div className="info-label">
 
-            <div
-                style={{
-                    display: "flex",
-                    gap: "15px",
-                    marginTop: "10px",
-                }}
-            >
+                                    Email Address
 
-                <button
-                    type="submit"
-                    className="save-btn"
-                >
-                    Save Changes
-                </button>
+                                </div>
 
-                <button
-                    type="button"
-                    className="cancel-btn"
-                    onClick={() => {
+                                <div className="info-value">
 
-                        loadProfile();
+                                    {profile.email}
 
-                        setEditingProfile(false);
+                                </div>
 
-                    }}
-                >
-                    Cancel
-                </button>
+                            </div>
 
-            </div>
+                            <div className="button-group">
 
-        </form>
-
-    )}
+    <button
+        className="edit-btn"
+        onClick={() => setEditingProfile(true)}
+    >
+        Edit Profile
+    </button>
 
 </div>
 
-    <div className="settings-card">
+                        </>
 
-        <h3>
-            Change Password
-        </h3>
+                    ) : (
 
-        <form
-            className="settings-form"
-            onSubmit={updatePassword}
-        >
+                        <form
+                            className="settings-form"
+                            onSubmit={saveProfile}
+                        >
 
-            <div>
+                            <div>
 
-                <label>
-                    Current Password
-                </label>
+                                <label>
 
-                <input
-                    type="password"
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={passwordChangeHandler}
-                />
+                                    Full Name
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={profile.name}
+                                    onChange={profileChangeHandler}
+                                />
+
+                            </div>
+
+                            <div>
+
+                                <label>
+
+                                    Email Address
+
+                                </label>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={profile.email}
+                                    onChange={profileChangeHandler}
+                                />
+
+                            </div>
+
+                            <div className="button-group">
+
+                                <button
+                                    type="button"
+                                    className="cancel-btn"
+                                    onClick={() => {
+
+                                        loadProfile();
+
+                                        setEditingProfile(false);
+
+                                    }}
+                                >
+
+                                    Cancel
+
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="save-btn"
+                                >
+
+                                    Save Changes
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    )
+
+                }
 
             </div>
 
-            <div>
+            <div className="settings-card">
 
-                <label>
-                    New Password
-                </label>
+                <h3>
 
-                <input
-                    type="password"
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={passwordChangeHandler}
-                />
+                    <Shield size={20} />
+
+                    Change Password
+
+                </h3>
+
+                <form
+                    className="settings-form"
+                    onSubmit={updatePassword}
+                >
+
+                    <div>
+
+                        <label>
+
+                            Current Password
+
+                        </label>
+
+                        <input
+                            type="password"
+                            name="currentPassword"
+                            value={passwordData.currentPassword}
+                            onChange={passwordChangeHandler}
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <label>
+
+                            New Password
+
+                        </label>
+
+                        <input
+                            type="password"
+                            name="newPassword"
+                            value={passwordData.newPassword}
+                            onChange={passwordChangeHandler}
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <label>
+
+                            Confirm Password
+
+                        </label>
+
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            value={passwordData.confirmPassword}
+                            onChange={passwordChangeHandler}
+                        />
+
+                    </div>
+
+                    <div className="button-group">
+
+                        <button
+                            className="save-btn"
+                            type="submit"
+                        >
+
+                            Update Password
+
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
-            <div>
-
-                <label>
-                    Confirm Password
-                </label>
-
-                <input
-                    type="password"
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={passwordChangeHandler}
-                />
-
-            </div>
-
-            <button
-                className="save-btn"
-                type="submit"
-            >
-                Update Password
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
+        </div>
 
     );
 

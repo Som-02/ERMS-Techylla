@@ -118,12 +118,19 @@ const Clients = () => {
                 buttonLink="/clients/add"
             />
 
-            <SearchBar
-                value={search}
-                onChange={searchHandler}
-            />
+            <div
+    style={{
+        marginBottom:"24px"
+    }}
+>
 
-            <br />
+    <SearchBar
+        value={search}
+        onChange={searchHandler}
+        placeholder="Search clients..."
+    />
+
+</div>
 
             <ClientTable
                 clients={clients || []}

@@ -1,0 +1,90 @@
+.client-table-wrapper{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 3px 12px rgba(0,0,0,.05);
+}
+
+.client-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.client-table thead{
+    background:#a0c8f0;
+}
+
+.client-table th{
+    text-align:center;
+    vertical-align:middle;
+    padding:16px 22px;
+    color:#374151;
+    font-weight:600;
+    font-size:.9rem;
+}
+
+.client-table td{
+    text-align:center;
+    vertical-align:middle;
+    padding:16px 22px;
+    border-top:1px solid #f1f5f9;
+}
+
+.client-table tbody tr{
+    transition:.2s;
+}
+
+.client-table tbody tr:hover{
+    background:#f9fafb;
+}
+
+.client-name{
+    text-align:center;
+    font-weight:600;
+    color:#1f2937;
+}
+
+.client-actions{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+.client-btn{
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    font-size:.85rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+    text-decoration:none;
+}
+
+.view-btn{
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.view-btn:hover{
+    background:#dbeafe;
+}
+
+.edit-btn{
+    background:#ecfdf5;
+    color:#16a34a;
+}
+
+.edit-btn:hover{
+    background:#dcfce7;
+}
+
+.delete-btn{
+    background:#fef2f2;
+    color:#dc2626;
+}
+
+.delete-btn:hover{
+    background:#fee2e2;
+}

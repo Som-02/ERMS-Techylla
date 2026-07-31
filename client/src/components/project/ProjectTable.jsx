@@ -1,4 +1,5 @@
 import ProjectRow from "./ProjectRow";
+import "./project.css";
 
 const ProjectTable = ({
     projects,
@@ -7,40 +8,72 @@ const ProjectTable = ({
 
     return (
 
-        <table
-            border="1"
-            cellPadding="10"
-            width="100%"
-        >
+        <div className="project-table-wrapper">
 
-            <thead>
+            <table className="project-table">
 
-                <tr>
+                <thead>
 
-                    <th>Project Name</th>
-                    <th>Client</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <tr>
 
-                </tr>
+                        <th>Project</th>
 
-            </thead>
+                        <th>Client</th>
 
-            <tbody>
+                        <th>Status</th>
 
-                {(projects || []).map((project) => (
+                        <th
+                            style={{
+                                width: "130px",
+                            }}
+                        >
+                            Actions
+                        </th>
 
-                    <ProjectRow
-                        key={project._id}
-                        project={project}
-                        onDelete={onDelete}
-                    />
+                    </tr>
 
-                ))}
+                </thead>
 
-            </tbody>
+                <tbody>
 
-        </table>
+                    {
+
+                        projects.length === 0 ? (
+
+                            <tr>
+
+                                <td
+                                    colSpan="4"
+                                    className="empty-table"
+                                >
+
+                                    No Projects Found
+
+                                </td>
+
+                            </tr>
+
+                        ) : (
+
+                            projects.map(project => (
+
+                                <ProjectRow
+                                    key={project._id}
+                                    project={project}
+                                    onDelete={onDelete}
+                                />
+
+                            ))
+
+                        )
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     );
 

@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import {
+    LayoutDashboard,
+    FolderKanban
+} from "lucide-react";
 
 import Loader from "../../components/common/Loader";
-import StatCard from "../../pages/dashboard/StatCard";
-
+import StatCard from "./StatCard";
 import { getDashboard } from "../../services/dashboardService";
+
+import "./dashboard.css";
 
 const Dashboard = () => {
 
@@ -42,13 +47,45 @@ const Dashboard = () => {
 
     return (
 
-        <div>
+        <div className="dashboard">
 
-            <h1 className="text-3xl font-bold mb-6">
-                Dashboard
-            </h1>
+            <div className="dashboard-header">
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "16px"
+                    }}
+                >
+
+                    <div className="dashboard-icon">
+
+                        <LayoutDashboard
+                            size={30}
+                            className="text-blue-600"
+                        />
+
+                    </div>
+
+                    <div>
+
+                        <h1 className="dashboard-title">
+                            Dashboard
+                        </h1>
+
+                        <p className="dashboard-subtitle">
+                            Welcome back! Here's an overview of your
+                            organization.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="stats-grid">
 
                 <StatCard
                     title="Employees"
@@ -67,117 +104,267 @@ const Dashboard = () => {
 
             </div>
 
-            <div className="mt-10">
+            {/* Recent Employees */}
 
-                <h2 className="text-xl font-semibold mb-4">
-                    Recent Employees
-                </h2>
+            <section className="section">
 
-                <table className="w-full border">
+                <div className="section-header">
 
-                    <thead>
+                    <h2 className="section-title">
 
-                        <tr>
+                        Recent Employees
 
-                            <th className="border p-2">
-                                Employee ID
-                            </th>
+                    </h2>
 
-                            <th className="border p-2">
-                                Name
-                            </th>
+                </div>
 
-                            <th className="border p-2">
-                                Position
-                            </th>
+                {
 
-                        </tr>
+                    dashboard.recentEmployees.length === 0 ? (
 
-                    </thead>
+                        <div className="empty-state">
 
-                    <tbody>
+                            No recent employees found.
 
-                        {dashboard.recentEmployees.map((employee) => (
+                        </div>
 
-                            <tr key={employee._id}>
+                    ) : (
 
-                                <td className="border p-2">
-                                    {employee.empId}
-                                </td>
+                        <div className="table-wrapper">
 
-                                <td className="border p-2">
-                                    {employee.name}
-                                </td>
+                            <table className="dashboard-table">
 
-                                <td className="border p-2">
-                                    {employee.position}
-                                </td>
+                                <thead>
 
-                            </tr>
+                                    <tr>
 
-                        ))}
+                                        <th>
 
-                    </tbody>
+                                            Employee ID
 
-                </table>
+                                        </th>
 
-            </div>
+                                        <th>
 
-            <div className="mt-10">
+                                            Name
 
-                <h2 className="text-xl font-semibold mb-4">
-                    Active Projects
-                </h2>
+                                        </th>
 
-                <table className="w-full border">
+                                        <th>
 
-                    <thead>
+                                            Position
 
-                        <tr>
+                                        </th>
 
-                            <th className="border p-2">
-                                Project
-                            </th>
+                                    </tr>
 
-                            <th className="border p-2">
-                                Client
-                            </th>
+                                </thead>
 
-                            <th className="border p-2">
-                                Status
-                            </th>
+                                <tbody>
 
-                        </tr>
+                                    {
 
-                    </thead>
+                                        dashboard.recentEmployees.map(employee => (
 
-                    <tbody>
+                                            <tr
+                                                key={employee._id}
+                                            >
 
-                        {dashboard.activeProjects.map((project) => (
+                                                <td>
 
-                            <tr key={project._id}>
+                                                    <span className="emp-id">
 
-                                <td className="border p-2">
-                                    {project.name}
-                                </td>
+                                                        {employee.empId}
 
-                                <td className="border p-2">
-                                    {project.client?.name}
-                                </td>
+                                                    </span>
 
-                                <td className="border p-2">
-                                    {project.status}
-                                </td>
+                                                </td>
 
-                            </tr>
+                                                <td>
 
-                        ))}
+                                                    <div className="employee-cell">
 
-                    </tbody>
+                                                        <div className="employee-avatar">
 
-                </table>
+                                                            {
 
-            </div>
+                                                                employee.name
+                                                                    .charAt(0)
+                                                                    .toUpperCase()
+
+                                                            }
+
+                                                        </div>
+
+                                                        <div>
+
+                                                            <strong>
+
+                                                                {employee.name}
+
+                                                            </strong>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </td>
+
+                                                <td>
+
+                                                    {employee.position}
+
+                                                </td>
+
+                                            </tr>
+
+                                        ))
+
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    )
+
+                }
+
+            </section>
+                        {/* Active Projects */}
+
+            <section className="section">
+
+                <div className="section-header">
+
+                    <h2 className="section-title">
+
+                        Active Projects
+
+                    </h2>
+
+                </div>
+
+                {
+
+                    dashboard.activeProjects.length === 0 ? (
+
+                        <div className="empty-state">
+
+                            No active projects found.
+
+                        </div>
+
+                    ) : (
+
+                        <div className="table-wrapper">
+
+                            <table className="dashboard-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+
+                                            Project
+
+                                        </th>
+
+                                        <th>
+
+                                            Client
+
+                                        </th>
+
+                                        <th>
+
+                                            Status
+
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {
+
+                                        dashboard.activeProjects.map(project => (
+
+                                            <tr
+                                                key={project._id}
+                                            >
+
+                                                <td>
+
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            gap: "10px"
+                                                        }}
+                                                    >
+
+                                                        <FolderKanban
+                                                            size={18}
+                                                            className="text-purple-600"
+                                                        />
+
+                                                        <strong>
+
+                                                            {project.name}
+
+                                                        </strong>
+
+                                                    </div>
+
+                                                </td>
+
+                                                <td>
+
+                                                    {project.client?.name || "-"}
+
+                                                </td>
+
+                                                <td>
+
+                                                    <span
+                                                        className={`status ${
+                                                            project.status === "Active"
+                                                                ? "active"
+                                                                : "inactive"
+                                                        }`}
+                                                    >
+
+                                                        <span className="status-dot"></span>
+
+                                                        {project.status}
+
+                                                    </span>
+
+                                                </td>
+
+                                            </tr>
+
+                                        ))
+
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    )
+
+                }
+
+            </section>
 
         </div>
 

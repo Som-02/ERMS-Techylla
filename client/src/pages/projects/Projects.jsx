@@ -17,7 +17,6 @@ import {
 const Projects = () => {
 
     const [projects, setProjects] = useState([]);
-
     const [loading, setLoading] = useState(true);
 
     const [selectedProject, setSelectedProject] = useState(null);
@@ -50,19 +49,19 @@ const Projects = () => {
 
     const handleSearch = async (query) => {
 
-    console.log("Query:", query);
+        if (!query.trim()) {
 
-    if (!query.trim()) {
-        loadProjects();
-        return;
-    }
+            loadProjects();
 
+            return;
 
-    const res = await searchProjects(query);
+        }
 
+        const res = await searchProjects(query);
 
-    setProjects(res.data);
-};
+        setProjects(res.data);
+
+    };
 
     const openDeleteDialog = (project) => {
 
@@ -87,9 +86,13 @@ const Projects = () => {
         } catch (error) {
 
             toast.error(
+
                 error.response?.data?.message ||
+
                 "Delete failed"
+
             );
+
         }
 
     };
@@ -106,21 +109,28 @@ const Projects = () => {
 
             <PageHeader
                 title="Projects"
+                subtitle="Manage and monitor all company projects."
                 buttonText="Add Project"
                 buttonLink="/projects/add"
             />
 
-           <SearchBar
-    value={search}
-    placeholder="Search Project..."
-    onChange={(e) => {
-        const value = e.target.value;
-        setSearch(value);
-        handleSearch(value);
-    }}
-/>
+            <div style={{ marginBottom: "24px" }}>
 
-            <br />
+                <SearchBar
+                    value={search}
+                    placeholder="Search projects..."
+                    onChange={(e) => {
+
+                        const value = e.target.value;
+
+                        setSearch(value);
+
+                        handleSearch(value);
+
+                    }}
+                />
+
+            </div>
 
             <ProjectTable
                 projects={projects}

@@ -1,35 +1,95 @@
 import { Link } from "react-router-dom";
+import {
+    Eye,
+    Pencil,
+    Trash2,
+    FolderKanban,
+} from "lucide-react";
+
+import "./project.css";
 
 const ProjectRow = ({
     project,
     onDelete,
 }) => {
 
+    const getStatusClass = () => {
+
+        switch (project.status) {
+
+            case "Active":
+                return "active";
+
+            case "Completed":
+                return "completed";
+
+            case "On Hold":
+                return "hold";
+
+            default:
+                return "";
+
+        }
+
+    };
+
     return (
 
         <tr>
 
-            <td>{project.name}</td>
+            <td className="project-name">
 
-            <td>{project.client?.name || "-"}</td>
+    {project.name}
 
-            <td>{project.status}</td>
+</td>
 
             <td>
 
-                <Link
-                    to={`/projects/edit/${project._id}`}
-                >
-                    Edit
-                </Link>
+                <span className="client-badge">
 
-                {" | "}
+                    {project.client?.name || "-"}
 
-                <button
-                    onClick={() => onDelete(project)}
+                </span>
+
+            </td>
+
+            <td>
+
+                <span
+                    className={`status ${getStatusClass()}`}
                 >
-                    Delete
-                </button>
+
+                    <span className="status-dot"></span>
+
+                    {project.status}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <div className="project-actions">
+
+                    <Link
+    to={`/projects/edit/${project._id}`}
+    className="project-btn edit-btn"
+>
+    <Pencil size={16} />
+    <span>Edit</span>
+</Link>
+
+                    <button
+                        className="project-btn delete-btn"
+                        title="Delete"
+                        onClick={() => onDelete(project)}
+                    >
+
+                        <Trash2 size={17} />
+
+                    </button>
+
+                </div>
 
             </td>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Loader from "../../components/common/Loader";
+import PageHeader from "../../components/common/PageHeader";
 import ProjectForm from "../../components/project/ProjectForm";
 
 import { getProject } from "../../services/projectService";
@@ -38,20 +39,27 @@ const EditProject = () => {
     };
 
     if (loading) {
+
         return <Loader />;
+
     }
 
     return (
-        <>
-            <h2>Edit Project</h2>
 
-            <br />
+        <>
+
+            <PageHeader
+                title="Edit Project"
+                subtitle="Update project information and current status."
+            />
 
             <ProjectForm
                 mode="edit"
                 project={project}
             />
+
         </>
+
     );
 
 };

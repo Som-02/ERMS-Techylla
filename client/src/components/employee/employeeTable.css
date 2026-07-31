@@ -12,13 +12,13 @@
 }
 
 .employee-table thead{
-    background:#f8fafc;
+    background:#a0c8f0;
 }
 
 .employee-table th{
+    color:#374151;
     padding:16px;
     text-align:center;
-    color:var(--muted);
     font-size:14px;
 }
 

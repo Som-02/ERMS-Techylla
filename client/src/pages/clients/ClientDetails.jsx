@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { Building2, FolderKanban } from "lucide-react";
 
 import Loader from "../../components/common/Loader";
+import PageHeader from "../../components/common/PageHeader";
 
 import { getClient } from "../../services/clientService";
+
+import "../../components/client/client.css";
 
 const ClientDetails = () => {
 
@@ -31,9 +35,11 @@ const ClientDetails = () => {
 
             console.log(error);
 
-        }
+        } finally {
 
-        setLoading(false);
+            setLoading(false);
+
+        }
 
     };
 
@@ -47,47 +53,148 @@ const ClientDetails = () => {
 
         <>
 
-            <h1>{client.name}</h1>
+            <PageHeader
+                title="Client Details"
+                subtitle="View client information and assigned projects."
+                buttonText="Edit Client"
+                buttonLink={`/clients/edit/${client._id}`}
+            />
 
-            <br />
+            <div className="client-table-wrapper">
 
-            <h2>Projects</h2>
+                <div
+                    style={{
+                        padding: "30px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "20px",
+                        borderBottom: "1px solid #f3f4f6"
+                    }}
+                >
 
-            {client.projects?.length ? (
+                    <div className="client-avatar">
 
-                <table border="1" cellPadding="10">
+                        {client.name.charAt(0).toUpperCase()}
 
-                    <thead>
+                    </div>
 
-                        <tr>
+                    <div>
 
-                            <th>Project</th>
+                        <h2
+                            style={{
+                                margin: 0
+                            }}
+                        >
 
-                        </tr>
+                            {client.name}
 
-                    </thead>
+                        </h2>
 
-                    <tbody>
+                        <p
+                            style={{
+                                color: "#6b7280",
+                                marginTop: "6px"
+                            }}
+                        >
 
-                        {client.projects.map(project => (
+                            Business Client
 
-                            <tr key={project._id}>
+                        </p>
 
-                                <td>{project.name}</td>
+                    </div>
 
-                            </tr>
+                </div>
 
-                        ))}
+                <div
+                    style={{
+                        padding: "30px"
+                    }}
+                >
 
-                    </tbody>
+                    <h3
+                        style={{
+                            marginBottom: "20px"
+                        }}
+                    >
 
-                </table>
+                        <FolderKanban
+                            size={18}
+                            style={{
+                                display: "inline",
+                                marginRight: "8px"
+                            }}
+                        />
 
-            ) : (
+                        Assigned Projects
 
-                <p>No Projects Assigned</p>
+                    </h3>
 
-            )}
+                    {
+
+                        client.projects?.length ? (
+
+                            <table className="client-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+
+                                            Project Name
+
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {
+
+                                        client.projects.map(project => (
+
+                                            <tr
+                                                key={project._id}
+                                            >
+
+                                                <td>
+
+                                                    {project.name}
+
+                                                </td>
+
+                                            </tr>
+
+                                        ))
+
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        ) : (
+
+                            <div className="empty-state">
+
+                                <Building2
+                                    size={42}
+                                    className="mx-auto mb-3 text-gray-400"
+                                />
+
+                                No Projects Assigned
+
+                            </div>
+
+                        )
+
+                    }
+
+                </div>
+
+            </div>
 
         </>
 

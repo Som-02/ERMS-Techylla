@@ -1,16 +1,85 @@
+import {
+    Users,
+    Building2,
+    FolderKanban
+} from "lucide-react";
+
+import "./dashboard.css";
+
 const StatCard = ({ title, value }) => {
+
+    const getIcon = () => {
+
+        switch (title) {
+
+            case "Employees":
+                return (
+                    <Users
+                        size={28}
+                        className="text-blue-600"
+                    />
+                );
+
+            case "Clients":
+                return (
+                    <Building2
+                        size={28}
+                        className="text-green-600"
+                    />
+                );
+
+            case "Projects":
+                return (
+                    <FolderKanban
+                        size={28}
+                        className="text-purple-600"
+                    />
+                );
+
+            default:
+                return null;
+
+        }
+
+    };
 
     return (
 
-        <div className="border rounded-lg shadow p-5 bg-white w-64">
+        <div className="dashboard-card">
 
-            <h3 className="text-gray-500 text-sm">
-                {title}
-            </h3>
+            <div className="dashboard-card-top">
 
-            <h1 className="text-3xl font-bold mt-2">
-                {value}
-            </h1>
+                <div>
+
+                    <p className="dashboard-card-title">
+                        {title}
+                    </p>
+
+                    <h2 className="dashboard-card-value">
+                        {value}
+                    </h2>
+
+                    <p className="dashboard-card-subtitle">
+
+    {
+        title === "Employees"
+            ? "Registered Employees"
+            : title === "Clients"
+            ? "Business Clients"
+            : "Ongoing Projects"
+    }
+
+</p>
+
+                </div>
+
+                <div className="dashboard-icon">
+
+                    {getIcon()}
+
+                </div>
+
+            </div>
 
         </div>
 

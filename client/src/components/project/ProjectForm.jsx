@@ -9,6 +9,8 @@ import {
 
 import { getClients } from "../../services/clientService";
 
+import "./project.css";
+
 const ProjectForm = ({
     mode = "add",
     project = null,
@@ -45,27 +47,27 @@ const ProjectForm = ({
 
     const loadClients = async () => {
 
-    try {
+        try {
 
-        const res = await getClients();
+            const res = await getClients();
 
-        setClients(res.data);
+            setClients(res.data);
 
-    } catch (error) {
+        } catch (error) {
 
-        console.log(error);
+            console.log(error);
 
-        toast.error("Failed to load clients");
+            toast.error("Failed to load clients");
 
-    }
+        }
 
-};
+    };
 
     const handleChange = (e) => {
 
         const { name, value } = e.target;
 
-        setFormData((prev) => ({
+        setFormData(prev => ({
             ...prev,
             [name]: value,
         }));
@@ -129,101 +131,113 @@ const ProjectForm = ({
 
     return (
 
-        <form onSubmit={submitHandler}>
+        <div className="project-form-card">
 
-            <div>
+            <form onSubmit={submitHandler}>
 
-                <label>Project Name</label>
+                <div className="form-group">
 
-                <br />
+                    <label>Project Name</label>
 
-                <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter project name"
-                />
+                    <input
+                        className="form-control"
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter project name"
+                    />
 
-            </div>
+                </div>
 
-            <br />
+                <div className="form-group">
 
-            <div>
+                    <label>Client</label>
 
-                <label>Client</label>
+                    <select
+                        className="form-control"
+                        name="client"
+                        value={formData.client}
+                        onChange={handleChange}
+                    >
 
-                <br />
-
-                <select
-                    name="client"
-                    value={formData.client}
-                    onChange={handleChange}
-                >
-
-                    <option value="">
-                        Select Client
-                    </option>
-
-                    {clients.map((client) => (
-
-                        <option
-                            key={client._id}
-                            value={client._id}
-                        >
-                            {client.name}
+                        <option value="">
+                            Select Client
                         </option>
 
-                    ))}
+                        {clients.map(client => (
 
-                </select>
+                            <option
+                                key={client._id}
+                                value={client._id}
+                            >
+                                {client.name}
+                            </option>
 
-            </div>
+                        ))}
 
-            <br />
+                    </select>
 
-            <div>
+                </div>
 
-                <label>Status</label>
+                <div className="form-group">
 
-                <br />
+                    <label>Status</label>
 
-                <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                >
+                    <select
+                        className="form-control"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                    >
 
-                    <option value="Active">
-                        Active
-                    </option>
+                        <option value="Active">
+                            Active
+                        </option>
 
-                    <option value="Completed">
-                        Completed
-                    </option>
+                        <option value="Completed">
+                            Completed
+                        </option>
 
-                    <option value="On Hold">
-                        On Hold
-                    </option>
+                        <option value="On Hold">
+                            On Hold
+                        </option>
 
-                </select>
+                    </select>
 
-            </div>
+                </div>
 
-            <br />
+                <div className="form-actions">
 
-            <button
-                type="submit"
-                disabled={saving}
-            >
-                {saving
-                    ? "Saving..."
-                    : mode === "add"
-                        ? "Add Project"
-                        : "Update Project"}
-            </button>
+                    <button
+                        type="button"
+                        className="cancel-btn"
+                        onClick={() => navigate("/projects")}
+                    >
+                        Cancel
+                    </button>
 
-        </form>
+                    <button
+                        type="submit"
+                        className="save-btn"
+                        disabled={saving}
+                    >
+
+                        {
+                            saving
+                                ? "Saving..."
+                                : mode === "add"
+                                    ? "Add Project"
+                                    : "Update Project"
+                        }
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     );
 
