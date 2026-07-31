@@ -1,0 +1,152 @@
+/* ===========================
+   Dashboard Layout
+=========================== */
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--background);
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+.sidebar {
+    width: 260px;
+    background: #111827;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    height: 100vh;
+}
+
+.sidebar-logo {
+
+    padding: 28px 24px;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    border-bottom: 1px solid rgba(255,255,255,.08);
+
+}
+
+.sidebar-nav {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 24px 14px;
+
+    flex: 1;
+
+}
+
+.sidebar-nav a {
+
+    color: #cbd5e1;
+
+    padding: 14px 16px;
+
+    border-radius: 10px;
+
+    transition: .25s;
+
+    font-weight: 500;
+
+}
+
+.sidebar-nav a:hover {
+
+    background: rgba(255,255,255,.08);
+
+    color: white;
+
+}
+
+.sidebar-nav a.active {
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+.logout-btn {
+
+    margin: 18px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #ef4444;
+
+    color: white;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+}
+
+.logout-btn:hover {
+
+    background: #dc2626;
+
+}
+
+/* ===========================
+   Content
+=========================== */
+
+.content {
+
+    flex: 1;
+
+    margin-left: 260px;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.navbar {
+
+    height: 75px;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 35px;
+
+    border-bottom: 1px solid var(--border);
+
+}
+
+.page {
+
+    padding: 35px;
+
+}

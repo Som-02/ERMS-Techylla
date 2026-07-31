@@ -1,0 +1,37 @@
+:root {
+
+    /* Primary */
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+
+    /* Status */
+
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    /* Background */
+
+    --background: #f8fafc;
+    --card: #ffffff;
+
+    /* Text */
+
+    --heading: #0f172a;
+    --text: #334155;
+    --muted: #64748b;
+
+    /* Border */
+
+    --border: #e5e7eb;
+
+    /* Radius */
+
+    --radius: 12px;
+
+    /* Shadow */
+
+    --shadow: 0 6px 20px rgba(15,23,42,.08);
+
+}
