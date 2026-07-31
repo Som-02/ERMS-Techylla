@@ -27,7 +27,7 @@ connectDB();
 // =======================
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: ["http://localhost:5173","https://erms-techylla.vercel.app"],
         credentials: true,
     })
 );
