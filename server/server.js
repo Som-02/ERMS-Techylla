@@ -28,7 +28,7 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173","https://erms-techylla-theta.vercel.app/",
+      "http://localhost:5173","https://erms-techylla-theta.vercel.app",
     ],
     credentials: true,
   })
