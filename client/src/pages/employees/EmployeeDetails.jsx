@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loader from "../../components/common/Loader";
 import { getEmployee } from "../../services/employeeService";
-
+import "./employeeDetails.css";
 const EmployeeDetails = () => {
     const { id } = useParams();
 
@@ -33,7 +33,7 @@ const EmployeeDetails = () => {
     }
 
     return (
-        <div>
+        <div className="employee-details">
 
             <Link to="/employees">
                 ← Back to Employees
