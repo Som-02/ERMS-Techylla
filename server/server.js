@@ -16,7 +16,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const skillRoutes = require("./routes/skillRoutes");
 
 const app = express();
-
+app.set("trust proxy", 1);
 // =======================
 // Database Connection
 // =======================
@@ -28,9 +28,7 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://erms-techylla.vercel.app",
-      "https://erms-techylla-som-02s-projects.vercel.app",
+      "http://localhost:5173","https://erms-techylla-theta.vercel.app/",
     ],
     credentials: true,
   })
