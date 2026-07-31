@@ -105,16 +105,20 @@
 }
 
 .project-btn{
-    width:36px;
-    height:36px;
-    border:none;
-    border-radius:8px;
-    display:flex;
-    justify-content:center;
+    display:inline-flex;
     align-items:center;
+    justify-content:center;
+    gap:6px;
+    min-width:70px;
+    height:42px;
+    padding:0 16px;
+    border:none;
+    border-radius:10px;
     cursor:pointer;
-    transition:.2s;
     text-decoration:none;
+    font-weight:600;
+    transition:.2s;
+    box-sizing:border-box;
 }
 
 .view-btn{
@@ -127,12 +131,12 @@
 }
 
 .edit-btn{
-    background:#ecfdf5;
-    color:#16a34a;
+    background:#2563eb;
+    color:#fff;
 }
 
 .edit-btn:hover{
-    background:#dcfce7;
+    background:#1d4ed8;
 }
 
 .delete-btn{

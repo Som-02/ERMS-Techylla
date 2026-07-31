@@ -70,12 +70,16 @@ const ProjectRow = ({
             <td>
 
                 <div className="project-actions">
-
+                <Link
+    to={`/projects/${project._id}`}
+    className="project-btn view-btn"
+>
+    <span>View</span>
+</Link>
                     <Link
     to={`/projects/edit/${project._id}`}
     className="project-btn edit-btn"
 >
-    <Pencil size={16} />
     <span>Edit</span>
 </Link>
 

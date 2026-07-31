@@ -28,6 +28,7 @@ import SkillSets from "./pages/skills/SkillSets";
 import AddSkill from "./pages/skills/AddSkill";
 import EditSkill from "./pages/skills/EditSkill";
 import SkillMatrix from "./pages/skills/SkillMatrix";
+import ProjectDetails from "./pages/projects/ProjectDetails";
 
 function App() {
     return (
@@ -211,6 +212,17 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+
+            <Route
+    path="/projects/:id"
+    element={
+        <ProtectedRoute>
+            <DashboardLayout>
+                <ProjectDetails />
+            </DashboardLayout>
+        </ProtectedRoute>
+    }
+/>
 
             <Route
                 path="/projects/edit/:id"
