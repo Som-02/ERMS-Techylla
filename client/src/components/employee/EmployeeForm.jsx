@@ -101,10 +101,10 @@ const EmployeeForm = ({
     //     return;
     // }
 
-    if (!formData.position.trim()) {
-        toast.error("Position is required");
-        return;
-    }
+    // if (!formData.position.trim()) {
+    //     toast.error("Position is required");
+    //     return;
+    // }
 
 //    if (!formData.reportingManager && managers.length > 0) {
 //     toast.error("Please select a Reporting Manager");
