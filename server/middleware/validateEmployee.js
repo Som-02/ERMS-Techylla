@@ -38,11 +38,11 @@ const validateEmployee = (req, res, next) => {
   //     message: "WWID is required",
   //   });
 
-  if (!position)
-    return res.status(400).json({
-      success: false,
-      message: "Position is required",
-    });
+  // if (!position)
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: "Position is required",
+  //   });
 
   next();
 };
