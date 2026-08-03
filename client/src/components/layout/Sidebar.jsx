@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-
+import techyllaLogo from "../../assets/techylla-logo.png";
 const Sidebar = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -15,9 +15,17 @@ const Sidebar = () => {
 
     <div className="sidebar-logo">
 
-        ERMS, TECHYLLA
+    <h2 className="sidebar-title">
+        e-HRMS
+    </h2>
 
-    </div>
+    <img
+        src={techyllaLogo}
+        alt="Techylla"
+        className="sidebar-logo-img"
+    />
+
+</div>
 
     <nav className="sidebar-nav">
 

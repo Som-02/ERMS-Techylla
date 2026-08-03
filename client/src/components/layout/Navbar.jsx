@@ -7,7 +7,7 @@ const Navbar = () => {
         <header className="navbar">
 
     <h2>
-        Employee Resource Management
+        Human Resource Management System
     </h2>
 
     <div>

@@ -68,7 +68,7 @@ const Login = () => {
 
             <h1 className="login-title">
 
-                Employee Resource Management
+                Human Resource Management System
 
             </h1>
 
