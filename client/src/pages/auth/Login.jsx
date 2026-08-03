@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./login.css";
+
 import { login } from "../../services/authService";
 import useAuth from "../../hooks/useAuth";
+
 import logo from "../../assets/image.png";
+
 const Login = () => {
 
     const navigate = useNavigate();
@@ -15,9 +18,13 @@ const Login = () => {
 
     const [password, setPassword] = useState("");
 
+    const [loading, setLoading] = useState(false);
+
     const submitHandler = async (e) => {
 
         e.preventDefault();
+
+        setLoading(true);
 
         try {
 
@@ -46,99 +53,108 @@ const Login = () => {
                 error.response?.data?.message || "Login Failed"
             );
 
+        } finally {
+
+            setLoading(false);
+
         }
 
     };
 
     return (
 
-    <div className="login-page">
+        <div className="login-page">
 
-        <div className="login-card">
+            <div className="login-card">
 
-            <div className="login-logo">
+                <div className="login-logo">
 
-    <img
-        src={logo}
-        alt="Techylla Logo"
-        className="login-logo-img"
-    />
-
-</div>
-
-            <h1 className="login-title">
-
-                Human Resource Management System
-
-            </h1>
-
-            <p className="login-subtitle">
-
-                Sign in to continue to your dashboard
-
-            </p>
-
-            <form
-                className="login-form"
-                onSubmit={submitHandler}
-            >
-
-                <div className="login-group">
-
-                    <label>
-
-                        Email Address
-
-                    </label>
-
-                    <input
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e)=>setEmail(e.target.value)}
+                    <img
+                        src={logo}
+                        alt="Techylla Logo"
+                        className="login-logo-img"
                     />
 
                 </div>
 
-                <div className="login-group">
+                <h1 className="login-title">
 
-                    <label>
+                    Human Resource Management System
 
-                        Password
+                </h1>
 
-                    </label>
+                <p className="login-subtitle">
 
-                    <input
-                        type="password"
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e)=>setPassword(e.target.value)}
-                    />
+                    Sign in to continue to your dashboard
 
-                </div>
+                </p>
 
-                <button
-                    className="login-btn"
-                    type="submit"
+                <form
+                    className="login-form"
+                    onSubmit={submitHandler}
                 >
 
-                    Sign In
+                    <div className="login-group">
 
-                </button>
+                        <label>
 
-            </form>
+                            Email Address
 
-            <div className="login-footer">
+                        </label>
 
-                Employee Resource Management System
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={loading}
+                        />
+
+                    </div>
+
+                    <div className="login-group">
+
+                        <label>
+
+                            Password
+
+                        </label>
+
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            disabled={loading}
+                        />
+
+                    </div>
+
+                    <button
+                        className="login-btn"
+                        type="submit"
+                        disabled={loading}
+                    >
+
+                        {loading
+                            ? "Please wait, logging you in..."
+                            : "Sign In"}
+
+                    </button>
+
+                </form>
+
+                <div className="login-footer">
+
+                    Employee Resource Management System
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
-
-);
+    );
 
 };
 

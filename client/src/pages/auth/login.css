@@ -95,7 +95,13 @@
 .login-btn:hover{
     background:#1d4ed8;
 }
+.login-btn:disabled{
 
+    opacity:.8;
+
+    cursor:not-allowed;
+
+}
 .login-footer{
     margin-top:25px;
     text-align:center;
