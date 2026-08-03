@@ -80,3 +80,26 @@
 .action-btn:hover{
     opacity:.9;
 }
+.employee-underutilized td{
+
+    background:#a2ffd4;
+
+}
+
+.employee-underutilized:hover td{
+
+    background:#d1fae5;
+
+}
+
+.employee-overloaded td{
+
+    background:#eca9a9;
+
+}
+
+.employee-overloaded:hover td{
+
+    background:#fee2e2;
+
+}

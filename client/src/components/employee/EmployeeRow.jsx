@@ -5,17 +5,29 @@ const EmployeeRow = ({
     onDelete,
 }) => {
 
+    const assignmentCount = employee.assignments?.length || 0;
+
+    let rowClass = "";
+
+    if (assignmentCount > 4) {
+
+        rowClass = "employee-overloaded";
+
+    } else if (assignmentCount < 2) {
+
+        rowClass = "employee-underutilized";
+
+    }
+
     return (
 
-        <tr>
+        <tr className={rowClass}>
 
             <td>{employee.empId}</td>
 
             <td>{employee.name}</td>
 
             <td>{employee.position}</td>
-
-            {/* <td>{employee.wwid}</td> */}
 
             <td>{employee.email}</td>
 
