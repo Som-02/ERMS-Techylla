@@ -22,7 +22,8 @@ const Projects = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [search, setSearch] = useState("");
     const [showDialog, setShowDialog] = useState(false);
-
+    const [exporting, setExporting] = useState(false);
+    const [importing, setImporting] = useState(false);
     useEffect(() => {
         loadProjects();
     }, []);
@@ -74,6 +75,8 @@ const Projects = () => {
 
     try {
 
+        setExporting(true);
+
         const res = await getProjectsForExport();
 
         await exportProjects(res.data);
@@ -88,6 +91,12 @@ const Projects = () => {
 
     }
 
+    finally {
+
+        setExporting(false);
+
+    }
+
 };
 const handleImport = async (e) => {
 
@@ -97,42 +106,30 @@ const handleImport = async (e) => {
 
     try {
 
-        // Step 1 - Preview
-        const preview = await previewProjectImport(file);
+        setImporting(true);
 
-        if (!preview.success) {
+        const res = await previewProjectImport(file);
 
-            toast.error("Validation failed.");
+        console.log(res);
 
-            console.log(preview.errors);
-
-            return;
-
-        }
-
-        // Step 2 - Import
-        const result = await importProjectsExcel(file);
-
-        console.log(result);
-
-        toast.success("Projects imported successfully.");
-
-        loadProjects();
+        toast.success("Excel validated successfully.");
 
     }
 
     catch (error) {
 
-        console.log(error);
-
         toast.error(
-
             error.response?.data?.message ||
-
             "Import failed"
-
         );
 
+    }
+
+    finally {
+
+        setImporting(false);
+
+        e.target.value = "";
     }
 
 };
@@ -175,10 +172,31 @@ const handleImport = async (e) => {
             <PageHeader
     title="Projects"
     subtitle="Manage and monitor all company projects."
-    thirdButtonText="Import Excel"
-    onThirdClick={() => fileInputRef.current.click()}
-    secondaryButtonText="Export Excel"
-    onSecondaryClick={handleExport}
+
+    thirdButtonText={
+        importing
+            ? "⬆️ Importing Excel..."
+            : "Import Excel"
+    }
+
+    onThirdClick={() => {
+
+        if (!importing)
+            fileInputRef.current.click();
+
+    }}
+
+    secondaryButtonText={
+        exporting
+            ? "⬇️ Exporting Excel..."
+            : "Export Excel"
+    }
+
+    onSecondaryClick={
+        exporting
+            ? undefined
+            : handleExport
+    }
 
     buttonText="Add Project"
     buttonLink="/projects/add"

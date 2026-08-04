@@ -148,7 +148,7 @@ const ProjectDetails = () => {
     </div>
     <div className="detail">
 
-    <span>Required Skills</span>
+    <span>Role</span>
 
     <strong>
 

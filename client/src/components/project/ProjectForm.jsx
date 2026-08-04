@@ -358,12 +358,12 @@ const filteredEmployees = employees.filter((employee) => {
                 </div>
 <div className="form-group">
 
-    <label>Required Skills</label>
+    <label>Role</label>
 
     <Select
         isMulti
         options={skillOptions}
-        placeholder="Select required skills..."
+        placeholder="Select roles..."
         value={skillOptions.filter((option) =>
             formData.requiredSkills.includes(option.value)
         )}

@@ -24,40 +24,78 @@ const exportProjects = async (projects) => {
     // ===========================
     // TITLE
     // ===========================
+    worksheet.mergeCells("C1:I1");
+const title = worksheet.getCell("C1");
 
-    worksheet.mergeCells("A1:I1");
+title.value = "Project Details Report";
 
-    const title = worksheet.getCell("A1");
+title.font = {
+    bold: true,
+    size: 18,
+    color: { argb: "000000" },
+};
 
-    title.value = "Project Details Report";
+title.alignment = {
+    horizontal: "center",
+    vertical: "middle",
+};
 
-    title.font = {
+title.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "ddf23d" },
+};
+worksheet.mergeCells("A1:B1");
 
-        bold: true,
+const legend = worksheet.getCell("A1");
 
-        size: 18,
+legend.value = {
+    richText: [
+        {
+            text: "Red",
+            font: {
+                bold: true,
+                color: { argb: "FF0000" },
+            },
+        },
+        {
+            text: " = Read Only",
+            font: {
+                color: { argb: "000000" },
+            },
+        },
+        {
+            text: "   |   ",
+            font: {
+                color: { argb: "000000" },
+            },
+        },
+        {
+            text: "Blue",
+            font: {
+                bold: true,
+                color: { argb: "4F81BD" },
+            },
+        },
+        {
+            text: " = Editable",
+            font: {
+                color: { argb: "000000" },
+            },
+        },
+    ],
+};
 
-        color: { argb: "FFFFFFFF" },
+legend.alignment = {
+    horizontal: "center",
+    vertical: "middle",
+};
 
-    };
-
-    title.alignment = {
-
-        horizontal: "center",
-
-        vertical: "middle",
-
-    };
-
-    title.fill = {
-
-        type: "pattern",
-
-        pattern: "solid",
-
-        fgColor: { argb: "1F4E78" },
-
-    };
+legend.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "ddf23d" },
+};
 
     worksheet.getRow(1).height = 28;
 
@@ -77,7 +115,7 @@ const exportProjects = async (projects) => {
 
         "Status",
 
-        "Required Skills",
+        "Roles",
 
         "Employees Assigned",
 
@@ -172,18 +210,17 @@ header.eachCell((cell, colNumber) => {
         { width: 18 },
 
     ];
-
     // ===========================
     // DATA
     // ===========================
 
     projects.forEach(project => {
 
-        const skills =
+        const roles =
 
-            project.requiredSkills?.length > 0
+            project.roles?.length > 0
 
-                ? project.requiredSkills
+                ? project.roles
 
                       .map(skill => skill.name)
 
@@ -260,7 +297,7 @@ header.eachCell((cell, colNumber) => {
     formatDate(project.startDate),
     formatDate(project.endDate),
     project.status,
-    skills,
+    roles,
     project.employees.length,
     "",
     `${totalAllocation}%`,
