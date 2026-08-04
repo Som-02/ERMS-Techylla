@@ -36,7 +36,7 @@ export const getManagers = async () => {
     const response = await api.get("/employees");
     return response.data;
 };
-export const getEmployeesBySkills = async (skills) => {
+export const getEmployeesBySkills = async (skills = []) => {
 
     const response = await api.get(
 

@@ -8,6 +8,8 @@ const PageHeader = ({
     buttonLink,
     secondaryButtonText,
     onSecondaryClick,
+    thirdButtonText,
+    onThirdClick,
 }) => {
 
     return (
@@ -22,7 +24,18 @@ const PageHeader = ({
 
             </div>
             <div className="header-actions">
+{thirdButtonText && (
 
+        <button
+            className="secondary-btn"
+            onClick={onThirdClick}
+        >
+
+            {thirdButtonText}
+
+        </button>
+
+    )}
     {secondaryButtonText && (
         <button
             className="secondary-btn"

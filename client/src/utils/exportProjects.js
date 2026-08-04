@@ -3,17 +3,11 @@ import { saveAs } from "file-saver";
 
 const formatDate = (date) => {
 
-    if (!date) return "-";
+    if (!date) return "";
 
-    return new Date(date).toLocaleDateString("en-IN", {
-
-        day: "2-digit",
-
-        month: "short",
-
-        year: "numeric",
-
-    });
+    return new Date(date)
+        .toISOString()
+        .split("T")[0];
 
 };
 
@@ -95,23 +89,30 @@ const exportProjects = async (projects) => {
 
     const header = worksheet.getRow(2);
 
-    header.eachCell(cell => {
+header.eachCell((cell, colNumber) => {
 
-        cell.font = {
+    cell.font = {
 
-            bold: true,
+        bold: true,
 
-            color: { argb: "FFFFFFFF" },
+        color: {
 
-        };
+            argb: "FFFFFFFF",
 
-        cell.alignment = {
+        },
 
-            horizontal: "center",
+    };
 
-            vertical: "middle",
+    cell.alignment = {
 
-        };
+        horizontal: "center",
+
+        vertical: "middle",
+
+    };
+
+    // Read-only columns
+    if ([1, 2, 6, 7, 9].includes(colNumber)) {
 
         cell.fill = {
 
@@ -119,11 +120,36 @@ const exportProjects = async (projects) => {
 
             pattern: "solid",
 
-            fgColor: { argb: "4F81BD" },
+            fgColor: {
+
+                argb: "C00000",
+
+            },
 
         };
 
-    });
+    }
+
+    // Editable columns
+    else {
+
+        cell.fill = {
+
+            type: "pattern",
+
+            pattern: "solid",
+
+            fgColor: {
+
+                argb: "4F81BD",
+
+            },
+
+        };
+
+    }
+
+});
 
     worksheet.columns = [
 
@@ -165,28 +191,56 @@ const exportProjects = async (projects) => {
 
                 : "-";
 
-        const employeeDetails =
+        const employeeDetails = project.employees?.length
+    ? {
+          richText: project.employees.flatMap((employee, index) => {
 
-            project.employees?.length > 0
+              const text = [];
 
-                ? project.employees
+              // RED
+              text.push({
+                  font: {
+                      color: { argb: "C00000" },
+                      bold: true,
+                  },
+                  text: `${index + 1}. ${employee.empId} - ${employee.name}\n`,
+              });
 
-                      .map(
+              text.push({
+                  font: {
+                      color: { argb: "C00000" },
+                  },
+                  text: `Position : ${employee.position}\n`,
+              });
 
-                          (employee, index) =>
+              text.push({
+                  font: {
+                      color: { argb: "C00000" },
+                  },
+                  text: `Experience : ${employee.experience} Years\n`,
+              });
 
-`${index + 1}. ${employee.empId} - ${employee.name}
-Position : ${employee.position}
-Experience : ${employee.experience} Years
-Allocation : ${employee.allocation}%
-Start : ${formatDate(employee.startDate)}
-End : ${formatDate(employee.endDate)}`
+              // BLACK (Editable)
+              text.push({
+                  font: {},
+                  text: `Allocation : ${employee.allocation}%\n`,
+              });
 
-                      )
+              text.push({
+                  font: {},
+                  text: `Start : ${formatDate(employee.startDate)}\n`,
+              });
 
-                      .join("\n\n")
+              text.push({
+                  font: {},
+                  text: `End : ${formatDate(employee.endDate)}\n\n`,
+              });
 
-                : "-";
+              return text;
+
+          }),
+      }
+    : "-";
 
         const totalAllocation =
 
@@ -201,27 +255,17 @@ End : ${formatDate(employee.endDate)}`
             ) || 0;
 
         const row = worksheet.addRow([
-
-            project.name,
-
-            project.client?.name || "-",
-
-            formatDate(project.startDate),
-
-            formatDate(project.endDate),
-
-            project.status,
-
-            skills,
-
-            project.employees.length,
-
-            employeeDetails,
-
-            `${totalAllocation}%`,
-
-        ]);
-
+    project.name,
+    project.client?.name || "-",
+    formatDate(project.startDate),
+    formatDate(project.endDate),
+    project.status,
+    skills,
+    project.employees.length,
+    "",
+    `${totalAllocation}%`,
+]);
+row.getCell(8).value = employeeDetails;
         row.alignment = {
 
             vertical: "middle",

@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-
 import Loader from "../../components/common/Loader";
 import SearchBar from "../../components/common/SearchBar";
 import PageHeader from "../../components/common/PageHeader";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
-
 import ProjectTable from "../../components/project/ProjectTable";
+import {previewProjectImport,importProjectsExcel,} from "../../services/projectImportService";
 import exportProjects from "../../utils/exportProjects";
 import { getProjectsForExport } from "../../services/projectService";
 import {
@@ -16,7 +15,7 @@ import {
 } from "../../services/projectService";
 
 const Projects = () => {
-
+    const fileInputRef = useRef(null);
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -90,6 +89,53 @@ const Projects = () => {
     }
 
 };
+const handleImport = async (e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    try {
+
+        // Step 1 - Preview
+        const preview = await previewProjectImport(file);
+
+        if (!preview.success) {
+
+            toast.error("Validation failed.");
+
+            console.log(preview.errors);
+
+            return;
+
+        }
+
+        // Step 2 - Import
+        const result = await importProjectsExcel(file);
+
+        console.log(result);
+
+        toast.success("Projects imported successfully.");
+
+        loadProjects();
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        toast.error(
+
+            error.response?.data?.message ||
+
+            "Import failed"
+
+        );
+
+    }
+
+};
     const handleDelete = async () => {
 
         try {
@@ -129,12 +175,26 @@ const Projects = () => {
             <PageHeader
     title="Projects"
     subtitle="Manage and monitor all company projects."
-
+    thirdButtonText="Import Excel"
+    onThirdClick={() => fileInputRef.current.click()}
     secondaryButtonText="Export Excel"
     onSecondaryClick={handleExport}
 
     buttonText="Add Project"
     buttonLink="/projects/add"
+/>
+<input
+
+    type="file"
+
+    accept=".xlsx"
+
+    ref={fileInputRef}
+
+    style={{ display: "none" }}
+
+    onChange={handleImport}
+
 />
 
             <div style={{ marginBottom: "24px" }}>

@@ -146,6 +146,21 @@ const ProjectDetails = () => {
         </strong>
 
     </div>
+    <div className="detail">
+
+    <span>Required Skills</span>
+
+    <strong>
+
+        {project.requiredSkills?.length > 0
+            ? project.requiredSkills
+                  .map((skill) => skill.name)
+                  .join(", ")
+            : "-"}
+
+    </strong>
+
+</div>
 
 </div>
 

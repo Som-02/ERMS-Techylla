@@ -82,6 +82,7 @@ const EmployeeDetails = () => {
         <tr>
             <th>Client</th>
             <th>Project</th>
+            <th>Start Date</th>
             <th>End Date</th>
         </tr>
     </thead>
@@ -105,6 +106,16 @@ const EmployeeDetails = () => {
                 </td>
 
                 <td>
+    {assignment.startDate
+        ? new Date(assignment.startDate).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+          })
+        : "-"}
+</td>
+
+<td>
     {assignment.endDate
         ? new Date(assignment.endDate).toLocaleDateString("en-IN", {
               day: "2-digit",

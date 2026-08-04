@@ -47,7 +47,7 @@ const ProjectForm = ({
     useEffect(() => {
         loadClients();
         loadSkills();
-        loadEmployees();
+        loadEmployees([]);
     }, []);
 
     useEffect(() => {
@@ -191,7 +191,7 @@ const filteredEmployees = employees.filter((employee) => {
         return true;
 
     const employeeSkills = employee.skills.map(
-        (skill) => skill.skill._id
+        (skill) => skill.skill
     );
 
     return formData.requiredSkills.every((skillId) =>
