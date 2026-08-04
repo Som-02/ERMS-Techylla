@@ -1,7 +1,9 @@
 const express = require("express");
 
 const router = express.Router();
+const upload = require("../middleware/uploadExcel");
 
+const { previewImport,importExcel} = require("../controllers/projectImportController");
 const { protect } = require("../middleware/authMiddleware");
 
 const {
@@ -25,6 +27,23 @@ router.get(
     "/export",
     protect,
     exportProjects
+);
+router.post(
+
+    "/import/preview",
+
+    protect,
+
+    upload.single("file"),
+
+    previewImport
+
+);
+router.post(
+    "/import",
+    protect,
+    upload.single("file"),
+    importExcel
 );
 router.get("/:id", protect, getProject);
 router.put("/:id", protect, updateProject);

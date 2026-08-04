@@ -41,7 +41,7 @@ const assignmentSchema = new mongoose.Schema({
 
         type: Date,
 
-        required: true,
+        default:null,
 
     },
 
@@ -49,14 +49,15 @@ const assignmentSchema = new mongoose.Schema({
 
         type: Date,
 
-        required: true,
+        default:null,
 
     },
 
     allocation: {
 
         type: Number,
-
+        min:1,
+        max:100,
         default: 0,
 
     },
