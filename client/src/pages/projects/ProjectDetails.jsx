@@ -69,43 +69,85 @@ const ProjectDetails = () => {
 
             <div className="project-card">
 
-                <div className="detail">
+    <div className="detail">
 
-                    <span>Client</span>
+        <span>Client</span>
 
-                    <strong>
+        <strong>
 
-                        {project.client?.name}
+            {project.client?.name}
 
-                    </strong>
+        </strong>
 
-                </div>
+    </div>
 
-                <div className="detail">
+    <div className="detail">
 
-                    <span>Status</span>
+        <span>Status</span>
 
-                    <strong>
+        <strong>
 
-                        {project.status}
+            {project.status}
 
-                    </strong>
+        </strong>
 
-                </div>
+    </div>
 
-                <div className="detail">
+    <div className="detail">
 
-                    <span>Employees Assigned</span>
+        <span>Project Start Date</span>
 
-                    <strong>
+        <strong>
 
-                        {employees.length}
+            {project.startDate
+                ? new Date(project.startDate).toLocaleDateString(
+                      "en-IN",
+                      {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                      }
+                  )
+                : "-"}
 
-                    </strong>
+        </strong>
 
-                </div>
+    </div>
 
-            </div>
+    <div className="detail">
+
+        <span>Project End Date</span>
+
+        <strong>
+
+            {project.endDate
+                ? new Date(project.endDate).toLocaleDateString(
+                      "en-IN",
+                      {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                      }
+                  )
+                : "-"}
+
+        </strong>
+
+    </div>
+
+    <div className="detail">
+
+        <span>Employees Assigned</span>
+
+        <strong>
+
+            {employees.length}
+
+        </strong>
+
+    </div>
+
+</div>
 
             <h2>
 
@@ -135,17 +177,21 @@ const ProjectDetails = () => {
 
                             <tr>
 
-                                <th>Employee ID</th>
+    <th>Employee ID</th>
 
-                                <th>Name</th>
+    <th>Name</th>
 
-                                <th>Position</th>
+    <th>Position</th>
 
-                                <th>Experience</th>
+    <th>Experience</th>
 
-                                <th>End Date</th>
+    <th>Start Date</th>
 
-                            </tr>
+    <th>End Date</th>
+
+    <th>Allocation</th>
+
+</tr>
 
                         </thead>
 
@@ -183,35 +229,39 @@ const ProjectDetails = () => {
 
                                         <td>
 
-                                            {
+    {employee.startDate
+        ? new Date(employee.startDate).toLocaleDateString(
+              "en-IN",
+              {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+              }
+          )
+        : "-"}
 
-                                                employee.endDate
+</td>
 
-                                                ?
+<td>
 
-                                                new Date(employee.endDate).toLocaleDateString(
+    {employee.endDate
+        ? new Date(employee.endDate).toLocaleDateString(
+              "en-IN",
+              {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+              }
+          )
+        : "-"}
 
-                                                    "en-IN",
+</td>
 
-                                                    {
+<td>
 
-                                                        day:"2-digit",
+    {employee.allocation}%
 
-                                                        month:"short",
-
-                                                        year:"numeric",
-
-                                                    }
-
-                                                )
-
-                                                :
-
-                                                "-"
-
-                                            }
-
-                                        </td>
+</td>
 
                                     </tr>
 

@@ -7,7 +7,8 @@ import PageHeader from "../../components/common/PageHeader";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 
 import ProjectTable from "../../components/project/ProjectTable";
-
+import exportProjects from "../../utils/exportProjects";
+import { getProjectsForExport } from "../../services/projectService";
 import {
     getProjects,
     searchProjects,
@@ -70,7 +71,25 @@ const Projects = () => {
         setShowDialog(true);
 
     };
+    const handleExport = async () => {
 
+    try {
+
+        const res = await getProjectsForExport();
+
+        await exportProjects(res.data);
+
+        toast.success("Projects exported successfully");
+
+    }
+
+    catch (error) {
+
+        toast.error("Export failed");
+
+    }
+
+};
     const handleDelete = async () => {
 
         try {
@@ -106,13 +125,17 @@ const Projects = () => {
     return (
 
         <>
-
+            
             <PageHeader
-                title="Projects"
-                subtitle="Manage and monitor all company projects."
-                buttonText="Add Project"
-                buttonLink="/projects/add"
-            />
+    title="Projects"
+    subtitle="Manage and monitor all company projects."
+
+    secondaryButtonText="Export Excel"
+    onSecondaryClick={handleExport}
+
+    buttonText="Add Project"
+    buttonLink="/projects/add"
+/>
 
             <div style={{ marginBottom: "24px" }}>
 

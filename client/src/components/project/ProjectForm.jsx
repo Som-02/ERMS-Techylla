@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import {
     createProject,
     updateProject,
 } from "../../services/projectService";
-
+import Select from "react-select";
 import { getClients } from "../../services/clientService";
-
+import { getSkills } from "../../services/skillService";
+import { getEmployeesBySkills } from "../../services/employeeService";
+import { getSkillMatrix } from "../../services/skillService";
 import "./project.css";
 
 const ProjectForm = ({
@@ -19,16 +20,34 @@ const ProjectForm = ({
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        name: "",
-        client: "",
-        status: "Active",
-    });
+    name: "",
+    client: "",
+    startDate: "",
+    endDate: "",
+    status: "Active",
+    requiredSkills: [],
+    assignedEmployees:[],
+});
 
     const [clients, setClients] = useState([]);
     const [saving, setSaving] = useState(false);
+    const [skills, setSkills] = useState([]);
+    const [employees, setEmployees] = useState([]);
+    const employeeOptions = employees.map((employee) => ({
 
+    value: employee._id,
+
+    label: `${employee.name} (${employee.empId})`,
+
+}));
+    const skillOptions = skills.map((skill) => ({
+    value: skill._id,
+    label: skill.name,
+}));
     useEffect(() => {
         loadClients();
+        loadSkills();
+        loadEmployees();
     }, []);
 
     useEffect(() => {
@@ -36,10 +55,46 @@ const ProjectForm = ({
         if (mode === "edit" && project) {
 
             setFormData({
-                name: project.name || "",
-                client: project.client?._id || project.client || "",
-                status: project.status || "Active",
-            });
+
+    name: project.name || "",
+
+    client: project.client?._id || project.client || "",
+
+    startDate: project.startDate
+        ? project.startDate.split("T")[0]
+        : "",
+
+    endDate: project.endDate
+        ? project.endDate.split("T")[0]
+        : "",
+
+    status: project.status || "Active",
+
+    requiredSkills:
+        project.requiredSkills?.map(
+            (skill) => skill._id
+        ) || [],
+
+    assignedEmployees:
+        project.assignedEmployees?.map(
+            (employee) =>
+                employee._id || employee
+        ) || [],
+
+});
+if (project.requiredSkills?.length > 0) {
+
+    loadEmployees(
+
+        project.requiredSkills.map(
+
+            (skill) => skill._id
+
+        )
+
+    );
+
+}
 
         }
 
@@ -62,7 +117,41 @@ const ProjectForm = ({
         }
 
     };
+    const loadSkills = async () => {
 
+    try {
+
+        const res = await getSkills();
+
+        setSkills(res.data);
+
+    } catch (error) {
+
+        console.log(error);
+
+        toast.error("Failed to load skills");
+
+    }
+
+};
+
+    const loadEmployees = async (selectedSkills) => {
+
+    try {
+
+        const res = await getEmployeesBySkills(
+            selectedSkills
+        );
+
+        setEmployees(res.data);
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+};
     const handleChange = (e) => {
 
         const { name, value } = e.target;
@@ -73,7 +162,43 @@ const ProjectForm = ({
         }));
 
     };
+    const handleSkillChange = (skillId) => {
 
+    setFormData((prev) => {
+
+        const exists = prev.requiredSkills.includes(skillId);
+
+        return {
+
+            ...prev,
+
+            requiredSkills: exists
+
+                ? prev.requiredSkills.filter(
+                      (id) => id !== skillId
+                  )
+
+                : [...prev.requiredSkills, skillId],
+
+        };
+
+    });
+
+};
+const filteredEmployees = employees.filter((employee) => {
+
+    if (formData.requiredSkills.length === 0)
+        return true;
+
+    const employeeSkills = employee.skills.map(
+        (skill) => skill.skill._id
+    );
+
+    return formData.requiredSkills.every((skillId) =>
+        employeeSkills.includes(skillId)
+    );
+
+});
     const submitHandler = async (e) => {
 
         e.preventDefault();
@@ -179,7 +304,32 @@ const ProjectForm = ({
                     </select>
 
                 </div>
+                
+                <div className="form-group">
 
+    <label>Start Date</label>
+
+    <input
+        type="date"
+        name="startDate"
+        value={formData.startDate}
+        onChange={handleChange}
+    />
+
+</div>
+
+<div className="form-group">
+
+    <label>End Date</label>
+
+    <input
+        type="date"
+        name="endDate"
+        value={formData.endDate}
+        onChange={handleChange}
+    />
+
+</div>
                 <div className="form-group">
 
                     <label>Status</label>
@@ -206,7 +356,75 @@ const ProjectForm = ({
                     </select>
 
                 </div>
+<div className="form-group">
 
+    <label>Required Skills</label>
+
+    <Select
+        isMulti
+        options={skillOptions}
+        placeholder="Select required skills..."
+        value={skillOptions.filter((option) =>
+            formData.requiredSkills.includes(option.value)
+        )}
+        onChange={async (selected) => {
+
+    const selectedSkills = selected
+        ? selected.map((item) => item.value)
+        : [];
+
+    setFormData((prev) => ({
+
+    ...prev,
+
+    requiredSkills: selectedSkills,
+
+    assignedEmployees: [],
+
+}));
+
+    await loadEmployees(selectedSkills);
+
+}}
+    />
+
+</div>
+
+<div className="form-group">
+
+    <label>Assigned Employees</label>
+
+    <Select
+
+        isMulti
+
+        options={employeeOptions}
+
+        placeholder="Select Employees..."
+
+        value={employeeOptions.filter((employee) =>
+            formData.assignedEmployees.includes(employee.value)
+        )}
+
+        onChange={(selected) =>
+
+            setFormData((prev) => ({
+
+                ...prev,
+
+                assignedEmployees: selected
+
+                    ? selected.map((item) => item.value)
+
+                    : [],
+
+            }))
+
+        }
+
+    />
+
+</div>
                 <div className="form-actions">
 
                     <button

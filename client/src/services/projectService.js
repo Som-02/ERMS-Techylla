@@ -32,3 +32,14 @@ export const searchProjects = async (query) => {
 
     return response.data;
 };
+export const getProjectsForExport = async () => {
+
+    const response = await api.get(
+
+        "/projects/export"
+
+    );
+
+    return response.data;
+
+};

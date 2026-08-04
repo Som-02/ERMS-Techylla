@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import "./employeeSection.css";
+import { getProject } from "../../services/projectService";
 const AssignmentSection = ({
     clients = [],
     projects = [],
@@ -10,9 +11,13 @@ const AssignmentSection = ({
 
     const [client, setClient] = useState("");
     const [project, setProject] = useState("");
+    const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-
+    const [allocation, setAllocation] = useState("");
+    const [editingIndex, setEditingIndex] = useState(null);
+const [loadingProject, setLoadingProject] = useState(false);
     const filteredProjects = useMemo(() => {
+
         if (!client) return [];
 
         return projects.filter(
@@ -20,26 +25,61 @@ const AssignmentSection = ({
                 p.client === client ||
                 p.client?._id === client
         );
+
     }, [client, projects]);
+
+    const clearForm = () => {
+
+        setClient("");
+        setProject("");
+        setStartDate("");
+        setEndDate("");
+        setAllocation("");
+        setEditingIndex(null);
+
+    };
 
     const addAssignment = () => {
 
-        if (!client || !project || !endDate) {
-            toast.error("Please select client, project and end date.");
+        if (
+            !client ||
+            !project ||
+            !startDate ||
+            !endDate
+        ) {
+
+            toast.error("Fill all fields");
+
             return;
+
         }
+        if (new Date(endDate) < new Date(startDate)) {
 
-        const alreadyExists = assignments.some(
-            (assignment) =>
-                (assignment.client === client ||
-                    assignment.client?._id === client) &&
-                (assignment.project === project ||
-                    assignment.project?._id === project)
-        );
+    toast.error(
+        "End Date cannot be before Start Date."
+    );
 
-        if (alreadyExists) {
-            toast.error("Assignment already exists.");
-            return;
+    return;
+
+}
+        if (editingIndex === null) {
+
+            const alreadyExists = assignments.some(
+                (assignment) =>
+                    (assignment.client === client ||
+                        assignment.client?._id === client) &&
+                    (assignment.project === project ||
+                        assignment.project?._id === project)
+            );
+
+            if (alreadyExists) {
+
+                toast.error("Assignment already exists.");
+
+                return;
+
+            }
+
         }
 
         const selectedClient = clients.find(
@@ -50,22 +90,81 @@ const AssignmentSection = ({
             (p) => p._id === project
         );
 
-        setAssignments([
-            ...assignments,
-            {
-                client,
-                project,
-                endDate,
-                clientName: selectedClient?.name,
-                projectName: selectedProject?.name,
-            },
-        ]);
+        const assignmentData = {
 
-        setClient("");
-        setProject("");
-        setEndDate("");
+            client,
 
-        toast.success("Assignment Added");
+            project,
+
+            startDate,
+
+            endDate,
+
+            allocation,
+
+            clientName: selectedClient?.name,
+
+            projectName: selectedProject?.name,
+
+        };
+
+        if (editingIndex !== null) {
+
+            const updatedAssignments = [...assignments];
+
+            updatedAssignments[editingIndex] =
+                assignmentData;
+
+            setAssignments(updatedAssignments);
+
+            toast.success("Assignment Updated");
+
+        }
+
+        else {
+
+            setAssignments([
+                ...assignments,
+                assignmentData,
+            ]);
+
+            toast.success("Assignment Added");
+
+        }
+
+        clearForm();
+
+    };
+
+    const editAssignment = (assignment, index) => {
+
+        setClient(
+            assignment.client?._id ||
+            assignment.client
+        );
+
+        setProject(
+            assignment.project?._id ||
+            assignment.project
+        );
+
+        setStartDate(
+            assignment.startDate
+                ? assignment.startDate.split("T")[0]
+                : ""
+        );
+
+        setEndDate(
+            assignment.endDate
+                ? assignment.endDate.split("T")[0]
+                : ""
+        );
+
+        setAllocation(
+            assignment.allocation || 100
+        );
+
+        setEditingIndex(index);
 
     };
 
@@ -75,178 +174,354 @@ const AssignmentSection = ({
             assignments.filter((_, i) => i !== index)
         );
 
+        if (editingIndex === index) {
+
+            clearForm();
+
+        }
+
         toast.success("Assignment Removed");
 
     };
 
-    return(
+    return (
 
-<>
+        <>
 
-<div className="assignment-grid">
+            <div className="assignment-grid">
 
-    <div className="field">
+                <div className="field">
 
-        <label>Client</label>
+                    <label>Client</label>
 
-        <select
-            value={client}
-            onChange={(e)=>{
-                setClient(e.target.value);
-                setProject("");
+                    <select
+                        value={client}
+                        onChange={(e) => {
+
+                            setClient(e.target.value);
+
+                            setProject("");
+
+                        }}
+                    >
+
+                        <option value="">
+                            Select Client
+                        </option>
+
+                        {clients.map((client) => (
+
+                            <option
+                                key={client._id}
+                                value={client._id}
+                            >
+                                {client.name}
+                            </option>
+
+                        ))}
+
+                    </select>
+
+                </div>
+
+                <div className="field">
+
+                    <label>Project</label>
+
+                    <select
+    value={project}
+    onChange={async (e) => {
+
+        const selectedProject = e.target.value;
+
+        setProject(selectedProject);
+
+        if (!selectedProject) return;
+
+        // Don't overwrite dates while editing
+        if (editingIndex !== null) return;
+
+        try {
+
+            setLoadingProject(true);
+
+            const res = await getProject(selectedProject);
+
+            const projectData = res.data.project;
+
+            setStartDate(
+
+                projectData.startDate
+                    ? projectData.startDate.split("T")[0]
+                    : ""
+
+            );
+
+            setEndDate(
+
+                projectData.endDate
+                    ? projectData.endDate.split("T")[0]
+                    : ""
+
+            );
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+        finally {
+
+            setLoadingProject(false);
+
+        }
+
+    }}
+>
+
+                        <option value="">
+                            Select Project
+                        </option>
+
+                        {filteredProjects.map((project) => (
+
+                            <option
+                                key={project._id}
+                                value={project._id}
+                            >
+                                {project.name}
+                            </option>
+
+                        ))}
+
+                    </select>
+
+                </div>
+
+                <div className="field">
+
+                    <label>
+
+    Start Date
+
+    {loadingProject && (
+
+        <span
+            style={{
+                color: "#2563eb",
+                marginLeft: "10px",
+                fontSize: "13px",
             }}
         >
 
-            <option value="">Select Client</option>
+            Fetching...
 
-            {clients.map(client=>(
+        </span>
 
-                <option
-                    key={client._id}
-                    value={client._id}
+    )}
+
+</label>
+
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) =>
+                            setStartDate(e.target.value)
+                        }
+                    />
+
+                </div>
+
+                <div className="field">
+
+                    <label>
+                        End Date
+                        {loadingProject && (
+                            <span
+                                style={{
+                                    color: "#2563eb",
+                                    marginLeft: "10px",
+                                    fontSize: "13px",
+                                }}
+                            >
+                                Fetching...
+                            </span>
+                        )}
+                    </label>
+
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) =>
+                            setEndDate(e.target.value)
+                        }
+                    />
+
+                </div>
+
+                <div className="field">
+
+                    <label>Allocation %</label>
+
+                    <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={allocation}
+                        onChange={(e) =>
+                            setAllocation(e.target.value)
+                        }
+                    />
+
+                </div>
+
+                <button
+                    type="button"
+                    className="primary-btn"
+                    onClick={addAssignment}
                 >
-                    {client.name}
-                </option>
 
-            ))}
+                    {editingIndex !== null
+                        ? "Update"
+                        : "+ Add"}
 
-        </select>
+                </button>
 
-    </div>
+            </div>
 
-    <div className="field">
+            {assignments.length === 0 ? (
 
-        <label>Project</label>
+                <div className="empty">
 
-        <select
-            value={project}
-            onChange={(e)=>setProject(e.target.value)}
-        >
+                    No assignments added
 
-            <option value="">Select Project</option>
+                </div>
 
-            {filteredProjects.map(project=>(
+            ) : (
 
-                <option
-                    key={project._id}
-                    value={project._id}
-                >
-                    {project.name}
-                </option>
+                <table className="data-table">
 
-            ))}
+                    <thead>
 
-        </select>
+                        <tr>
 
-    </div>
+                            <th>Client</th>
 
-    <div className="field">
+                            <th>Project</th>
 
-        <label>End Date</label>
+                            <th>Start Date</th>
 
-        <input
-            type="date"
-            value={endDate}
-            onChange={(e)=>setEndDate(e.target.value)}
-        />
+                            <th>End Date</th>
 
-    </div>
+                            <th>Allocation</th>
 
-    <button
-        type="button"
-        className="primary-btn"
-        onClick={addAssignment}
-    >
-        + Add
-    </button>
+                            <th>Actions</th>
 
-</div>
+                        </tr>
 
-{assignments.length===0 ? (
+                    </thead>
 
-    <div className="empty">
+                    <tbody>
 
-        No assignments added
+                        {assignments.map((assignment, index) => (
 
-    </div>
+                            <tr key={index}>
 
-) : (
+                                <td>
 
-<table className="data-table">
+                                    {
+                                        assignment.clientName ||
+                                        assignment.client?.name ||
+                                        clients.find(
+                                            (c) =>
+                                                c._id === assignment.client
+                                        )?.name ||
+                                        "-"
+                                    }
 
-<thead>
+                                </td>
 
-<tr>
+                                <td>
 
-<th>Client</th>
+                                    {
+                                        assignment.projectName ||
+                                        assignment.project?.name ||
+                                        projects.find(
+                                            (p) =>
+                                                p._id === assignment.project
+                                        )?.name ||
+                                        "-"
+                                    }
 
-<th>Project</th>
+                                </td>
 
-<th>End Date</th>
+                                <td>
 
-<th></th>
+                                    {assignment.startDate}
 
-</tr>
+                                </td>
 
-</thead>
+                                <td>
 
-<tbody>
+                                    {assignment.endDate}
 
-{assignments.map((assignment,index)=>(
+                                </td>
 
-<tr key={index}>
+                                <td>
 
-<td>
+                                    {assignment.allocation}%
 
-{
-assignment.clientName ||
-assignment.client?.name ||
-clients.find(c=>c._id===assignment.client)?.name ||
-"-"
-}
+                                </td>
 
-</td>
+                                <td>
 
-<td>
+                                    <button
+                                        type="button"
+                                        className="primary-btn"
+                                        onClick={() =>
+                                            editAssignment(
+                                                assignment,
+                                                index
+                                            )
+                                        }
+                                    >
 
-{
-assignment.projectName ||
-assignment.project?.name ||
-projects.find(p=>p._id===assignment.project)?.name ||
-"-"
-}
+                                        Edit
 
-</td>
+                                    </button>
 
-<td>{assignment.endDate}</td>
+                                    {" "}
 
-<td>
+                                    <button
+                                        type="button"
+                                        className="remove-btn"
+                                        onClick={() =>
+                                            removeAssignment(index)
+                                        }
+                                    >
 
-<button
-type="button"
-className="remove-btn"
-onClick={()=>removeAssignment(index)}
->
+                                        Delete
 
-Remove
+                                    </button>
 
-</button>
+                                </td>
 
-</td>
+                            </tr>
 
-</tr>
+                        ))}
 
-))}
+                    </tbody>
 
-</tbody>
+                </table>
 
-</table>
+            )}
 
-)}
+        </>
 
-</>
-
-);
+    );
 
 };
 

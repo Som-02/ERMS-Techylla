@@ -36,3 +36,14 @@ export const getManagers = async () => {
     const response = await api.get("/employees");
     return response.data;
 };
+export const getEmployeesBySkills = async (skills) => {
+
+    const response = await api.get(
+
+        `/employees/filter-by-skills?skills=${skills.join(",")}`
+
+    );
+
+    return response.data;
+
+};

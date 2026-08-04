@@ -16,21 +16,25 @@ const ProjectTable = ({
 
                     <tr>
 
-                        <th>Project</th>
+    <th>Project</th>
 
-                        <th>Client</th>
+    <th>Client</th>
 
-                        <th>Status</th>
+    <th>Start Date</th>
 
-                        <th
-                            style={{
-                                width: "130px",
-                            }}
-                        >
-                            Actions
-                        </th>
+    <th>End Date</th>
 
-                    </tr>
+    <th>Status</th>
+
+    <th
+        style={{
+            width: "170px",
+        }}
+    >
+        Actions
+    </th>
+
+</tr>
 
                 </thead>
 
@@ -43,7 +47,7 @@ const ProjectTable = ({
                             <tr>
 
                                 <td
-                                    colSpan="4"
+                                    colSpan="6"
                                     className="empty-table"
                                 >
 

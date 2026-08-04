@@ -24,7 +24,7 @@ const EditProject = () => {
 
             const res = await getProject(id);
 
-            setProject(res.data);
+            setProject(res.data.project);
 
         } catch (error) {
 

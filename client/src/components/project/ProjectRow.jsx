@@ -45,27 +45,57 @@ const ProjectRow = ({
 
             <td>
 
-                <span className="client-badge">
+    <span className="client-badge">
 
-                    {project.client?.name || "-"}
+        {project.client?.name || "-"}
 
-                </span>
+    </span>
 
-            </td>
+</td>
 
-            <td>
+<td>
 
-                <span
-                    className={`status ${getStatusClass()}`}
-                >
+    {project.startDate
+        ? new Date(project.startDate).toLocaleDateString(
+              "en-IN",
+              {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+              }
+          )
+        : "-"}
 
-                    <span className="status-dot"></span>
+</td>
 
-                    {project.status}
+<td>
 
-                </span>
+    {project.endDate
+        ? new Date(project.endDate).toLocaleDateString(
+              "en-IN",
+              {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+              }
+          )
+        : "-"}
 
-            </td>
+</td>
+
+<td>
+
+    <span
+        className={`status ${getStatusClass()}`}
+    >
+
+        <span className="status-dot"></span>
+
+        {project.status}
+
+    </span>
+
+</td>
 
             <td>
 

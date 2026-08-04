@@ -57,9 +57,17 @@ const EmployeeForm = ({
     (employee.assignments || []).map((assignment) => ({
         client: assignment.client?._id || assignment.client,
         project: assignment.project?._id || assignment.project,
+
+        startDate: assignment.startDate
+            ? assignment.startDate.split("T")[0]
+            : "",
+
         endDate: assignment.endDate
             ? assignment.endDate.split("T")[0]
             : "",
+
+        allocation: assignment.allocation ?? 100,
+
         clientName: assignment.client?.name,
         projectName: assignment.project?.name,
     }))
@@ -120,7 +128,9 @@ const EmployeeForm = ({
     assignments: assignments.map((assignment) => ({
         client: assignment.client?._id || assignment.client,
         project: assignment.project?._id || assignment.project,
-        endDate: assignment.endDate,
+        startDate: assignment.startDate,
+    endDate: assignment.endDate,
+    allocation: assignment.allocation,
     })),
 };
 
