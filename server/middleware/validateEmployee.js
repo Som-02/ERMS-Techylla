@@ -1,50 +1,96 @@
 const validateEmployee = (req, res, next) => {
-  const {
-    empId,
-    name,
-    email,
-    mobile,
-    wwid,
-    position,
-  } = req.body;
 
-  if (!empId)
-    return res.status(400).json({
-      success: false,
-      message: "Employee ID is required",
-    });
+    const {
 
-  if (!name)
-    return res.status(400).json({
-      success: false,
-      message: "Employee Name is required",
-    });
+        empId,
+        name,
+        email,
+        assignments = [],
 
-  if (!email)
-    return res.status(400).json({
-      success: false,
-      message: "Email is required",
-    });
+    } = req.body;
 
-  // if (!mobile)
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "Mobile Number is required",
-  //   });
+    if (!empId)
 
-  // if (!wwid)
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "WWID is required",
-  //   });
+        return res.status(400).json({
 
-  // if (!position)
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "Position is required",
-  //   });
+            success: false,
 
-  next();
+            message: "Employee ID is required",
+
+        });
+
+    if (!name)
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Employee Name is required",
+
+        });
+
+    if (!email)
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Email is required",
+
+        });
+
+    // Validate all assignments
+
+    for (const assignment of assignments) {
+
+        if (
+
+            assignment.startDate &&
+
+            assignment.endDate &&
+
+            new Date(assignment.endDate) <
+
+                new Date(assignment.startDate)
+
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Assignment End Date cannot be before Start Date.",
+
+            });
+
+        }
+
+        if (
+
+            assignment.allocation !== undefined &&
+
+            (assignment.allocation < 1 ||
+
+                assignment.allocation > 100)
+
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Allocation must be between 1 and 100.",
+
+            });
+
+        }
+
+    }
+
+    next();
+
 };
 
 module.exports = validateEmployee;

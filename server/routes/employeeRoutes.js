@@ -10,6 +10,7 @@ const {
   updateEmployee,
   deleteEmployee,
   searchEmployees,
+  getEmployeesBySkills,
 } = require("../controllers/employeeController");
 
 router.get(
@@ -17,7 +18,11 @@ router.get(
     protect,
     searchEmployees
 );
-
+router.get(
+    "/filter-by-skills",
+    protect,
+    getEmployeesBySkills
+);
 router.get("/:id", protect, getEmployeeById);
 router.get("/", protect, getEmployees);
 router.post(

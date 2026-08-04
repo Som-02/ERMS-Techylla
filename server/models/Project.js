@@ -18,7 +18,27 @@ const projectSchema=new mongoose.Schema({
         type:String,
         enum:["Active","Completed","On Hold"],
         default:"Active"
-    }
+    },
+    startDate: {
+    type: Date,
+    required: true,
+},
+
+endDate: {
+    type: Date,
+    required: true,
+},
+
+requiredSkills: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Skill",
+}],
+assignedEmployees: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Employee",
+    },
+],
 
 },{
     timestamps:true

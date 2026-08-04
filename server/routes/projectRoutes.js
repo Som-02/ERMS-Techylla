@@ -7,6 +7,7 @@ const { protect } = require("../middleware/authMiddleware");
 const {
 
     getProjects,
+    exportProjects,
     getProject,
     createProject,
     updateProject,
@@ -20,7 +21,11 @@ router.get("/", protect, getProjects);
 router.get("/search", protect, searchProjects);
 
 router.post("/", protect, createProject);
-
+router.get(
+    "/export",
+    protect,
+    exportProjects
+);
 router.get("/:id", protect, getProject);
 router.put("/:id", protect, updateProject);
 

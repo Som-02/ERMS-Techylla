@@ -23,7 +23,7 @@ const assignmentSchema = new mongoose.Schema({
 
         ref: "Client",
 
-        required: true
+        required: true,
 
     },
 
@@ -33,7 +33,15 @@ const assignmentSchema = new mongoose.Schema({
 
         ref: "Project",
 
-        required: true
+        required: true,
+
+    },
+
+    startDate: {
+
+        type: Date,
+
+        required: true,
 
     },
 
@@ -41,9 +49,17 @@ const assignmentSchema = new mongoose.Schema({
 
         type: Date,
 
-        required: true
+        required: true,
 
-    }
+    },
+
+    allocation: {
+
+        type: Number,
+
+        default: 0,
+
+    },
 
 });
 

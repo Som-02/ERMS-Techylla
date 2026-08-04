@@ -1,5 +1,6 @@
 const Employee = require("../models/Employee");
 
+const Skill = require("../models/Skill");
 // ==========================
 // Get All Employees
 // ==========================
@@ -196,6 +197,74 @@ const searchEmployees = async (req, res) => {
 
 };
 
+const getEmployeesBySkills = async (req, res) => {
+
+    try {
+
+        const skillIds = req.query.skills
+            ? req.query.skills.split(",")
+            : [];
+
+        // If no skills selected return all employees
+        if (skillIds.length === 0) {
+
+            const employees = await Employee.find(
+                {},
+                "name empId position experience skills"
+            );
+
+            return res.status(200).json({
+                success: true,
+                data: employees,
+            });
+
+        }
+
+        // Convert Skill IDs → Skill Names
+        const skills = await Skill.find({
+            _id: { $in: skillIds },
+        });
+
+        const skillNames = skills.map((skill) => skill.name);
+
+        const employees = await Employee.find(
+            {},
+            "name empId position experience skills"
+        );
+
+        const filteredEmployees = employees.filter((employee) => {
+
+            const employeeSkills = employee.skills.map(
+                (item) => item.skill
+            );
+
+            return employeeSkills.some((skill) =>
+    skillNames.includes(skill)
+);
+
+        });
+
+        res.status(200).json({
+
+            success: true,
+
+            data: filteredEmployees,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
 module.exports = {
   getEmployees,
   getEmployeeById,
@@ -203,4 +272,5 @@ module.exports = {
   updateEmployee,
   deleteEmployee,
   searchEmployees,
+  getEmployeesBySkills,
 };
