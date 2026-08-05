@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getEmployeesBySkills } from "../../services/employeeService";
 import Loader from "../../components/common/Loader";
@@ -23,6 +23,28 @@ const [selectedAssignment, setSelectedAssignment] = useState(null);
 const [availableEmployees, setAvailableEmployees] = useState([]);
 const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 const [employeeToDelete, setEmployeeToDelete] = useState(null); 
+const roleListRef = useRef(null);
+const [showMore, setShowMore] = useState(false);
+
+useEffect(() => {
+    const list = roleListRef.current;
+
+    if (!list) return;
+
+    const checkScroll = () => {
+        const atBottom =
+            list.scrollTop + list.clientHeight >= list.scrollHeight - 2;
+
+        setShowMore(!atBottom);
+    };
+
+    checkScroll();
+
+    list.addEventListener("scroll", checkScroll);
+
+    return () => list.removeEventListener("scroll", checkScroll);
+
+}, [project]);
 useEffect(() => {
 
         loadProject();
@@ -181,17 +203,42 @@ const openAssignModal = async () => {
     </div>
     <div className="detail">
 
-    <span>Role</span>
+    <span>Roles</span>
 
-    <strong>
+    <div className="role-list-wrapper">
 
-        {project.requiredSkills?.length > 0
-            ? project.requiredSkills
-                  .map((skill) => skill.name)
-                  .join(", ")
-            : "-"}
+    <div
+        className="role-list"
+        ref={roleListRef}
+    >
 
-    </strong>
+        <ul>
+
+            {project.requiredSkills.map(skill => (
+
+                <li key={skill._id || skill.name}>
+
+                    {skill.name}
+
+                </li>
+
+            ))}
+
+        </ul>
+
+    </div>
+
+    {showMore && (
+
+        <div className="scroll-hint">
+
+            ↓
+
+        </div>
+
+    )}
+
+</div>
 
 </div>
 
