@@ -1,6 +1,6 @@
 const Employee = require("../models/Employee");
 const Skill = require("../models/Skill");
-
+const Project = require("../models/Project");
 /*
 ==========================================
 HELPER
@@ -198,7 +198,25 @@ const createEmployee = async (req, res) => {
         }
 
         const employee = await Employee.create(req.body);
+for (const assignment of employee.assignments || []) {
 
+    await Project.findByIdAndUpdate(
+
+        assignment.project,
+
+        {
+
+            $addToSet: {
+
+                assignedEmployees: employee._id,
+
+            },
+
+        }
+
+    );
+
+}
         res.status(201).json({
 
             success: true,
@@ -263,13 +281,49 @@ const updateEmployee = async (req, res) => {
 
         }
 
-        console.log(
+        // -----------------------------------
+        // Sync Project.assignedEmployees
+        // -----------------------------------
 
-            "Assignments received:",
+        // Remove employee from all projects
 
-            JSON.stringify(req.body.assignments, null, 2)
+        await Project.updateMany(
+
+            {},
+
+            {
+
+                $pull: {
+
+                    assignedEmployees: employee._id,
+
+                },
+
+            }
 
         );
+
+        // Add employee to assigned projects
+
+        for (const assignment of employee.assignments) {
+
+            await Project.findByIdAndUpdate(
+
+                assignment.project,
+
+                {
+
+                    $addToSet: {
+
+                        assignedEmployees: employee._id,
+
+                    },
+
+                }
+
+            );
+
+        }
 
         res.status(200).json({
 

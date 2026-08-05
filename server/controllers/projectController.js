@@ -170,13 +170,11 @@ const createProject = async (req, res) => {
 
         const {
 
-            assignedEmployees,
+    assignedEmployees,
 
-            ...projectData
+    ...projectData
 
-        } = req.body;
-
-        projectData.assignedEmployees = assignedEmployees;
+} = req.body;
 
 const project = await Project.create(projectData);
 
@@ -287,7 +285,7 @@ const updateProject = async (req, res) => {
 
         } = req.body;
 
-        projectData.assignedEmployees = assignedEmployees;
+        // projectData.assignedEmployees = assignedEmployees;
 
         const project = await Project.findByIdAndUpdate(
 
@@ -797,7 +795,17 @@ const deleteAssignment = async (req, res) => {
         );
 
         await employee.save();
+const project = await Project.findById(projectId);
 
+if (project) {
+
+    project.assignedEmployees = project.assignedEmployees.filter(
+    id => id.toString() !== employeeId.toString()
+);
+
+    await project.save();
+
+}
         res.status(200).json({
 
             success: true,
@@ -907,7 +915,25 @@ const assignEmployee = async (req, res) => {
         });
 
         await employee.save();
+// -----------------------------
+// Update Project
+// -----------------------------
 
+if (
+
+    !project.assignedEmployees.some(
+
+        id => id.toString() === employee._id.toString()
+
+    )
+
+) {
+
+    project.assignedEmployees.push(employee._id);
+
+    await project.save();
+
+}
         res.status(200).json({
 
             success: true,
