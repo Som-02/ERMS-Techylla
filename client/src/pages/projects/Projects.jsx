@@ -8,6 +8,7 @@ import ProjectTable from "../../components/project/ProjectTable";
 import {previewProjectImport,importProjectsExcel,} from "../../services/projectImportService";
 import exportProjects from "../../utils/exportProjects";
 import { getProjectsForExport } from "../../services/projectService";
+import ProjectImportPreviewModal from "../../components/common/ProjectImportPreviewModal";
 import {
     getProjects,
     searchProjects,
@@ -16,6 +17,10 @@ import {
 import EditAssignmentModal from "../../components/project/AssignmentModal";
 const Projects = () => {
     const fileInputRef = useRef(null);
+    const [preview, setPreview] = useState([]);
+const [summary, setSummary] = useState({});
+const [showPreview, setShowPreview] = useState(false);
+const [selectedFile, setSelectedFile] = useState(null);
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showEditModal,setShowEditModal]=useState(false);
@@ -113,15 +118,24 @@ const handleImport = async (e) => {
 
         console.log(res);
 
-        toast.success("Excel validated successfully.");
+        setSelectedFile(file);
+
+        setPreview(res.preview);
+
+        setSummary(res.summary);
+
+        setShowPreview(true);
 
     }
 
     catch (error) {
 
         toast.error(
+
             error.response?.data?.message ||
+
             "Import failed"
+
         );
 
     }
@@ -131,6 +145,46 @@ const handleImport = async (e) => {
         setImporting(false);
 
         e.target.value = "";
+
+    }
+
+};
+const confirmImport = async () => {
+
+    try {
+
+        setImporting(true);
+
+        const res = await importProjectsExcel(selectedFile);
+
+        toast.success(
+
+            `Updated ${res.summary.updatedProjects} projects`
+
+        );
+
+        setShowPreview(false);
+
+        loadProjects();
+
+    }
+
+    catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+
+            "Import failed"
+
+        );
+
+    }
+
+    finally {
+
+        setImporting(false);
+
     }
 
 };
@@ -246,7 +300,21 @@ const handleImport = async (e) => {
                 onConfirm={handleDelete}
                 onCancel={() => setShowDialog(false)}
             />
+            <ProjectImportPreviewModal
 
+    open={showPreview}
+
+    preview={preview}
+
+    summary={summary}
+
+    loading={importing}
+
+    onClose={() => setShowPreview(false)}
+
+    onImport={confirmImport}
+
+/>
         </>
 
     );

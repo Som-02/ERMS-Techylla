@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import Loader from "../../components/common/Loader";
 import { getEmployee } from "../../services/employeeService";
 import "../../pages/employees/employeeDetails.css";
+import { formatDate } from "../../utils/formatDate";
 const EmployeeDetails = () => {
     const { id } = useParams();
 
@@ -80,11 +81,21 @@ const EmployeeDetails = () => {
 
     <thead>
         <tr>
-            <th>Client</th>
-            <th>Project</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Allocation</th>
+            <th style={{
+        textAlign: "left",
+    }}>Client</th>
+            <th style={{
+        textAlign: "left",
+    }}>Project</th>
+            <th style={{
+        textAlign: "left",
+    }}>Start Date</th>
+            <th style={{
+        textAlign: "left",
+    }}>End Date</th>
+            <th style={{
+        textAlign: "left",
+    }}>Allocation</th>
         </tr>
     </thead>
 
@@ -94,38 +105,40 @@ const EmployeeDetails = () => {
 
             <tr key={index}>
 
-                <td>
+                <td style={{
+        textAlign: "left",
+    }}>
                     {assignment.client?.name ||
                         assignment.clientName ||
                         "-"}
                 </td>
 
-                <td>
+                <td style={{
+        textAlign: "left",
+    }}>
                     {assignment.project?.name ||
                         assignment.projectName ||
                         "-"}
                 </td>
 
-                <td>
+                <td style={{
+        textAlign: "left",
+    }}>
     {assignment.startDate
-        ? new Date(assignment.startDate).toLocaleDateString("en-IN", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-          })
+        ? formatDate(assignment.startDate)
         : "-"}
 </td>
 
-<td>
+<td style={{
+        textAlign: "left",
+    }}>
     {assignment.endDate
-        ? new Date(assignment.endDate).toLocaleDateString("en-IN", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-          })
+        ? formatDate(assignment.endDate)
         : "-"}
 </td>
-<td>{assignment.allocation || "-"}</td>
+<td style={{
+        textAlign: "left",
+    }}>{assignment.allocation || "-"}</td>
             </tr>
 
         ))}

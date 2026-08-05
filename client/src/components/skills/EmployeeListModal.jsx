@@ -40,11 +40,17 @@ const EmployeeListModal = ({
 
                             <tr>
 
-                                <th>Employee ID</th>
+                                <th style={{
+        textAlign: "left",
+    }}>Employee ID</th>
 
-                                <th>Name</th>
+                                <th style={{
+        textAlign: "left",
+    }}>Name</th>
 
-                                <th>Rating</th>
+                                <th style={{
+        textAlign: "left",
+    }}>Rating</th>
 
                             </tr>
 
@@ -58,19 +64,25 @@ const EmployeeListModal = ({
 
                                     <tr key={emp._id}>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {emp.empId}
 
                                         </td>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {emp.name}
 
                                         </td>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {"★".repeat(emp.rating)}
 

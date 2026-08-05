@@ -218,15 +218,15 @@ header.eachCell((cell, colNumber) => {
 
         const roles =
 
-            project.roles?.length > 0
+    project.requiredSkills?.length > 0
 
-                ? project.roles
+        ? project.requiredSkills
 
-                      .map(skill => skill.name)
+              .map(skill => skill.name)
 
-                      .join(", ")
+              .join(", ")
 
-                : "-";
+        : "-";
 
         const employeeDetails = project.employees?.length
     ? {

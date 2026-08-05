@@ -72,12 +72,6 @@ const ClientDetails = () => {
                     }}
                 >
 
-                    <div className="client-avatar">
-
-                        {client.name.charAt(0).toUpperCase()}
-
-                    </div>
-
                     <div>
 
                         <h2
@@ -117,13 +111,13 @@ const ClientDetails = () => {
                         }}
                     >
 
-                        <FolderKanban
+                        {/* <FolderKanban
                             size={18}
                             style={{
                                 display: "inline",
                                 marginRight: "8px"
                             }}
-                        />
+                        /> */}
 
                         Assigned Projects
 
@@ -139,7 +133,9 @@ const ClientDetails = () => {
 
                                     <tr>
 
-                                        <th>
+                                        <th style={{
+        textAlign: "left",
+    }}>
 
                                             Project Name
 

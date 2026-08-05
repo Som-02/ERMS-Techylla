@@ -23,7 +23,9 @@ const SkillMatrixTable = ({
 
                         <th>Intermediate</th>
 
-                        <th>Expert</th>
+                        <th style={{
+        textAlign: "left",
+    }}>Expert</th>
 
                     </tr>
 
@@ -37,13 +39,17 @@ const SkillMatrixTable = ({
 
                             <tr key={row.skill}>
 
-                                <td>
+                                <td style={{
+        textAlign: "left",
+    }}>
 
                                     {row.skill}
 
                                 </td>
 
-                                <td>
+                                <td style={{
+        textAlign: "left",
+    }}>
 
                                     <button
 
@@ -71,7 +77,9 @@ const SkillMatrixTable = ({
 
                                 </td>
 
-                                <td>
+                                <td style={{
+        textAlign: "left",
+    }}>
 
                                     <button
 
@@ -99,7 +107,9 @@ const SkillMatrixTable = ({
 
                                 </td>
 
-                                <td>
+                                <td style={{
+        textAlign: "left",
+    }}>
 
                                     <button
 

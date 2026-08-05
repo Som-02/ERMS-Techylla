@@ -14,10 +14,12 @@
 .client-table thead{
     background:#a0c8f0;
 }
-
+.client-table thead th:last-child{
+    text-align: center;
+}
 .client-table th{
-    text-align:center;
-    vertical-align:middle;
+    text-align:left;
+    vertical-align:left;
     padding:16px 22px;
     color:#374151;
     font-weight:600;
@@ -25,8 +27,8 @@
 }
 
 .client-table td{
-    text-align:center;
-    vertical-align:middle;
+    text-align:left;
+    vertical-align:left;
     padding:16px 22px;
     border-top:1px solid #f1f5f9;
 }
@@ -40,7 +42,7 @@
 }
 
 .client-name{
-    text-align:center;
+    text-align:left;
     font-weight:600;
     color:#1f2937;
 }

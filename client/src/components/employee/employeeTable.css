@@ -14,16 +14,22 @@
 .employee-table thead{
     background:#a0c8f0;
 }
-
+.employee-table thead th{
+    text-align: left;
+}
 .employee-table th{
+    text-align:left;
     color:#374151;
     padding:16px;
-    text-align:center;
     font-size:14px;
+}
+.employee-table th:last-child{
+    text-align: center;
 }
 
 .employee-table td{
-    text-align:center;
+    text-align:left;
+    vertical-align:middle;
     padding:18px 16px;
     border-top:1px solid var(--border);
 }

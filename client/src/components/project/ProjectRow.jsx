@@ -5,7 +5,7 @@ import {
     Trash2,
     FolderKanban,
 } from "lucide-react";
-
+import { formatDate } from "../../utils/formatDate";
 import "./project.css";
 
 const ProjectRow = ({
@@ -56,14 +56,7 @@ const ProjectRow = ({
 <td>
 
     {project.startDate
-        ? new Date(project.startDate).toLocaleDateString(
-              "en-IN",
-              {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-              }
-          )
+        ? formatDate(project.startDate)
         : "-"}
 
 </td>
@@ -71,14 +64,7 @@ const ProjectRow = ({
 <td>
 
     {project.endDate
-        ? new Date(project.endDate).toLocaleDateString(
-              "en-IN",
-              {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-              }
-          )
+        ? formatDate(project.endDate)
         : "-"}
 
 </td>

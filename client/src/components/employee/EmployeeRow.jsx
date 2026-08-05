@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { formatDate } from "../../utils/formatDate";
 const EmployeeRow = ({
     employee,
     onDelete,
@@ -23,11 +23,17 @@ const EmployeeRow = ({
 
         <tr className={rowClass}>
 
-            <td>{employee.empId}</td>
+            <td style={{
+        textAlign: "left",
+    }}>{employee.empId}</td>
 
-            <td>{employee.name}</td>
+            <td style={{
+        textAlign: "left",
+    }}>{employee.name}</td>
 
-            <td>{employee.position}</td>
+            <td style={{
+        textAlign: "left",
+    }}>{employee.position}</td>
 
             {/* <td>{employee.email}</td> */}
 
@@ -44,27 +50,30 @@ const EmployeeRow = ({
                     "-"}
 
             </td> */}
-            <td>
-    {employee.lowestStartDate
-        ? new Date(employee.lowestStartDate).toLocaleDateString("en-IN", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-          })
-        : "-"}
+            <td>{employee.totalProjects}</td>
+            <td
+    style={{
+        textAlign: "left",
+    }}
+>
+    {formatDate(employee.lowestStartDate)}
 </td>
 
-<td>
-    {employee.highestEndDate
-        ? new Date(employee.highestEndDate).toLocaleDateString("en-IN", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-          })
-        : "-"}
+<td
+    style={{
+        textAlign: "left",
+    }}
+>
+    {formatDate(employee.highestEndDate)}
 </td>
 
-<td>{employee.totalAllocation}%</td>
+<td
+    style={{
+        textAlign: "left",
+    }}
+>
+    {employee.totalAllocation}%
+</td>
             <td>
 
                 <div className="actions">

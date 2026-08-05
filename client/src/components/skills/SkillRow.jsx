@@ -12,7 +12,9 @@ const SkillRow = ({
 
         <tr>
 
-            <td>
+            <td style={{
+        textAlign: "left",
+    }}>
 
                 {skill.name}
 

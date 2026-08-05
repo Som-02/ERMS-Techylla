@@ -5,6 +5,7 @@ import Loader from "../../components/common/Loader";
 import AssignmentModal from "../../components/project/AssignmentModal";
 import { getProject, updateAssignment, deleteAssignment, assignEmployee} from "../../services/projectService";
 import "./projectDetails.css";
+import { formatDate } from "../../utils/formatDate";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 const ProjectDetails = () => {
 
@@ -146,14 +147,7 @@ const openAssignModal = async () => {
         <strong>
 
             {project.startDate
-                ? new Date(project.startDate).toLocaleDateString(
-                      "en-IN",
-                      {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                      }
-                  )
+                ? formatDate(project.startDate)
                 : "-"}
 
         </strong>
@@ -167,14 +161,7 @@ const openAssignModal = async () => {
         <strong>
 
             {project.endDate
-                ? new Date(project.endDate).toLocaleDateString(
-                      "en-IN",
-                      {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                      }
-                  )
+                ? formatDate(project.endDate)
                 : "-"}
 
         </strong>
@@ -271,61 +258,61 @@ const openAssignModal = async () => {
 
                                     <tr key={employee._id}>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {employee.empId}
 
                                         </td>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {employee.name}
 
                                         </td>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {employee.position}
 
                                         </td>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
                                             {employee.experience} Years
 
                                         </td>
 
-                                        <td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
 
     {employee.startDate
-        ? new Date(employee.startDate).toLocaleDateString(
-              "en-IN",
-              {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-              }
-          )
+        ? formatDate(employee.startDate)
         : "-"}
 
 </td>
 
-<td>
+<td style={{
+        textAlign: "left",
+    }}>
 
     {employee.endDate
-        ? new Date(employee.endDate).toLocaleDateString(
-              "en-IN",
-              {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-              }
-          )
+        ? formatDate(employee.endDate)
         : "-"}
 
 </td>
 
-<td>
+<td style={{
+        textAlign: "left",
+    }}>
 
     {employee.allocation}%
 
