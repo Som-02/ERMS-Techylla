@@ -56,7 +56,7 @@ const assignmentSchema = new mongoose.Schema({
     allocation: {
 
         type: Number,
-        min:1,
+        min:0,
         max:100,
         default: 0,
 

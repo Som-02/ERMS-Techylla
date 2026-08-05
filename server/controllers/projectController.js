@@ -679,6 +679,258 @@ const exportProjects = async (req, res) => {
     }
 
 };
+// ============================
+// Update Employee Assignment
+// ============================
+
+const updateAssignment = async (req, res) => {
+
+    try {
+
+        const { projectId, employeeId } = req.params;
+
+        const {
+
+            startDate,
+
+            endDate,
+
+            allocation,
+
+        } = req.body;
+
+        const employee = await Employee.findById(employeeId);
+
+        if (!employee) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Employee not found",
+
+            });
+
+        }
+
+        const assignment = employee.assignments.find(
+
+            assignment =>
+
+                assignment.project.toString() === projectId
+
+        );
+
+        if (!assignment) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Assignment not found",
+
+            });
+
+        }
+
+        assignment.startDate = startDate || null;
+
+        assignment.endDate = endDate || null;
+
+        assignment.allocation = allocation;
+
+        await employee.save();
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Assignment updated successfully",
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Remove Employee Assignment
+// ============================
+
+const deleteAssignment = async (req, res) => {
+
+    try {
+
+        const { projectId, employeeId } = req.params;
+
+        const employee = await Employee.findById(employeeId);
+
+        if (!employee) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Employee not found",
+
+            });
+
+        }
+
+        employee.assignments = employee.assignments.filter(
+
+            assignment =>
+
+                assignment.project.toString() !== projectId
+
+        );
+
+        await employee.save();
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Employee removed from project.",
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Assign Employee To Project
+// ============================
+
+const assignEmployee = async (req, res) => {
+
+    try {
+
+        const { projectId } = req.params;
+
+        const {
+
+            employeeId,
+
+            startDate,
+
+            endDate,
+
+            allocation,
+
+        } = req.body;
+
+        const project = await Project.findById(projectId)
+            .populate("client");
+
+        if (!project) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Project not found",
+
+            });
+
+        }
+
+        const employee = await Employee.findById(employeeId);
+
+        if (!employee) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Employee not found",
+
+            });
+
+        }
+
+        const alreadyAssigned = employee.assignments.some(
+
+            assignment =>
+
+                assignment.project.toString() === projectId
+
+        );
+
+        if (alreadyAssigned) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Employee already assigned to this project.",
+
+            });
+
+        }
+
+        employee.assignments.push({
+
+            client: project.client._id,
+
+            project: project._id,
+
+            startDate,
+
+            endDate,
+
+            allocation,
+
+        });
+
+        await employee.save();
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Employee Assigned Successfully",
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
 module.exports = {
 
     getProjects,
@@ -690,7 +942,8 @@ module.exports = {
     createProject,
 
     updateProject,
-
+    updateAssignment,
+    deleteAssignment,
     deleteProject,
-
+    assignEmployee,
 };

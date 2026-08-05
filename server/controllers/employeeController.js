@@ -1,161 +1,357 @@
 const Employee = require("../models/Employee");
-
 const Skill = require("../models/Skill");
-// ==========================
-// Get All Employees
-// ==========================
-const getEmployees = async (req, res) => {
-  try {
-   const employees = await Employee.find()
-    .populate("reportingManager", "name")
-    .populate("assignments.client")
-    .populate("assignments.project").sort({
-    createdAt:-1
-});
 
-    res.status(200).json({
-      success: true,
-      count: employees.length,
-      data: employees,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+/*
+==========================================
+HELPER
+==========================================
+*/
 
-// ==========================
-// Get Employee By ID
-// ==========================
-const getEmployeeById = async (req, res) => {
-  try {
-    const employee = await Employee.findById(req.params.id)
-    .populate("reportingManager", "name")
-    .populate("assignments.client", "name")
-    .populate("assignments.project", "name");
+const enrichEmployee = (employee) => {
 
-    if (!employee) {
-      return res.status(404).json({
-        success: false,
-        message: "Employee not found",
-      });
-    }
+    const assignments = employee.assignments || [];
 
-    res.status(200).json({
-      success: true,
-      data: employee,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+    const startDates = assignments
+        .filter(a => a.startDate)
+        .map(a => new Date(a.startDate));
 
-// ==========================
-// Create Employee
-// ==========================
+    const endDates = assignments
+        .filter(a => a.endDate)
+        .map(a => new Date(a.endDate));
 
-const createEmployee = async (req, res) => {
-  try {
+    const totalAllocation = assignments.reduce(
 
-    const exists = await Employee.findOne({
-      empId: req.body.empId,
-    });
+        (sum, assignment) =>
 
-    if (exists) {
-      return res.status(400).json({
-        success: false,
-        message: "Employee ID already exists",
-      });
-    }
-if (!req.body.reportingManager) {
-    req.body.reportingManager = null;
-}
-    const employee = await Employee.create(req.body);
+            sum + (assignment.allocation || 0),
 
-    res.status(201).json({
-      success: true,
-      message: "Employee Created",
-      data: employee,
-    });
+        0
 
-  } catch (err) {
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-
-  }
-};
-
-// ==========================
-// Update Employee
-// ==========================
-const updateEmployee = async (req, res) => {
-  try {
-    const employee = await Employee.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
     );
 
-    if (!employee) {
-      return res.status(404).json({
-        success: false,
-        message: "Employee not found",
-      });
-    }
-console.log(
-    "Assignments received:",
-    JSON.stringify(req.body.assignments, null, 2)
-);
-    res.status(200).json({
-      
-      success: true,
-      message: "Employee updated successfully",
-      data: employee,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+    return {
+
+        ...employee.toObject(),
+
+        lowestStartDate:
+
+            startDates.length > 0
+
+                ? new Date(Math.min(...startDates))
+
+                : null,
+
+        highestEndDate:
+
+            endDates.length > 0
+
+                ? new Date(Math.max(...endDates))
+
+                : null,
+
+        totalAllocation,
+
+    };
+
 };
 
-// ==========================
-// Delete Employee
-// ==========================
+/*
+==========================================
+Get All Employees
+==========================================
+*/
+
+const getEmployees = async (req, res) => {
+
+    try {
+
+        let employees = await Employee.find()
+
+            .populate("reportingManager", "name")
+
+            .populate("assignments.client")
+
+            .populate("assignments.project")
+
+            .sort({
+
+                createdAt: -1,
+
+            });
+
+        employees = employees.map(enrichEmployee);
+
+        res.status(200).json({
+
+            success: true,
+
+            count: employees.length,
+
+            data: employees,
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+/*
+==========================================
+Get Employee By ID
+==========================================
+*/
+
+const getEmployeeById = async (req, res) => {
+
+    try {
+
+        const employee = await Employee.findById(req.params.id)
+
+            .populate("reportingManager", "name")
+
+            .populate("assignments.client", "name")
+
+            .populate("assignments.project", "name");
+
+        if (!employee) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Employee not found",
+
+            });
+
+        }
+
+        res.status(200).json({
+
+            success: true,
+
+            data: employee,
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+/*
+==========================================
+Create Employee
+==========================================
+*/
+
+const createEmployee = async (req, res) => {
+
+    try {
+
+        const exists = await Employee.findOne({
+
+            empId: req.body.empId,
+
+        });
+
+        if (exists) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Employee ID already exists",
+
+            });
+
+        }
+
+        if (!req.body.reportingManager) {
+
+            req.body.reportingManager = null;
+
+        }
+
+        const employee = await Employee.create(req.body);
+
+        res.status(201).json({
+
+            success: true,
+
+            message: "Employee Created",
+
+            data: employee,
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message,
+
+        });
+
+    }
+
+};
+
+/*
+==========================================
+Update Employee
+==========================================
+*/
+
+const updateEmployee = async (req, res) => {
+
+    try {
+
+        const employee = await Employee.findByIdAndUpdate(
+
+            req.params.id,
+
+            req.body,
+
+            {
+
+                new: true,
+
+                runValidators: true,
+
+            }
+
+        );
+
+        if (!employee) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Employee not found",
+
+            });
+
+        }
+
+        console.log(
+
+            "Assignments received:",
+
+            JSON.stringify(req.body.assignments, null, 2)
+
+        );
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Employee updated successfully",
+
+            data: employee,
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+/*
+==========================================
+Delete Employee
+==========================================
+*/
+
 const deleteEmployee = async (req, res) => {
-  try {
-    const employee = await Employee.findByIdAndDelete(req.params.id);
 
-    if (!employee) {
-      return res.status(404).json({
-        success: false,
-        message: "Employee not found",
-      });
+    try {
+
+        const employee = await Employee.findByIdAndDelete(
+
+            req.params.id
+
+        );
+
+        if (!employee) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Employee not found",
+
+            });
+
+        }
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Employee deleted successfully",
+
+        });
+
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Employee deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
 };
+
+/*
+==========================================
+Search Employees
+==========================================
+*/
 
 const searchEmployees = async (req, res) => {
 
@@ -163,86 +359,177 @@ const searchEmployees = async (req, res) => {
 
         const q = req.query.q || "";
 
-        const employees = await Employee.find({
+        let employees = await Employee.find({
+
             $or: [
-                { name: { $regex: q, $options: "i" } },
-                { empId: { $regex: q, $options: "i" } },
-                { email: { $regex: q, $options: "i" } },
+
                 {
-                    "skills.skill": {
+
+                    name: {
+
                         $regex: q,
+
                         $options: "i",
+
                     },
+
                 },
+
+                {
+
+                    empId: {
+
+                        $regex: q,
+
+                        $options: "i",
+
+                    },
+
+                },
+
+                {
+
+                    email: {
+
+                        $regex: q,
+
+                        $options: "i",
+
+                    },
+
+                },
+
+                {
+
+                    "skills.skill": {
+
+                        $regex: q,
+
+                        $options: "i",
+
+                    },
+
+                },
+
             ],
+
         })
+
             .populate("reportingManager", "name")
-.populate("assignments.client", "name")
-.populate("assignments.project", "name");
+
+            .populate("assignments.client", "name")
+
+            .populate("assignments.project", "name");
+
+        employees = employees.map(enrichEmployee);
 
         res.status(200).json({
+
             success: true,
+
             count: employees.length,
+
             data: employees,
+
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         res.status(500).json({
+
             success: false,
+
             message: error.message,
+
         });
 
     }
 
 };
 
+/*
+==========================================
+Get Employees By Skills
+==========================================
+*/
+
 const getEmployeesBySkills = async (req, res) => {
 
     try {
 
         const skillIds = req.query.skills
+
             ? req.query.skills.split(",")
+
             : [];
 
-        // If no skills selected return all employees
         if (skillIds.length === 0) {
 
             const employees = await Employee.find(
+
                 {},
+
                 "name empId position experience skills"
+
             );
 
             return res.status(200).json({
+
                 success: true,
+
                 data: employees,
+
             });
 
         }
 
-        // Convert Skill IDs → Skill Names
         const skills = await Skill.find({
-            _id: { $in: skillIds },
+
+            _id: {
+
+                $in: skillIds,
+
+            },
+
         });
 
-        const skillNames = skills.map((skill) => skill.name);
+        const skillNames = skills.map(
 
-        const employees = await Employee.find(
-            {},
-            "name empId position experience skills"
+            skill => skill.name
+
         );
 
-        const filteredEmployees = employees.filter((employee) => {
+        const employees = await Employee.find(
 
-            const employeeSkills = employee.skills.map(
-                (item) => item.skill
-            );
+            {},
 
-            return employeeSkills.some((skill) =>
-    skillNames.includes(skill)
-);
+            "name empId position experience skills"
 
-        });
+        );
+
+        const filteredEmployees = employees.filter(
+
+            employee => {
+
+                const employeeSkills = employee.skills.map(
+
+                    item => item.skill
+
+                );
+
+                return employeeSkills.some(
+
+                    skill =>
+
+                        skillNames.includes(skill)
+
+                );
+
+            }
+
+        );
 
         res.status(200).json({
 
@@ -252,7 +539,9 @@ const getEmployeesBySkills = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         res.status(500).json({
 
@@ -265,12 +554,21 @@ const getEmployeesBySkills = async (req, res) => {
     }
 
 };
+
 module.exports = {
-  getEmployees,
-  getEmployeeById,
-  createEmployee,
-  updateEmployee,
-  deleteEmployee,
-  searchEmployees,
-  getEmployeesBySkills,
+
+    getEmployees,
+
+    getEmployeeById,
+
+    createEmployee,
+
+    updateEmployee,
+
+    deleteEmployee,
+
+    searchEmployees,
+
+    getEmployeesBySkills,
+
 };

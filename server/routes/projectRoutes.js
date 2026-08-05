@@ -13,8 +13,11 @@ const {
     getProject,
     createProject,
     updateProject,
+    updateAssignment,
+    deleteAssignment,
     deleteProject,
-    searchProjects
+    searchProjects,
+    assignEmployee,
 
 } = require("../controllers/projectController");
 
@@ -45,9 +48,35 @@ router.post(
     upload.single("file"),
     importExcel
 );
+router.post(
+
+    "/:projectId/assignment",
+
+    protect,
+
+    assignEmployee
+
+);
 router.get("/:id", protect, getProject);
 router.put("/:id", protect, updateProject);
+router.put(
 
+    "/:projectId/assignment/:employeeId",
+
+    protect,
+
+    updateAssignment
+
+);
+router.delete(
+
+    "/:projectId/assignment/:employeeId",
+
+    protect,
+
+    deleteAssignment
+
+);
 router.delete("/:id", protect, deleteProject);
 
 module.exports = router;
