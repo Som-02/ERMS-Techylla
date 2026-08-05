@@ -8,7 +8,7 @@ HELPER
 */
 
 const enrichEmployee = (employee) => {
-
+    const totalProjects = employee.assignments.length;
     const assignments = employee.assignments || [];
 
     const startDates = assignments
@@ -32,6 +32,8 @@ const enrichEmployee = (employee) => {
     return {
 
         ...employee.toObject(),
+
+        totalProjects,
 
         lowestStartDate:
 

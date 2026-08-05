@@ -1,264 +1,127 @@
-const Employee = require("../models/Employee");
 const Project = require("../models/Project");
 const Client = require("../models/Client");
 
-/*
-==========================================
-HELPER
-==========================================
-*/
+const parseDate = (value) => {
 
-const parseDate = (date) => {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return null;
+    }
 
-    console.log("parseDate input:", JSON.stringify(date));
+    // Already a JS Date
+    if (value instanceof Date) {
+        return value;
+    }
 
-    if (!date) return null;
+    // Excel serial number
+    if (typeof value === "number") {
 
-    const value = String(date).trim();
+        return new Date(
+            Math.round((value - 25569) * 86400 * 1000)
+        );
 
-    console.log("after trim:", value);
+    }
 
-    const parsed = new Date(value);
+    const str = String(value).trim();
 
-    console.log("parsed:", parsed);
+    // YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+
+        return new Date(str);
+
+    }
+
+    // DD-MM-YYYY
+    if (/^\d{2}-\d{2}-\d{4}$/.test(str)) {
+
+        const [day, month, year] = str.split("-");
+
+        return new Date(year, month - 1, day);
+
+    }
+
+    // DD/MM/YYYY
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
+
+        const [day, month, year] = str.split("/");
+
+        return new Date(year, month - 1, day);
+
+    }
+
+    // Fallback
+    const parsed = new Date(str);
+
+    if (isNaN(parsed.getTime())) {
+
+        return null;
+
+    }
 
     return parsed;
-};
-
-const {
-
-    parseEmployees
-
-} = require("../utils/employeeParser");
-const {
-    validateEmployeeAllocation,
-} = require("./allocationService");
-/*
-==========================================
-DETECT CHANGES
-==========================================
-*/
-
-const detectChanges = async (
-
-    project,
-
-    excelEmployees
-
-) => {
-
-    const dbEmployees = await Employee.find({
-
-        "assignments.project": project._id,
-
-    }).lean();
-
-    const changes = {
-
-        added: [],
-
-        removed: [],
-
-        updated: [],
-
-        unchanged: [],
-
-    };
-
-    /*
-    ----------------------------
-    Existing Employees
-    ----------------------------
-    */
-
-    dbEmployees.forEach(dbEmployee => {
-
-        const assignment = dbEmployee.assignments.find(
-
-            assignment =>
-
-                assignment.project.toString() ===
-
-                project._id.toString()
-
-        );
-
-        const excelEmployee = excelEmployees.find(
-
-            employee =>
-
-                employee.empId === dbEmployee.empId
-
-        );
-
-        if (!excelEmployee) {
-
-            changes.removed.push({
-
-                empId: dbEmployee.empId,
-
-                name: dbEmployee.name,
-
-            });
-
-            return;
-
-        }
-
-        const dbStart = assignment.startDate
-
-            ? new Date(assignment.startDate).toDateString()
-
-            : "";
-
-        const dbEnd = assignment.endDate
-
-            ? new Date(assignment.endDate).toDateString()
-
-            : "";
-
-        const excelStart = parseDate(
-
-            excelEmployee.startDate
-
-        )?.toDateString();
-
-        const excelEnd = parseDate(
-
-            excelEmployee.endDate
-
-        )?.toDateString();
-
-        if (
-
-            assignment.allocation !==
-
-                excelEmployee.allocation ||
-
-            dbStart !== excelStart ||
-
-            dbEnd !== excelEnd
-
-        ) {
-
-            changes.updated.push({
-
-                empId: dbEmployee.empId,
-
-                name: dbEmployee.name,
-
-                before: assignment,
-
-                after: excelEmployee,
-
-            });
-
-        }
-
-        else {
-
-            changes.unchanged.push({
-
-                empId: dbEmployee.empId,
-
-                name: dbEmployee.name,
-
-            });
-
-        }
-
-    });
-
-    /*
-    ----------------------------
-    Newly Added Employees
-    ----------------------------
-    */
-
-    excelEmployees.forEach(employee => {
-
-        const exists = dbEmployees.find(
-
-            dbEmployee =>
-
-                dbEmployee.empId ===
-
-                employee.empId
-
-        );
-
-        if (!exists) {
-
-            changes.added.push(employee);
-
-        }
-
-    });
-
-    return {
-
-        dbEmployees,
-
-        changes,
-
-    };
 
 };
-/*
-==========================================
-VALIDATE IMPORT
-==========================================
-*/
+const isSameDate = (a, b) => {
 
-const validateProjectImport = async (
-    excelRows
-) => {
+    if (!a && !b) return true;
+
+    if (!a || !b) return false;
+
+    return (
+        new Date(a).toDateString() ===
+        new Date(b).toDateString()
+    );
+
+};
+const formatDate = (date) => {
+
+    if (!date) return "-";
+
+    return new Date(date)
+        .toISOString()
+        .split("T")[0];
+
+};
+const VALID_STATUS = [
+
+    "Active",
+    "Completed",
+    "On Hold",
+
+];
+
+const validateProjectImport = async (rows) => {
 
     const errors = [];
 
     const preview = [];
 
-    const duplicateAssignments = new Set();
+    for (let i = 0; i < rows.length; i++) {
 
-    for (
+        const row = rows[i];
 
-        let rowIndex = 0;
-
-        rowIndex < excelRows.length;
-
-        rowIndex++
-
-    ) {
-
-        const row = excelRows[rowIndex];
-
-        /*
-        ==========================
-        PROJECT
-        ==========================
-        */
+        // ===========================
+        // PROJECT VALIDATION
+        // ===========================
 
         const project = await Project.findOne({
 
             name: row.project,
 
-        })
-
-            .populate("client")
-
-            .populate("requiredSkills", "name").lean();
+        });
 
         if (!project) {
 
             errors.push({
 
-                row: rowIndex + 3,
+                row: i + 3,
 
                 field: "Project",
 
-                message:
-
-                    `Project "${row.project}" not found.`,
+                message: `Project "${row.project}" not found.`,
 
             });
 
@@ -266,29 +129,22 @@ const validateProjectImport = async (
 
         }
 
-        /*
-        ==========================
-        CLIENT
-        ==========================
-        */
+const validationErrors = [];
+        // ===========================
+        // CLIENT VALIDATION
+        // ===========================
 
-        const client = await Client.findOne({
-
-            name: row.client,
-
-        }).lean();
+        const client = await Client.findById(project.client);
 
         if (!client) {
 
             errors.push({
 
-                row: rowIndex + 3,
+                row: i + 3,
 
                 field: "Client",
 
-                message:
-
-                    `Client "${row.client}" not found.`,
+                message: `Client for "${project.name}" not found.`,
 
             });
 
@@ -296,375 +152,202 @@ const validateProjectImport = async (
 
         }
 
-        if (
+        if (row.client.trim() !== client.name.trim()) {
 
-            project.client._id.toString() !==
+    validationErrors.push({
 
-            client._id.toString()
+        field: "Client",
 
-        ) {
+        entered: row.client,
 
-            errors.push({
+        expected: client.name,
 
-                row: rowIndex + 3,
+        message: `"${project.name}" belongs to "${client.name}", not "${row.client}".`
 
-                field: "Client",
+    });
 
-                message:
+}
 
-                    `Project "${row.project}" doesn't belong to "${row.client}".`
 
-            });
 
-        }
+        // ===========================
+// DATE VALIDATION
+// ===========================
 
-        /*
-==========================
-PROJECT DATE
-==========================
-*/
-
-const projectStart = parseDate(row.projectStart);
-
-const projectEnd = parseDate(row.projectEnd);
+const excelStart = parseDate(row.projectStart);
+const excelEnd = parseDate(row.projectEnd);
 
 /*
 Allowed:
-✔ Start + End
-✔ Start only
-✔ End only
 ✔ No dates
+✔ Only Start Date
+✔ Only End Date
+✔ Both Dates
 
-Only compare when BOTH dates exist.
+Only validate order when BOTH dates exist.
 */
 
 if (
 
-    projectStart &&
+    excelStart &&
 
-    projectEnd &&
+    excelEnd &&
 
-    projectEnd < projectStart
+    excelEnd < excelStart
 
 ) {
 
-    errors.push({
-
-        row: rowIndex + 3,
+    validationErrors.push({
 
         field: "Project Dates",
 
+        entered:
+            `${row.projectStart || "-"} → ${row.projectEnd || "-"}`,
+
+        expected:
+            "Start Date must be before End Date",
+
         message:
-            "Project End Date cannot be before Project Start Date.",
+            "Project End Date cannot be before Project Start Date."
 
     });
 
 }
 
-        /*
-        ==========================
-        EMPLOYEE PARSE
-        ==========================
-        */
+        // ===========================
+        // STATUS VALIDATION
+        // ===========================
 
-        const parsedEmployees = parseEmployees(
+        if (
 
-            row.employeeDetails
+    row.status &&
 
-        );
-
-        /*
-        ==========================
-        CHANGE DETECTION
-        ==========================
-        */
-
-        const comparison = await detectChanges(
-
-            project,
-
-            parsedEmployees
-
-        );
-
-        /*
-        ==========================
-        VALIDATE EMPLOYEES
-        ==========================
-        */
-
-        for (
-
-            const employee of parsedEmployees
-
-        ) {
-
-            const duplicateKey =
-
-                `${project._id}-${employee.empId}`;
-
-            if (
-
-                duplicateAssignments.has(
-
-                    duplicateKey
-
-                )
-
-            ) {
-
-                errors.push({
-
-                    row: rowIndex + 3,
-
-                    field: "Employee",
-
-                    message:
-
-                        `${employee.empId} appears multiple times in this project.`,
-
-                });
-
-                continue;
-
-            }
-
-            duplicateAssignments.add(
-
-                duplicateKey
-
-            );
-
-            /*
-            --------------------
-            Employee Exists
-            --------------------
-            */
-
-            const empId = employee.empId.trim();
-
-const existingEmployee = await Employee.findOne({
-    empId: {
-        $regex: `^${empId}$`,
-        $options: "i",
-    },
-});
-
-            if (!existingEmployee) {
-
-                errors.push({
-
-                    row: rowIndex + 3,
-
-                    field: "Employee",
-
-                    message:
-
-                        `${employee.empId} not found.`,
-
-                });
-
-                continue;
-
-            }
-                        /*
-            --------------------
-            Required Skills
-            --------------------
-            */
-
-            const employeeSkills =
-
-(existingEmployee.skills || []).map(
-
-    skill =>
-
-    (skill.skill || "").trim().toLowerCase()
-
-);
-
-const requiredSkills = (project.requiredSkills || []).map(
-    skill => (skill.name || "").trim().toLowerCase()
-);
-
-            const hasAllSkills = requiredSkills.every(
-
-                skill => employeeSkills.includes(skill)
-
-            );
-
-            if (!hasAllSkills) {
-
-                errors.push({
-
-                    row: rowIndex + 3,
-
-                    field: "Skills",
-
-                    message:
-
-                        `${employee.empId} doesn't satisfy project skills.`,
-
-                });
-
-            }
-const allocation = await validateEmployeeAllocation(
-
-    employee.empId,
-
-    employee.allocation,
-
-    project._id
-
-);
-
-if (!allocation.valid) {
-
-    errors.push({
-
-        row: rowIndex + 3,
-
-        field: "Allocation",
-
-        message: allocation.message,
-
-    });
-
-}
-/*
---------------------
-Assignment Dates
---------------------
-*/
-
-const employeeStart = parseDate(employee.startDate);
-
-const employeeEnd = parseDate(employee.endDate);
-
-/*
-Allowed:
-✔ Start + End
-✔ Start only
-✔ End only
-✔ No dates
-
-Only compare when BOTH dates exist.
-*/
-
-if (
-
-    employeeStart &&
-
-    employeeEnd &&
-
-    employeeEnd < employeeStart
+    !VALID_STATUS.includes(row.status)
 
 ) {
 
-    errors.push({
+    validationErrors.push({
 
-        row: rowIndex + 3,
+        field: "Status",
 
-        field: "Assignment",
+        entered: row.status,
+
+        expected: VALID_STATUS.join(", "),
 
         message:
-            `${employee.empId} has End Date before Start Date.`,
+            `Invalid Status "${row.status}".`
 
     });
 
 }
 
+        // ===========================
+        // CHANGE DETECTION
+        // ===========================
+
+        const changedFields = [];
+        // Start Date
+
+        if (!isSameDate(excelStart, project.startDate)) {
+
+    changedFields.push({
+
+    field: "Start Date",
+
+    oldValue: formatDate(project.startDate),
+
+    newValue: formatDate(excelStart),
+
+});
+}
+
+        // End Date
+
+       if (!isSameDate(excelEnd, project.endDate)) {
+
+    changedFields.push({
+
+    field: "End Date",
+
+    oldValue: formatDate(project.endDate),
+
+    newValue: formatDate(excelEnd),
+
+});
+
+}
+
+        // Status
+
+        if (
+
+            row.status !== project.status
+
+        ) {
+changedFields.push({
+
+    field: "Status",
+
+    oldValue: project.status || "-",
+
+    newValue: row.status || "-",
+
+});
+
         }
 
-        /*
-        ==========================
-        Preview
-        ==========================
-        */
+        // ===========================
+        // PREVIEW
+        // ===========================
 
         preview.push({
 
-            ...row,
+            projectId: project._id,
 
-            employees: parsedEmployees,
+            project: project.name,
 
-            changes: comparison.changes,
+            projectStart: excelStart,
+
+            projectEnd: excelEnd,
+
+            status: row.status,
+
+            changedFields,
+            validationErrors,
 
         });
 
     }
 
-    /*
-    ==========================
-    Summary
-    ==========================
-    */
-
-    const summary = {
-
-        rows: excelRows.length,
-
-        projects: preview.length,
-
-        employees: preview.reduce(
-
-            (sum, project) =>
-
-                sum +
-
-                project.employees.length,
-
-            0
-
-        ),
-
-        added: preview.reduce(
-
-            (sum, project) =>
-
-                sum +
-
-                project.changes.added.length,
-
-            0
-
-        ),
-
-        removed: preview.reduce(
-
-            (sum, project) =>
-
-                sum +
-
-                project.changes.removed.length,
-
-            0
-
-        ),
-
-        updated: preview.reduce(
-
-            (sum, project) =>
-
-                sum +
-
-                project.changes.updated.length,
-
-            0
-
-        ),
-
-    };
-
     return {
 
         success: errors.length === 0,
-
-        summary,
-
+hasValidationErrors: preview.some(
+        project => project.validationErrors.length > 0
+    ),
         errors,
 
         preview,
+
+        summary: {
+
+            totalRows: preview.length,
+
+    changedProjects: preview.filter(
+        p => p.changedFields.length > 0
+    ).length,
+
+    invalidProjects: preview.filter(
+        p => p.validationErrors.length > 0
+    ).length,
+
+    unchangedProjects: preview.filter(
+        p =>
+            p.changedFields.length === 0 &&
+            p.validationErrors.length === 0
+    ).length,
+
+        },
 
     };
 

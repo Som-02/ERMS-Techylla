@@ -1,41 +1,91 @@
 const mongoose = require("mongoose");
-
 const Project = require("../models/Project");
-const Employee = require("../models/Employee");
-const Skill = require("../models/Skill");
 
-const { parseEmployees } = require("../utils/employeeParser");
+// =======================================
+// Parse Date
+// =======================================
 
-const {
-    validateEmployeeAllocation,
-} = require("./allocationService");
-const parseDate = (date) => {
+const parseDate = (value) => {
 
-    if (!date) return null;
-
-    if (date instanceof Date) {
-        return date;
-    }
-
-    if (typeof date === "number") {
-        // Excel serial date
-        return new Date(Math.round((date - 25569) * 86400 * 1000));
-    }
-
-    const parsed = new Date(String(date).trim());
-
-    if (isNaN(parsed.getTime())) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
         return null;
     }
 
-    return parsed;
+    if (value instanceof Date) {
+        return value;
+    }
+
+    if (typeof value === "number") {
+
+        return new Date(
+            Math.round((value - 25569) * 86400 * 1000)
+        );
+
+    }
+
+    const str = String(value).trim();
+
+    // YYYY-MM-DD
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+
+        return new Date(str);
+
+    }
+
+    // DD-MM-YYYY
+
+    if (/^\d{2}-\d{2}-\d{4}$/.test(str)) {
+
+        const [day, month, year] = str.split("-");
+
+        return new Date(year, month - 1, day);
+
+    }
+
+    // DD/MM/YYYY
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
+
+        const [day, month, year] = str.split("/");
+
+        return new Date(year, month - 1, day);
+
+    }
+
+    const parsed = new Date(str);
+
+    return isNaN(parsed.getTime())
+        ? null
+        : parsed;
 
 };
-/*
-===========================================
-SYNC SINGLE PROJECT
-===========================================
-*/
+
+// =======================================
+// Compare Dates
+// =======================================
+
+const isSameDate = (a, b) => {
+
+    if (!a && !b) return true;
+
+    if (!a || !b) return false;
+
+    return (
+        new Date(a).toDateString() ===
+        new Date(b).toDateString()
+    );
+
+};
+
+// =======================================
+// Sync Single Project
+// =======================================
+
 const syncProject = async (
 
     row,
@@ -43,388 +93,82 @@ const syncProject = async (
     session
 
 ) => {
-    
-    const project = await Project.findOne({
 
-        name: row.project,
-
-    })
-
-        .populate("client")
-
-        .populate("requiredSkills")
-
-        .session(session);
+    const project = await Project.findById(
+        row.projectId
+    ).session(session);
 
     if (!project) {
 
         throw new Error(
-
             `${row.project} not found.`
-
         );
 
     }
 
-    /*
-    ------------------------------------
-    Update Project
-    ------------------------------------
-    */
+    let updated = false;
 
-    if (row.projectStart) {
-
-    project.startDate = parseDate(
+    const startDate = parseDate(
         row.projectStart
     );
 
-}
-
-if (row.projectEnd) {
-
-    project.endDate = parseDate(
+    const endDate = parseDate(
         row.projectEnd
     );
 
-}
+    // ----------------------------
+    // Start Date
+    // ----------------------------
 
-    project.status = row.status;
-
-
-    await project.save({
-
-        session,
-
-    });
-const updatedProject = await Project.findById(project._id)
-    .populate("requiredSkills");
-
-    const excelEmployees = row.employees;
-    
-        /*
-    ------------------------------------
-    Employees currently assigned
-    ------------------------------------
-    */
-
-    const dbEmployees = await Employee.find({
-
-        "assignments.project": project._id,
-
-    }).session(session);
-
-    const dbMap = new Map();
-
-    dbEmployees.forEach(employee => {
-
-        dbMap.set(
-
-            employee.empId,
-
-            employee
-
-        );
-
-    });
-
-    const excelMap = new Map();
-
-    excelEmployees.forEach(employee => {
-
-        excelMap.set(
-
-            employee.empId,
-
-            employee
-
-        );
-
-    });
-
-    let added = 0;
-
-    let removed = 0;
-
-    let updated = 0;
-        /*
-    ===========================================
-    UPDATE EXISTING EMPLOYEES
-    ===========================================
-    */
-
-    for (
-
-        const [empId, employee]
-
-        of dbMap.entries()
-
+    if (
+        !isSameDate(
+            startDate,
+            project.startDate
+        )
     ) {
-        const excelEmployee =
 
-            excelMap.get(empId);
+        project.startDate = startDate;
 
-        /*
-        -----------------------------------
-        Removed Employee
-        -----------------------------------
-        */
-
-        if (!excelEmployee) {
-
-            employee.assignments =
-
-                employee.assignments.filter(
-
-                    assignment =>
-
-                        assignment.project.toString() !==
-
-                        project._id.toString()
-
-                );
-
-            await employee.save({
-
-                session,
-
-            });
-
-            removed++;
-
-            continue;
-
-        }
-
-        /*
-        -----------------------------------
-        Existing Assignment
-        -----------------------------------
-        */
-
-        const assignment =
-
-            employee.assignments.find(
-
-                assignment =>
-
-                    assignment.project.toString() ===
-
-                    project._id.toString()
-
-            );
-
-        if (!assignment) continue;
-                /*
-        -----------------------------------
-        Validate Allocation
-        -----------------------------------
-        */
-
-        const allocationResult =
-
-            await validateEmployeeAllocation(
-
-                employee.empId,
-
-                excelEmployee.allocation,
-
-                project._id
-
-            );
-
-        if (!allocationResult.valid) {
-
-            throw new Error(
-
-                `${employee.empId} : ${allocationResult.message}`
-
-            );
-
-        }
-
-        let changed = false;
-
-        /*
-        -----------------------------------
-        Allocation
-        -----------------------------------
-        */
-
-        if (
-
-            assignment.allocation !==
-
-            excelEmployee.allocation
-
-        ) {
-
-            assignment.allocation =
-
-                excelEmployee.allocation;
-
-            changed = true;
-
-        }
-
-        /*
------------------------------------
-Start Date
------------------------------------
-*/
-
-const excelStart = parseDate(
-    excelEmployee.startDate
-);
-
-if (
-
-    excelStart &&
-
-    assignment.startDate?.toDateString() !==
-    excelStart.toDateString()
-
-) {
-
-    assignment.startDate = excelStart;
-
-    changed = true;
-
-}
-
-/*
------------------------------------
-End Date
------------------------------------
-*/
-
-const excelEnd = parseDate(
-    excelEmployee.endDate
-);
-
-if (
-
-    excelEnd &&
-
-    assignment.endDate?.toDateString() !==
-    excelEnd.toDateString()
-
-) {
-
-    assignment.endDate = excelEnd;
-
-    changed = true;
-
-}
-if (changed) {
-
-    await employee.save({
-
-        session,
-
-    });
-
-    updated++;
-
-}
+        updated = true;
 
     }
 
-    /*
-    ===========================================
-    ADD NEW EMPLOYEES
-    ===========================================
-    */
+    // ----------------------------
+    // End Date
+    // ----------------------------
 
-    for (
-
-        const [empId, excelEmployee]
-
-        of excelMap.entries()
-
+    if (
+        !isSameDate(
+            endDate,
+            project.endDate
+        )
     ) {
 
-        if (dbMap.has(empId))
+        project.endDate = endDate;
 
-            continue;
+        updated = true;
 
-        const employee =
+    }
 
-            await Employee.findOne({
+    // ----------------------------
+    // Status
+    // ----------------------------
 
-                empId,
+    if (
+        row.status !== project.status
+    ) {
 
-            }).session(session);
+        project.status = row.status;
 
-        if (!employee)
+        updated = true;
 
-            continue;
-                    /*
-        -----------------------------------
-        Validate Allocation
-        -----------------------------------
-        */
+    }
 
-        const allocationResult =
+    if (updated) {
 
-            await validateEmployeeAllocation(
-
-                employee.empId,
-
-                excelEmployee.allocation
-
-            );
-
-        if (!allocationResult.valid) {
-
-            throw new Error(
-
-                `${employee.empId} : ${allocationResult.message}`
-
-            );
-
-        }
-
-        const assignment = {
-
-    client: project.client._id,
-
-    project: project._id,
-
-    allocation: excelEmployee.allocation,
-
-};
-
-const start = parseDate(
-    excelEmployee.startDate
-);
-
-const end = parseDate(
-    excelEmployee.endDate
-);
-
-if (start) {
-
-    assignment.startDate = start;
-
-}
-
-if (end) {
-
-    assignment.endDate = end;
-
-}
-
-employee.assignments.push(
-    assignment
-);
-
-        await employee.save({
-
+        await project.save({
             session,
-
         });
-
-        added++;
 
     }
 
@@ -432,73 +176,59 @@ employee.assignments.push(
 
         project: project.name,
 
-        added,
-
-        removed,
-
         updated,
 
     };
 
 };
-/*
-===========================================
-IMPORT PROJECTS
-===========================================
-*/
+
+// =======================================
+// Import Projects
+// =======================================
 
 const importProjects = async (
-
     preview
-
 ) => {
 
     const session =
-
         await mongoose.startSession();
 
     try {
 
-        let added = 0;
+        let updatedProjects = 0;
 
-        let removed = 0;
-
-        let updated = 0;
+        let skippedProjects = 0;
 
         const projects = [];
 
         await session.withTransaction(
-
             async () => {
 
-                for (
-
-                    const row of preview
-
-                ) {
+                for (const row of preview) {
 
                     const result =
-
                         await syncProject(
-
                             row,
-
                             session
-
                         );
 
-                    added += result.added;
-
-                    removed += result.removed;
-
-                    updated += result.updated;
-
                     projects.push(result);
+
+                    if (result.updated) {
+
+                        updatedProjects++;
+
+                    }
+
+                    else {
+
+                        skippedProjects++;
+
+                    }
 
                 }
 
             }
-
         );
 
         session.endSession();
@@ -510,20 +240,11 @@ const importProjects = async (
             summary: {
 
                 importedProjects:
-
                     preview.length,
 
-                employeesAdded:
+                updatedProjects,
 
-                    added,
-
-                employeesRemoved:
-
-                    removed,
-
-                employeesUpdated:
-
-                    updated,
+                skippedProjects,
 
             },
 
@@ -535,14 +256,11 @@ const importProjects = async (
 
     catch (error) {
 
-    console.error("REAL IMPORT ERROR:");
-    console.error(error);
+        session.endSession();
 
-    session.endSession();
+        throw error;
 
-    throw error;
-
-}
+    }
 
 };
 

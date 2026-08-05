@@ -11,7 +11,6 @@ const {
     importProjects,
 
 } = require("../services/projectSyncService");
-console.log("========== PREVIEW IMPORT CALLED ==========");
 const previewImport = async (req, res) => {
 
     try {
@@ -47,40 +46,29 @@ const previewImport = async (req, res) => {
         }
 
         const rows = [];
-console.log("Worksheet name:", worksheet.name);
-console.log("Row count:", worksheet.rowCount);
+
         worksheet.eachRow((row, index) => {
-console.log("INDEX:", index);
             if (index <= 2) return;
-console.log("AFTER SKIP:", index);
             rows.push({
 
-                project: row.getCell(1).text,
+    project: row.getCell(1).text.trim(),
 
-                client: row.getCell(2).text,
+    client: row.getCell(2).text.trim(),
 
-                projectStart: row.getCell(3).text,
+    projectStart: row.getCell(3).value,
 
-                projectEnd: row.getCell(4).text,
+    projectEnd: row.getCell(4).value,
 
-                status: row.getCell(5).text,
+    status: row.getCell(5).text.trim(),
 
-                requiredSkills: row.getCell(6).text,
-
-                employeesAssigned: row.getCell(7).text,
-
-                employeeDetails: row.getCell(8).text,
-
-                totalAllocation: row.getCell(9).text,
-
-            });
+});
 
         });
-
+console.log(rows);
         const validation =
 
             await validateProjectImport(rows);
-
+console.log(validation);
         res.json(validation);
 
     }
@@ -128,16 +116,18 @@ const importExcel = async (req, res) => {
 
 
     rows.push({
-        project: row.getCell(1).text,
-        client: row.getCell(2).text,
-        projectStart: row.getCell(3).value,
-        projectEnd: row.getCell(4).value,
-        status: row.getCell(5).text,
-        requiredSkills: row.getCell(6).text,
-        employeesAssigned: row.getCell(7).text,
-        employeeDetails: row.getCell(8).text,
-        totalAllocation: row.getCell(9).text,
-    });
+
+    project: row.getCell(1).text.trim(),
+
+    client: row.getCell(2).text.trim(),
+
+    projectStart: row.getCell(3).value,
+
+    projectEnd: row.getCell(4).value,
+
+    status: row.getCell(5).text.trim(),
+
+});
 
 });
 
