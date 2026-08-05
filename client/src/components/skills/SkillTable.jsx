@@ -20,7 +20,7 @@ const SkillTable = ({
 
                     <tr>
 
-                        <th>Skill</th>
+                        <th>Roles</th>
 
                         <th>Actions</th>
 

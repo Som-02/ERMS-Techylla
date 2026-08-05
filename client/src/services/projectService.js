@@ -43,3 +43,60 @@ export const getProjectsForExport = async () => {
     return response.data;
 
 };
+export const updateAssignment = async (
+
+    projectId,
+
+    employeeId,
+
+    data
+
+) => {
+
+    const response = await api.put(
+
+        `/projects/${projectId}/assignment/${employeeId}`,
+
+        data
+
+    );
+
+    return response.data;
+
+};
+export const deleteAssignment = async (
+
+    projectId,
+
+    employeeId
+
+) => {
+
+    const response = await api.delete(
+
+        `/projects/${projectId}/assignment/${employeeId}`
+
+    );
+
+    return response.data;
+
+};
+export const assignEmployee = async (
+
+    projectId,
+
+    data
+
+) => {
+
+    const response = await api.post(
+
+        `/projects/${projectId}/assignment`,
+
+        data
+
+    );
+
+    return response.data;
+
+};

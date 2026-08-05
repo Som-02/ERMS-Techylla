@@ -17,7 +17,7 @@ const SkillMatrixTable = ({
 
                     <tr>
 
-                        <th>Skill</th>
+                        <th>Roles</th>
 
                         <th>Beginner</th>
 

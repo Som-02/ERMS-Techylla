@@ -31,13 +31,13 @@ const SkillForm = ({ initialData = {}, onSubmit, loading }) => {
 
             <div className="form-card">
 
-                <h3>Skill Information</h3>
+                <h3>Role Information</h3>
 
                 <div className="form-grid">
 
                     <div className="form-group">
 
-                        <label>Skill Name</label>
+                        <label>Role Name</label>
 
                         <input
                             type="text"
@@ -59,7 +59,7 @@ const SkillForm = ({ initialData = {}, onSubmit, loading }) => {
                     className="save-btn"
                     disabled={loading}
                 >
-                    {loading ? "Saving..." : "Save Skill"}
+                    {loading ? "Saving..." : "Save Role"}
                 </button>
 
             </div>

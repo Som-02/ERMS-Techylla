@@ -66,15 +66,15 @@ const filteredMatrix = matrix.filter((item) =>
 
             <PageHeader
 
-                title="Skill Matrix"
+                title="Role Matrix"
 
-                subtitle="Employee skill distribution"
+                subtitle="Employee role distribution"
 
             />
     <SearchBar
     value={search}
     onChange={(e) => setSearch(e.target.value)}
-    placeholder="Search Skill..."
+    placeholder="Search Role..."
 />
             <SkillMatrixTable
 

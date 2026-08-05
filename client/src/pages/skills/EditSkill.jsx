@@ -41,7 +41,7 @@ const EditSkill = () => {
 
         catch (error) {
 
-            toast.error("Unable to load skill");
+            toast.error("Unable to load role");
 
         }
 
@@ -55,7 +55,7 @@ const EditSkill = () => {
 
             await updateSkill(id, data);
 
-            toast.success("Skill Updated");
+            toast.success("Role Updated");
 
             navigate("/skills");
 

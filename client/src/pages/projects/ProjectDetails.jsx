@@ -1,22 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import { getEmployeesBySkills } from "../../services/employeeService";
 import Loader from "../../components/common/Loader";
-
-import { getProject } from "../../services/projectService";
-
+import AssignmentModal from "../../components/project/AssignmentModal";
+import { getProject, updateAssignment, deleteAssignment, assignEmployee} from "../../services/projectService";
 import "./projectDetails.css";
-
+import ConfirmDialog from "../../components/common/ConfirmDialog";
 const ProjectDetails = () => {
 
     const { id } = useParams();
 
     const [project, setProject] = useState(null);
     const [employees, setEmployees] = useState([]);
-
     const [loading, setLoading] = useState(true);
+const [showAssignmentModal, setShowAssignmentModal] = useState(false);
 
-    useEffect(() => {
+const [assignmentMode, setAssignmentMode] = useState("edit");
+
+const [selectedAssignment, setSelectedAssignment] = useState(null);
+
+const [availableEmployees, setAvailableEmployees] = useState([]);
+const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+const [employeeToDelete, setEmployeeToDelete] = useState(null); 
+useEffect(() => {
 
         loadProject();
 
@@ -49,7 +55,47 @@ const ProjectDetails = () => {
         return <Loader />;
 
     }
+const openAssignModal = async () => {
 
+    try {
+
+        const skillIds = project.requiredSkills.map(
+
+            skill => skill._id
+
+        );
+
+        const res = await getEmployeesBySkills(skillIds);
+
+        const filteredEmployees = res.data.filter(employee =>
+
+            !employees.some(
+
+                assigned =>
+
+                    assigned._id === employee._id
+
+            )
+
+        );
+
+        setAvailableEmployees(filteredEmployees);
+
+        setAssignmentMode("add");
+
+        setSelectedAssignment(null);
+
+        setShowAssignmentModal(true);
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+    }
+
+};
     return (
 
         <div className="project-details">
@@ -69,7 +115,7 @@ const ProjectDetails = () => {
 
             <div className="project-card">
 
-    <div className="detail">
+    {/* <div className="detail">
 
         <span>Client</span>
 
@@ -91,7 +137,7 @@ const ProjectDetails = () => {
 
         </strong>
 
-    </div>
+    </div> */}
 
     <div className="detail">
 
@@ -164,11 +210,18 @@ const ProjectDetails = () => {
 
 </div>
 
-            <h2>
+            <div className="table-header">
 
-                Assigned Employees
+    <h2>Assigned Employees</h2>
 
-            </h2>
+   <button
+    className="assign-btn"
+    onClick={openAssignModal}
+>
+    + Assign Employee
+</button>
+
+</div>
 
             {
 
@@ -205,7 +258,7 @@ const ProjectDetails = () => {
     <th>End Date</th>
 
     <th>Allocation</th>
-
+    <th>Actions</th>
 </tr>
 
                         </thead>
@@ -277,6 +330,54 @@ const ProjectDetails = () => {
     {employee.allocation}%
 
 </td>
+<td>
+<div className="table-actions">
+<button
+className="action-btn edit-btn"
+onClick={()=>{
+
+setSelectedAssignment({
+
+employeeId:employee._id,
+
+name:employee.name,
+
+projectName:project.name,
+
+clientName:project.client?.name,
+
+startDate:employee.startDate,
+
+endDate:employee.endDate,
+
+allocation:employee.allocation,
+
+});
+
+setAssignmentMode("edit");
+
+setShowAssignmentModal(true);
+
+}}
+>
+
+Edit
+
+</button>
+<button
+    className="action-btn delete-btn"
+    onClick={() => {
+
+        setEmployeeToDelete(employee);
+
+        setShowDeleteDialog(true);
+
+    }}
+>
+    Delete
+</button>
+</div>
+</td>
 
                                     </tr>
 
@@ -292,6 +393,106 @@ const ProjectDetails = () => {
 
             }
 
+<AssignmentModal
+
+    open={showAssignmentModal}
+
+    mode={assignmentMode}
+
+    assignment={selectedAssignment}
+
+    project={project}
+
+    employees={availableEmployees}
+
+    onClose={() => setShowAssignmentModal(false)}
+
+    onSave={async (data) => {
+
+        try {
+
+            if (assignmentMode === "edit") {
+
+                await updateAssignment(
+
+                    project._id,
+
+                    selectedAssignment.employeeId,
+
+                    data
+
+                );
+
+            }
+
+            else {
+
+                await assignEmployee(
+
+    project._id,
+
+    data
+
+);
+
+            }
+
+            setShowAssignmentModal(false);
+
+            loadProject();
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+    }}
+
+/>
+<ConfirmDialog
+    open={showDeleteDialog}
+    title="Remove Employee"
+    message={`Remove ${employeeToDelete?.name} from this project?`}
+    confirmText="Remove"
+    cancelText="Cancel"
+    onCancel={() => {
+
+        setShowDeleteDialog(false);
+
+        setEmployeeToDelete(null);
+
+    }}
+    onConfirm={async () => {
+
+        try {
+
+            await deleteAssignment(
+
+                project._id,
+
+                employeeToDelete._id
+
+            );
+
+            setShowDeleteDialog(false);
+
+            setEmployeeToDelete(null);
+
+            loadProject();
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+    }}
+/>
         </div>
 
     );

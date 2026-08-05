@@ -390,7 +390,7 @@ const filteredEmployees = employees.filter((employee) => {
 
 </div>
 
-<div className="form-group">
+{/* <div className="form-group">
 
     <label>Assigned Employees</label>
 
@@ -424,7 +424,7 @@ const filteredEmployees = employees.filter((employee) => {
 
     />
 
-</div>
+</div> */}
                 <div className="form-actions">
 
                     <button

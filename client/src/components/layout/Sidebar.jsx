@@ -32,24 +32,24 @@ const Sidebar = () => {
         <NavLink to="/dashboard">
             Dashboard
         </NavLink>
-
-        <NavLink to="/employees">
-            Employees
-        </NavLink>
-
-        <NavLink to="/skills">
-    Skill Sets
-</NavLink>
-<NavLink to="/skill-matrix">
-    Skill Matrix
-</NavLink>
-        <NavLink to="/clients">
+<NavLink to="/clients">
             Clients
         </NavLink>
 
         <NavLink to="/projects">
             Projects
         </NavLink>
+        <NavLink to="/employees">
+            Employee Master
+        </NavLink>
+
+        <NavLink to="/skills">
+    Role Sets
+</NavLink>
+<NavLink to="/skill-matrix">
+    Role Matrix
+</NavLink>
+        
 
         <NavLink to="/settings">
             Settings

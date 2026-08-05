@@ -13,12 +13,13 @@ import {
     searchProjects,
     deleteProject,
 } from "../../services/projectService";
-
+import EditAssignmentModal from "../../components/project/AssignmentModal";
 const Projects = () => {
     const fileInputRef = useRef(null);
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [showEditModal,setShowEditModal]=useState(false);
+    const [selectedAssignment,setSelectedAssignment]=useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [search, setSearch] = useState("");
     const [showDialog, setShowDialog] = useState(false);

@@ -19,7 +19,7 @@ const AddSkill = () => {
 
             await addSkill(data);
 
-            toast.success("Skill Added");
+            toast.success("Role Added");
 
             navigate("/skills");
 
@@ -29,7 +29,7 @@ const AddSkill = () => {
 
             toast.error(
                 error.response?.data?.message ||
-                "Unable to add skill"
+                "Unable to add role"
             );
 
         }

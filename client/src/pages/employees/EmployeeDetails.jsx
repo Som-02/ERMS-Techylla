@@ -58,7 +58,7 @@ const EmployeeDetails = () => {
 
             <hr />
 
-            <h3>Skills</h3>
+            <h3>Roles</h3>
 
 {employee.skills.length === 0 ? (
     <p>No Skills Added</p>
@@ -84,6 +84,7 @@ const EmployeeDetails = () => {
             <th>Project</th>
             <th>Start Date</th>
             <th>End Date</th>
+            <th>Allocation</th>
         </tr>
     </thead>
 
@@ -124,7 +125,7 @@ const EmployeeDetails = () => {
           })
         : "-"}
 </td>
-
+<td>{assignment.allocation || "-"}</td>
             </tr>
 
         ))}

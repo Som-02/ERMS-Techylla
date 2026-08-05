@@ -29,22 +29,42 @@ const EmployeeRow = ({
 
             <td>{employee.position}</td>
 
-            <td>{employee.email}</td>
+            {/* <td>{employee.email}</td> */}
 
-            <td>
+            {/* <td>
 
                 {employee.experience} Years
 
-            </td>
+            </td> */}
 
-            <td>
+            {/* <td>
 
                 {employee.reportingManager?.name ||
                     employee.reportingManager ||
                     "-"}
 
-            </td>
+            </td> */}
+            <td>
+    {employee.lowestStartDate
+        ? new Date(employee.lowestStartDate).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+          })
+        : "-"}
+</td>
 
+<td>
+    {employee.highestEndDate
+        ? new Date(employee.highestEndDate).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+          })
+        : "-"}
+</td>
+
+<td>{employee.totalAllocation}%</td>
             <td>
 
                 <div className="actions">

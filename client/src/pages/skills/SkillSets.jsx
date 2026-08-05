@@ -73,7 +73,7 @@ const SkillSets = () => {
 
             await deleteSkill(selectedSkill._id);
 
-            toast.success("Skill Deleted");
+            toast.success("Role Deleted");
 
             loadSkills();
 
@@ -104,11 +104,11 @@ const SkillSets = () => {
 
             <PageHeader
 
-                title="Skill Sets"
+                title="Role Sets"
 
-                subtitle="Manage all available skills."
+                subtitle="Manage all available roles."
 
-                buttonText="Add Skill"
+                buttonText="Add Role"
 
                 buttonLink="/skills/add"
 
@@ -120,7 +120,7 @@ const SkillSets = () => {
 
                 onChange={(e)=>setSearch(e.target.value)}
 
-                placeholder="Search Skill"
+                placeholder="Search Role"
 
             />
 

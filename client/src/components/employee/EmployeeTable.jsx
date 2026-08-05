@@ -20,9 +20,12 @@ const EmployeeTable = ({
                         <th>Name</th>
                         <th>Position</th>
                         {/* <th>WWID</th> */}
-                        <th>Email</th>
-                        <th>Experience</th>
-                        <th>Reporting Manager</th>
+                        {/* <th>Email</th> */}
+                        {/* <th>Experience</th>
+                        <th>Reporting Manager</th> */}
+                        <th>Allocation Date (Earliest)</th>
+                        <th>Release Date (Max)</th>
+                        <th>Total Allocation</th>
                         <th>Details</th>
 
                     </tr>
