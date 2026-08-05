@@ -150,7 +150,7 @@ header.eachCell((cell, colNumber) => {
     };
 
     // Read-only columns
-    if ([1, 2, 6, 7, 9].includes(colNumber)) {
+    if ([1, 2, 6, 7, 8, 9].includes(colNumber)) {
 
         cell.fill = {
 
@@ -259,17 +259,17 @@ header.eachCell((cell, colNumber) => {
 
               // BLACK (Editable)
               text.push({
-                  font: {},
+                  font: {color: { argb: "C00000" },},
                   text: `Allocation : ${employee.allocation}%\n`,
               });
 
               text.push({
-                  font: {},
+                  font: {color: { argb: "C00000" },},
                   text: `Start : ${formatDate(employee.startDate)}\n`,
               });
 
               text.push({
-                  font: {},
+                  font: {color: { argb: "C00000" },},
                   text: `End : ${formatDate(employee.endDate)}\n\n`,
               });
 
@@ -303,6 +303,17 @@ header.eachCell((cell, colNumber) => {
     `${totalAllocation}%`,
 ]);
 row.getCell(8).value = employeeDetails;
+[1, 2, 6, 7, 9].forEach((col) => {
+
+    row.getCell(col).font = {
+
+        color: { argb: "C00000" },
+
+        bold: true,
+
+    };
+
+});
         row.alignment = {
 
             vertical: "middle",
