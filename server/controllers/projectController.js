@@ -54,7 +54,10 @@ const getProject = async (req, res) => {
 
         const project = await Project.findById(req.params.id)
             .populate("client")
-            .populate("requiredSkills", "name");
+            .populate({
+    path: "requiredSkills.skill",
+    select: "name",
+})
 
         if (!project) {
 
@@ -93,7 +96,7 @@ const getProject = async (req, res) => {
                 empId: employee.empId,
 
                 name: employee.name,
-
+                location: employee.location,
                 position: employee.position,
 
                 experience: employee.experience,
@@ -107,7 +110,6 @@ const getProject = async (req, res) => {
             };
 
         });
-
         res.status(200).json({
 
             success: true,
@@ -852,7 +854,8 @@ const assignEmployee = async (req, res) => {
         } = req.body;
 
         const project = await Project.findById(projectId)
-            .populate("client");
+    .populate("client")
+    .populate("requiredSkills.skill");
 
         if (!project) {
 
@@ -899,7 +902,87 @@ const assignEmployee = async (req, res) => {
             });
 
         }
+// ==========================================
+// RESOURCE VALIDATION
+// ==========================================
 
+const matchingRole = project.requiredSkills.find(role =>
+
+    employee.skills.some(
+
+        empSkill =>
+
+            empSkill.skill === role.skill.name
+
+    )
+
+);
+
+if (!matchingRole) {
+
+    return res.status(400).json({
+
+        success:false,
+
+        message:"Employee role is not required for this project."
+
+    });
+
+}
+
+const locationKey =
+
+    employee.location === "Onshore / US"
+
+        ? "onshore"
+
+        : "offshore";
+
+const assignedEmployees = await Employee.find({
+
+    "assignments.project": project._id
+
+});
+
+let currentCount = 0;
+
+for (const assigned of assignedEmployees) {
+
+    if (assigned.location !== employee.location)
+
+        continue;
+
+    const hasRole = assigned.skills.some(
+
+        empSkill =>
+
+            empSkill.skill === matchingRole.skill.name
+
+    );
+
+    if (hasRole)
+
+        currentCount++;
+
+}
+
+const requiredCount =
+
+    matchingRole.resources?.[locationKey] || 0;
+
+if (currentCount >= requiredCount) {
+
+    return res.status(400).json({
+
+        success:false,
+
+        message:
+
+`No more ${employee.location} resources required for "${matchingRole.skill.name}".`
+
+    });
+
+}
         employee.assignments.push({
 
             client: project.client._id,

@@ -527,7 +527,7 @@ const getEmployeesBySkills = async (req, res) => {
 
                 {},
 
-                "name empId position experience skills"
+                "name empId position experience skills location"
 
             );
 
@@ -561,7 +561,7 @@ const getEmployeesBySkills = async (req, res) => {
 
             {},
 
-            "name empId position experience skills"
+            "name empId position experience skills location"
 
         );
 

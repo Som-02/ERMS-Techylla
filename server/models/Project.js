@@ -49,10 +49,32 @@ endDate: {
     default: null
 },
 
-requiredSkills: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Skill",
-}],
+requiredSkills: [
+    {
+        skill: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Skill",
+            required: true,
+        },
+
+        resources: {
+
+            onshore: {
+                type: Number,
+                default: 0,
+                min: 0,
+            },
+
+            offshore: {
+                type: Number,
+                default: 0,
+                min: 0,
+            },
+
+        },
+
+    },
+],
 assignedEmployees: [
     {
         type: mongoose.Schema.Types.ObjectId,
