@@ -272,3 +272,37 @@ height:36px;
     opacity:.7;
     cursor:not-allowed;
 }
+.form-group.full{
+    grid-column:1 / -1;
+}
+.form-group textarea{
+
+    width:100%;
+
+    min-height:110px;
+
+    resize:vertical;
+
+    padding:12px 14px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    font-family:inherit;
+
+    outline:none;
+
+    transition:.2s;
+
+}
+
+.form-group textarea:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+
+}

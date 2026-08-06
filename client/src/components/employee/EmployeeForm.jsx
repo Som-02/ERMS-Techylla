@@ -25,7 +25,8 @@ const EmployeeForm = ({
         name: "",
         email: "",
         mobile: "",
-        wwid: "",
+        location: "", 
+        // wwid: "",
         position: "",
         experience: "",
         reportingManager: "",
@@ -43,7 +44,8 @@ const EmployeeForm = ({
                 name: employee.name || "",
                 email: employee.email || "",
                 mobile: employee.mobile || "",
-                wwid: employee.wwid || "",
+                location: employee.location || "",
+                // wwid: employee.wwid || "",
                 position: employee.position || "",
                 experience: employee.experience || "",
                 reportingManager:
@@ -103,7 +105,10 @@ const EmployeeForm = ({
         toast.error("Email is required");
         return;
     }
-
+    if (!formData.location) {
+        toast.error("Please select a Location");
+        return;
+    }
     // if (!formData.mobile.trim()) {
     //     toast.error("Mobile Number is required");
     //     return;
@@ -242,7 +247,25 @@ const EmployeeForm = ({
             />
 
         </div>
+        <div className="form-group">
 
+    <label>Location ★</label>
+    <select
+        name="location"
+        value={formData.location}
+        onChange={handleChange}
+    >
+        <option value="">
+            Select Location
+        </option>
+        <option value="Offshore / INDIA">
+            Offshore / INDIA
+        </option>
+        <option value="Onshore / US">
+            Onshore / US
+        </option>
+    </select>
+</div>
         {/* <div className="form-group full">
 
             <label>WWID</label>

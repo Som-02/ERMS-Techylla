@@ -178,7 +178,7 @@
 .role-list li{
     margin-bottom:8px;
     color:#1f2937;
-    font-weight:500;
+    font-weight:600;
     line-height:1.5;
 }
 
@@ -220,6 +220,94 @@
     bottom:0;
 
     left:-3px;
+    width:100%;
+
+    padding:14px 0 6px;
+
+    text-align:left;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:#6b7280;
+
+    background:linear-gradient(
+        to top,
+        white 45%,
+        rgba(255,255,255,0)
+    );
+
+    pointer-events:none;
+
+    transition:.3s;
+
+}
+.description-card{
+
+    grid-column:1 / -1;
+
+    position:relative;
+    overflow:hidden;
+
+}
+
+.description-card p{
+
+    margin-top:10px;
+
+    line-height:1.7;
+
+    color:#374151;
+
+    white-space:pre-wrap;
+
+    overflow-wrap:break-word;
+
+    word-break:break-word;
+
+}
+.description-content{
+
+    margin-top:12px;
+
+    max-height:90px;
+    color:#000000;
+    overflow-y:auto;
+    font-weight:600;
+    white-space:pre-wrap;
+
+    word-break:break-word;
+
+    overflow-wrap:anywhere;
+
+    line-height:1.7;
+
+    padding-right:6px;
+
+}
+.description-content::-webkit-scrollbar{
+
+    width:0;
+
+}
+.description-content{
+
+    scrollbar-width:none;
+
+}
+.description-content{
+
+    -ms-overflow-style:none;
+
+}
+.scroll-hin{
+
+    position:absolute;
+
+    bottom:0;
+
+    left:18px;
     width:100%;
 
     padding:14px 0 6px;

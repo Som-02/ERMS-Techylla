@@ -22,6 +22,9 @@ const ProjectForm = ({
     const [formData, setFormData] = useState({
     name: "",
     client: "",
+    reference: "",
+description: "",
+type: "",
     startDate: "",
     endDate: "",
     status: "Active",
@@ -59,7 +62,9 @@ const ProjectForm = ({
     name: project.name || "",
 
     client: project.client?._id || project.client || "",
-
+                reference: project.reference || "",
+description: project.description || "",
+type: project.type || "",
     startDate: project.startDate
         ? project.startDate.split("T")[0]
         : "",
@@ -304,7 +309,79 @@ const filteredEmployees = employees.filter((employee) => {
                     </select>
 
                 </div>
-                
+                <div className="form-group">
+
+    <label>Reference</label>
+
+    <input
+        type="text"
+        name="reference"
+        value={formData.reference}
+        onChange={handleChange}
+        placeholder="Enter Reference"
+    />
+
+</div>
+<div className="form-group full">
+
+    <label>
+
+        Brief Description / Summary
+
+    </label>
+
+    <textarea
+
+        rows="4"
+
+        name="description"
+
+        value={formData.description}
+
+        onChange={handleChange}
+
+        placeholder="Brief description of the project..."
+
+    />
+
+</div>
+<div className="form-group">
+
+    <label>Project Category</label>
+
+    <select
+        name="type"
+        value={formData.type}
+        onChange={handleChange}
+    >
+
+        <option value="">
+            Select Category
+        </option>
+
+        <option value="AI">
+            AI
+        </option>
+
+        <option value="BI & Analytics">
+            BI & Analytics
+        </option>
+
+        <option value="Consulting (SAP)">
+            Consulting (SAP)
+        </option>
+
+        <option value="Consulting (Data & Analytics)">
+            Consulting (Data & Analytics)
+        </option>
+
+        <option value="Integration">
+            Integration
+        </option>
+
+    </select>
+
+</div>
                 <div className="form-group">
 
     <label>Start Date</label>

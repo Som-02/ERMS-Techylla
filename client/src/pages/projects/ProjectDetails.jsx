@@ -25,7 +25,62 @@ const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 const [employeeToDelete, setEmployeeToDelete] = useState(null); 
 const roleListRef = useRef(null);
 const [showMore, setShowMore] = useState(false);
+const descriptionRef = useRef(null);
+const [showHint, setShowHint] = useState(false);
 
+const handleDescriptionScroll = () => {
+
+    const el = descriptionRef.current;
+
+    if (!el) return;
+
+    const isScrollable =
+        el.scrollHeight > el.clientHeight;
+
+    if (!isScrollable) {
+
+        setShowHint(false);
+
+        return;
+
+    }
+
+    const reachedBottom =
+        el.scrollTop + el.clientHeight >=
+        el.scrollHeight - 2;
+
+    setShowHint(!reachedBottom);
+
+};
+useEffect(() => {
+
+    const checkDescription = () => {
+
+        const el = descriptionRef.current;
+
+        if (!el) return;
+
+        const isScrollable =
+            el.scrollHeight > el.clientHeight;
+
+        setShowHint(isScrollable);
+
+    };
+
+    checkDescription();
+
+    window.addEventListener(
+        "resize",
+        checkDescription
+    );
+
+    return () =>
+        window.removeEventListener(
+            "resize",
+            checkDescription
+        );
+
+}, [project]);
 useEffect(() => {
     const list = roleListRef.current;
 
@@ -161,7 +216,65 @@ const openAssignModal = async () => {
         </strong>
 
     </div> */}
+    <div className="detail">
 
+    <span>
+
+        Reference
+
+    </span>
+
+    <strong>
+
+        {project.reference || "-"}
+
+    </strong>
+
+</div>
+<div className="detail description-card">
+
+    <span>Brief Description</span>
+
+    <div
+
+        ref={descriptionRef}
+
+        onScroll={handleDescriptionScroll}
+
+        className="description-content"
+
+    >
+        
+        {project.description || "-"}
+
+    </div>
+
+    {showHint && (
+
+        <div className="scroll-hin">
+
+            Scroll for more...
+
+        </div>
+
+    )}
+
+</div>
+<div className="detail">
+
+    <span>
+
+        Project Category
+
+    </span>
+
+    <strong>
+
+        {project.type || "-"}
+
+    </strong>
+
+</div>
     <div className="detail">
 
         <span>Project Start Date</span>

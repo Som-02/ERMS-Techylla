@@ -47,6 +47,10 @@ const EmployeeDetails = () => {
             <p><strong>Employee ID:</strong> {employee.empId}</p>
 <p><strong>Email:</strong> {employee.email}</p>
 <p><strong>Mobile:</strong> {employee.mobile}</p>
+<p>
+    <strong>Location:</strong>{" "}
+    {employee.location || "-"}
+</p>
 {/* <p><strong>WWID:</strong> {employee.wwid}</p> */}
 <p><strong>Position:</strong> {employee.position}</p>
 <p><strong>Experience:</strong> {employee.experience} Years</p>
