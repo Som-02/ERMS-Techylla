@@ -14,8 +14,8 @@ const EmployeeTable = ({
 <colgroup>
         <col style={{ width: "1%" }} />
         <col style={{ width: "1%" }} />
-        <col style={{ width: "10%" }} />
-        <col style={{ width: "10%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "1%" }} />
         <col style={{ width: "10%" }} />
         <col style={{ width: "10%" }} />
         <col style={{ width: "10%" }} />
@@ -33,11 +33,13 @@ const EmployeeTable = ({
                         {/* <th>Experience</th>
                         <th>Reporting Manager</th> */}
                         <th style={{
-        textAlign: "center",
+        textAlign: "right",
     }}>Total Projects</th>
-                        <th>Allocation Date (Earliest)</th>
+                        <th >Allocation Date (Earliest)</th>
                         <th>Release Date (Max)</th>
-                        <th>Total Allocation</th>
+                        <th style={{
+        textAlign: "right",
+    }}>Total Allocation</th>
                         <th>Details</th>
 
                     </tr>

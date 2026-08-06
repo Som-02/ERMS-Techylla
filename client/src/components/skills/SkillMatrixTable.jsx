@@ -19,12 +19,16 @@ const SkillMatrixTable = ({
 
                         <th>Roles</th>
 
-                        <th>Beginner</th>
-
-                        <th>Intermediate</th>
+                        <th style={{
+        textAlign: "right",
+    }}>Beginner</th>
 
                         <th style={{
-        textAlign: "left",
+        textAlign: "right",
+    }}>Intermediate</th>
+
+                        <th style={{
+        textAlign: "right",
     }}>Expert</th>
 
                     </tr>
@@ -48,7 +52,7 @@ const SkillMatrixTable = ({
                                 </td>
 
                                 <td style={{
-        textAlign: "left",
+        textAlign: "right",
     }}>
 
                                     <button
@@ -78,7 +82,7 @@ const SkillMatrixTable = ({
                                 </td>
 
                                 <td style={{
-        textAlign: "left",
+        textAlign: "right",
     }}>
 
                                     <button
@@ -108,7 +112,7 @@ const SkillMatrixTable = ({
                                 </td>
 
                                 <td style={{
-        textAlign: "left",
+        textAlign: "right",
     }}>
 
                                     <button

@@ -50,7 +50,9 @@ const EmployeeRow = ({
                     "-"}
 
             </td> */}
-            <td>{employee.totalProjects}</td>
+            <td style={{
+        textAlign: "right",
+    }}>{employee.totalProjects}</td>
             <td
     style={{
         textAlign: "left",
@@ -69,7 +71,7 @@ const EmployeeRow = ({
 
 <td
     style={{
-        textAlign: "left",
+        textAlign: "right",
     }}
 >
     {employee.totalAllocation}%
