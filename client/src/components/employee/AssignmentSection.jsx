@@ -416,9 +416,9 @@ const [loadingProject, setLoadingProject] = useState(false);
 
                             <th>End Date</th>
 
-                            <th>Allocation</th>
+                            <th style={{textAlign: "right",}}>Allocation</th>
 
-                            <th>Actions</th>
+                            <th style={{textAlign: "center",}}>Actions</th>
 
                         </tr>
 
@@ -458,25 +458,25 @@ const [loadingProject, setLoadingProject] = useState(false);
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "left",}}>
 
                                     {assignment.startDate}
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "left",}}>
 
                                     {assignment.endDate}
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "right",}}>
 
                                     {assignment.allocation}%
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "center",}}>
 
                                     <button
                                         type="button"

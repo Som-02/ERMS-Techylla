@@ -34,11 +34,11 @@ const AllocatedRolesTable = ({
 
                         <th>Role</th>
 
-                        <th>Onshore / US</th>
+                        <th style={{textAlign: "center",}}>Onshore/US</th>
 
-                        <th>Offshore / INDIA</th>
+                        <th style={{textAlign: "center",}}>Offshore/IND</th>
 
-                        <th>Actions</th>
+                        <th style={{textAlign: "center",}}>Actions</th>
 
                     </tr>
 
@@ -54,25 +54,25 @@ const AllocatedRolesTable = ({
                                 key={role.skill}
                             >
 
-                                <td>
+                                <td style={{textAlign: "left",}}>
 
                                     {role.skillName}
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "center",}}>
 
                                     {role.resources.onshore}
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "center",}}>
 
                                     {role.resources.offshore}
 
                                 </td>
 
-                                <td>
+                                <td style={{textAlign: "center",}}>
 
                                     <div
                                         className="project-actions"

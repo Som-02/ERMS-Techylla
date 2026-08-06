@@ -160,7 +160,7 @@ const loadSkills = async () => {
 
                         <th>Rating</th>
 
-                        <th></th>
+                        <th style={{textAlign: "center",}}>Actions</th>
 
                     </tr>
 
@@ -176,7 +176,7 @@ const loadSkills = async () => {
 
                             <td>{"★".repeat(item.rating)}</td>
 
-                            <td>
+                            <td style={{textAlign: "center",}}>
 
                                 <button
                                     type="button"
