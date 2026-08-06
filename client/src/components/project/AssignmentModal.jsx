@@ -8,6 +8,7 @@ const AssignmentModal = ({
     assignment,
     project,
     employees = [],
+    errorMessage,
     onClose,
     onSave,
 }) => {
@@ -17,16 +18,39 @@ const AssignmentModal = ({
         endDate: "",
         allocation: 100,
     });
-    const employeeOptions = employees.map(employee => ({
+    
+    const employeeOptions = employees.map(employee => {
 
-    value: employee._id,
+    const projectRoles = project.requiredSkills.map(
+        role => role.skill?.name || role.skill
+    );
 
-    label: `${employee.empId} - ${employee.name}`,
+    const matchedSkills = employee.skills.filter(skill =>
+        projectRoles.includes(skill.skill)
+    );
 
-}));
+    return {
+
+        value: employee._id,
+
+        empId: employee.empId,
+
+        name: employee.name,
+
+        location: employee.location,
+
+        matchedSkills,
+
+    };
+
+});
     useEffect(() => {
 
+    if (!open) return;
+
     if (mode === "edit" && assignment) {
+
+        setSelectedEmployee(null);
 
         setForm({
 
@@ -60,7 +84,7 @@ const AssignmentModal = ({
 
     }
 
-}, [assignment, mode]);
+}, [assignment, mode, open]);
 
     if (!open) return null;
 
@@ -73,6 +97,25 @@ const AssignmentModal = ({
                 <h2>{mode === "edit"
     ? "Edit Assignment"
     : "Assign Employee"}</h2>
+    {errorMessage && (
+
+    <div className="assignment-error">
+
+        <strong>
+
+            Cannot Assign Employee
+
+        </strong>
+
+        <p>
+
+            {errorMessage}
+
+        </p>
+
+    </div>
+
+)}
 
                 <div className="modal-group">
 
@@ -89,11 +132,50 @@ const AssignmentModal = ({
 ) : (
 
     <Select
-        options={employeeOptions}
-        value={selectedEmployee}
-        onChange={setSelectedEmployee}
-        placeholder="Select Employee..."
-    />
+    classNamePrefix="react-select"
+    options={employeeOptions}
+    value={selectedEmployee}
+    onChange={setSelectedEmployee}
+    placeholder="Select Employee..."
+
+    formatOptionLabel={(option) => (
+
+        <div>
+
+            <div>
+
+                <strong>
+
+                    {option.empId} - {option.name}
+
+                </strong>
+
+            </div>
+
+            <div
+                style={{
+                    fontSize: "13px",
+                    color: "#6b7280",
+                    marginTop: "2px",
+                }}
+            >
+
+                {option.matchedSkills
+                    .map(skill =>
+                        `${skill.skill} (${skill.rating}/5)`
+                    )
+                    .join(", ")}
+
+                {" • "}
+
+                {option.location}
+
+            </div>
+
+        </div>
+
+    )}
+/>
 
 )}
 

@@ -74,3 +74,102 @@
     margin-top:20px;
 
 }
+.assignment-error{
+
+    background:#FEF2F2;
+
+    border:1px solid #FCA5A5;
+
+    color:#991B1B;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    margin-bottom:18px;
+
+}
+
+.assignment-error strong{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    font-size:15px;
+
+}
+
+.assignment-error p{
+
+    margin:0;
+
+    line-height:1.5;
+
+}
+/* Selected Option */
+.react-select__option--is-selected {
+
+    background-color: #dbeafe !important;
+
+    color: #111827 !important;
+
+}
+
+/* Employee Name */
+.react-select__option--is-selected strong {
+
+    color: #111827 !important;
+
+}
+
+/* Role & Location */
+.react-select__option--is-selected div {
+
+    color: #4b5563 !important;
+
+}
+
+/* Hover */
+.react-select__option--is-focused {
+
+    background-color: #eff6ff !important;
+
+    color: #111827 !important;
+
+}
+
+.react-select__option--is-focused strong {
+
+    color: #111827 !important;
+
+}
+/* Selected value container */
+.react-select__value-container{
+
+    padding: 8px 14px !important;
+
+}
+
+/* Entire control */
+.react-select__control{
+
+    min-height: 64px !important;
+
+    border-radius: 8px !important;
+
+}
+
+/* Placeholder */
+.react-select__placeholder{
+
+    margin-left: 2px;
+
+}
+
+/* Selected value */
+.react-select__single-value{
+
+    margin-left: 2px;
+
+}

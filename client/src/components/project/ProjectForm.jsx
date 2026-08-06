@@ -11,7 +11,8 @@ import { getSkills } from "../../services/skillService";
 import { getEmployeesBySkills } from "../../services/employeeService";
 import { getSkillMatrix } from "../../services/skillService";
 import "./project.css";
-
+import RoleResourceModal from "../../components/project/RoleResourceModal";
+import AllocatedRolesTable from "../../components/project/AllocatedRolesTable";
 const ProjectForm = ({
     mode = "add",
     project = null,
@@ -23,8 +24,8 @@ const ProjectForm = ({
     name: "",
     client: "",
     reference: "",
-description: "",
-type: "",
+    description: "",
+    type: "",
     startDate: "",
     endDate: "",
     status: "Active",
@@ -36,6 +37,9 @@ type: "",
     const [saving, setSaving] = useState(false);
     const [skills, setSkills] = useState([]);
     const [employees, setEmployees] = useState([]);
+const [roleModalOpen, setRoleModalOpen] = useState(false);
+const [selectedRole, setSelectedRole] = useState(null);
+const [editingRoleIndex, setEditingRoleIndex] = useState(null);
     const employeeOptions = employees.map((employee) => ({
 
     value: employee._id,
@@ -47,6 +51,12 @@ type: "",
     value: skill._id,
     label: skill.name,
 }));
+const availableSkillOptions = skillOptions.filter(
+    (option) =>
+        !formData.requiredSkills.some(
+            (item) => item.skill === option.value
+        )
+);
     useEffect(() => {
         loadClients();
         loadSkills();
@@ -60,44 +70,43 @@ type: "",
             setFormData({
 
     name: project.name || "",
-
     client: project.client?._id || project.client || "",
-                reference: project.reference || "",
-description: project.description || "",
-type: project.type || "",
+    reference: project.reference || "",
+    description: project.description || "",
+    type: project.type || "",
     startDate: project.startDate
         ? project.startDate.split("T")[0]
         : "",
-
     endDate: project.endDate
         ? project.endDate.split("T")[0]
         : "",
-
     status: project.status || "Active",
-
     requiredSkills:
-        project.requiredSkills?.map(
-            (skill) => skill._id
-        ) || [],
-
+    project.requiredSkills?.map((item) => ({
+        skill: item.skill._id,
+        skillName: item.skill.name,
+        resources: {
+            onshore: item.resources?.onshore || 0,
+            offshore: item.resources?.offshore || 0,
+        },
+    })) || [],
     assignedEmployees:
         project.assignedEmployees?.map(
             (employee) =>
                 employee._id || employee
         ) || [],
-
 });
 if (project.requiredSkills?.length > 0) {
 
     loadEmployees(
 
-        project.requiredSkills.map(
+    formData.requiredSkills.map(
 
-            (skill) => skill._id
+        role => role.skill
 
-        )
+    )
 
-    );
+);
 
 }
 
@@ -196,12 +205,13 @@ const filteredEmployees = employees.filter((employee) => {
         return true;
 
     const employeeSkills = employee.skills.map(
-        (skill) => skill.skill
-    );
+    skill => skill.skill
+);
 
-    return formData.requiredSkills.every((skillId) =>
-        employeeSkills.includes(skillId)
-    );
+return formData.requiredSkills.every(
+    role =>
+        employeeSkills.includes(role.skill)
+);
 
 });
     const submitHandler = async (e) => {
@@ -230,13 +240,41 @@ const filteredEmployees = employees.filter((employee) => {
 
             if (mode === "add") {
 
-                await createProject(formData);
+                const payload = {
+
+    ...formData,
+
+    requiredSkills: formData.requiredSkills.map(role => ({
+
+        skill: role.skill,
+
+        resources: role.resources,
+
+    })),
+
+};
+
+await createProject(payload);
 
                 toast.success("Project added successfully");
 
             } else {
 
-                await updateProject(project._id, formData);
+               const payload = {
+
+    ...formData,
+
+    requiredSkills: formData.requiredSkills.map(role => ({
+
+        skill: role.skill,
+
+        resources: role.resources,
+
+    })),
+
+};
+
+await updateProject(project._id, payload);
 
                 toast.success("Project updated successfully");
 
@@ -438,33 +476,103 @@ const filteredEmployees = employees.filter((employee) => {
     <label>Role</label>
 
     <Select
-        isMulti
-        options={skillOptions}
-        placeholder="Select roles..."
-        value={skillOptions.filter((option) =>
-            formData.requiredSkills.includes(option.value)
-        )}
-        onChange={async (selected) => {
+    options={availableSkillOptions}
+    placeholder="Select Role..."
+    value={null}
+    onChange={(role) => {
 
-    const selectedSkills = selected
-        ? selected.map((item) => item.value)
-        : [];
+        if (!role) return;
 
-    setFormData((prev) => ({
+        setSelectedRole(role);
 
-    ...prev,
+        setEditingRoleIndex(null);
 
-    requiredSkills: selectedSkills,
+        setRoleModalOpen(true);
 
-    assignedEmployees: [],
+    }}
+/>
+<RoleResourceModal
 
-}));
+    open={roleModalOpen}
 
-    await loadEmployees(selectedSkills);
+    role={selectedRole}
 
-}}
-    />
+    existingData={
+        editingRoleIndex !== null
+            ? formData.requiredSkills[editingRoleIndex]
+            : null
+    }
 
+    onClose={() => {
+
+        setRoleModalOpen(false);
+
+    }}
+
+    onSave={(roleData) => {
+
+        const updated = [...formData.requiredSkills];
+
+        if (editingRoleIndex !== null) {
+
+            updated[editingRoleIndex] = roleData;
+
+        } else {
+
+            updated.push(roleData);
+
+        }
+
+        setFormData((prev) => ({
+
+            ...prev,
+
+            requiredSkills: updated,
+
+        }));
+
+        setRoleModalOpen(false);
+
+    }}
+
+/>
+<AllocatedRolesTable
+
+    roles={formData.requiredSkills}
+
+    onEdit={(role) => {
+
+        const index = formData.requiredSkills.findIndex(
+            (item) => item.skill === role.skill
+        );
+
+        setEditingRoleIndex(index);
+
+        setSelectedRole({
+            value: role.skill,
+            label: role.skillName,
+        });
+
+        setRoleModalOpen(true);
+
+    }}
+
+    onDelete={(skillId) => {
+
+        setFormData((prev) => ({
+
+            ...prev,
+
+            requiredSkills:
+                prev.requiredSkills.filter(
+                    (item) => item.skill !== skillId
+                ),
+
+        }));
+
+    }}
+
+/>
 </div>
 
 {/* <div className="form-group">

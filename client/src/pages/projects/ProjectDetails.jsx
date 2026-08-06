@@ -7,6 +7,7 @@ import { getProject, updateAssignment, deleteAssignment, assignEmployee} from ".
 import "./projectDetails.css";
 import { formatDate } from "../../utils/formatDate";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import toast from "react-hot-toast";
 const ProjectDetails = () => {
 
     const { id } = useParams();
@@ -19,7 +20,7 @@ const [showAssignmentModal, setShowAssignmentModal] = useState(false);
 const [assignmentMode, setAssignmentMode] = useState("edit");
 
 const [selectedAssignment, setSelectedAssignment] = useState(null);
-
+const [assignmentError, setAssignmentError] = useState("");
 const [availableEmployees, setAvailableEmployees] = useState([]);
 const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 const [employeeToDelete, setEmployeeToDelete] = useState(null); 
@@ -139,9 +140,9 @@ const openAssignModal = async () => {
 
         const skillIds = project.requiredSkills.map(
 
-            skill => skill._id
+    role => role.skill?._id || role.skill
 
-        );
+);
 
         const res = await getEmployeesBySkills(skillIds);
 
@@ -327,15 +328,39 @@ const openAssignModal = async () => {
 
         <ul>
 
-            {project.requiredSkills.map(skill => (
+            {project.requiredSkills.map((role, index) => (
 
-                <li key={skill._id || skill.name}>
+    <li key={index}>
 
-                    {skill.name}
+        <strong>
 
-                </li>
+            {role.skill?.name || role.name || "Unknown Role"}
 
-            ))}
+        </strong>
+
+        <br />
+
+        <span>
+
+            (
+
+            {role.resources?.onshore ?? 0}
+
+            {" "}Onshore,
+
+            {" "}
+
+            {role.resources?.offshore ?? 0}
+
+            {" "}Offshore
+
+            )
+
+        </span>
+
+    </li>
+
+))}
 
         </ul>
 
@@ -397,14 +422,16 @@ const openAssignModal = async () => {
     <th>Name</th>
 
     <th>Position</th>
-
+    <th>Location</th>
     <th>Experience</th>
 
     <th>Start Date</th>
 
     <th>End Date</th>
 
-    <th>Allocation</th>
+    <th style={{
+        textAlign: "right",
+    }}>Allocation</th>
     <th>Actions</th>
 </tr>
 
@@ -441,11 +468,16 @@ const openAssignModal = async () => {
                                             {employee.position}
 
                                         </td>
-
-                                        <td style={{
+<td style={{
         textAlign: "left",
     }}>
 
+    {employee.location}
+
+</td>
+                                        <td style={{
+        textAlign: "left",
+    }}>
                                             {employee.experience} Years
 
                                         </td>
@@ -471,7 +503,7 @@ const openAssignModal = async () => {
 </td>
 
 <td style={{
-        textAlign: "left",
+        textAlign: "right",
     }}>
 
     {employee.allocation}%
@@ -552,49 +584,58 @@ Edit
 
     employees={availableEmployees}
 
-    onClose={() => setShowAssignmentModal(false)}
+    errorMessage={assignmentError}
+
+    onClose={() => {
+
+        setAssignmentError("");
+
+        setShowAssignmentModal(false);
+
+    }}
 
     onSave={async (data) => {
 
         try {
 
-            if (assignmentMode === "edit") {
+    setAssignmentError("");
 
-                await updateAssignment(
+    if (assignmentMode === "edit") {
 
-                    project._id,
+        await updateAssignment(
+            project._id,
+            selectedAssignment.employeeId,
+            data
+        );
 
-                    selectedAssignment.employeeId,
+    }
 
-                    data
+    else {
 
-                );
+        await assignEmployee(
+            project._id,
+            data
+        );
 
-            }
+    }
 
-            else {
+    setShowAssignmentModal(false);
 
-                await assignEmployee(
+    loadProject();
 
-    project._id,
+}
 
-    data
+catch (error) {
 
-);
+    setAssignmentError(
 
-            }
+        error.response?.data?.message ||
 
-            setShowAssignmentModal(false);
+        "Unable to assign employee."
 
-            loadProject();
+    );
 
-        }
-
-        catch (error) {
-
-            console.log(error);
-
-        }
+}
 
     }}
 
