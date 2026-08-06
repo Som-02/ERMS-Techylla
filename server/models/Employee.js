@@ -93,8 +93,16 @@ const employeeSchema = new mongoose.Schema({
     },
 
     mobile: String,
-
-    wwid: String,
+    
+    location: {
+    type: String,
+    enum: [
+        "Offshore / INDIA",
+        "Onshore / US"
+    ],
+    required: true,
+},
+    // wwid: String,
 
     position: String,
 

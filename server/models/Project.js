@@ -19,6 +19,26 @@ const projectSchema=new mongoose.Schema({
         enum:["Active","Completed","On Hold"],
         default:"Active"
     },
+    reference: {
+    type: String,
+    trim: true,
+},
+
+description: {
+    type: String,
+    trim: true,
+},
+
+type: {
+    type: String,
+    enum: [
+        "AI",
+        "BI & Analytics",
+        "Consulting (SAP)",
+        "Consulting (Data & Analytics)",
+        "Integration",
+    ],
+},
     startDate: {
     type: Date,
     default: null
