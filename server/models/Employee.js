@@ -36,7 +36,25 @@ const assignmentSchema = new mongoose.Schema({
         required: true,
 
     },
+    role: {
+        skillId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Skill",
+        },
+        name: {
+            type: String,
+            required: true,
+        },
+    },
 
+    location: {
+        type: String,
+        enum: [
+            "Onshore / US",
+            "Offshore / INDIA",
+        ],
+        required: true,
+    },
     startDate: {
 
         type: Date,

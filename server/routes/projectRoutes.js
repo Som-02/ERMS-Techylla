@@ -11,6 +11,7 @@ const {
     getProjects,
     exportProjects,
     getProject,
+    getProjectStaffingPlan,
     createProject,
     updateProject,
     updateAssignment,
@@ -57,6 +58,15 @@ router.post(
     assignEmployee
 
 );
+router.get(
+
+    "/:id/staffing-plan",
+
+    protect,
+
+    getProjectStaffingPlan
+
+);
 router.get("/:id", protect, getProject);
 router.put("/:id", protect, updateProject);
 router.put(
@@ -69,13 +79,8 @@ router.put(
 
 );
 router.delete(
-
-    "/:projectId/assignment/:employeeId",
-
-    protect,
-
+    "/:projectId/assign/:employeeId/:role",
     deleteAssignment
-
 );
 router.delete("/:id", protect, deleteProject);
 

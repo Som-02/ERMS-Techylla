@@ -1,6 +1,8 @@
 const Project = require("../models/Project");
 const Employee = require("../models/Employee");
-
+const {
+    assignEmployeeToProject,
+} = require("../services/assignmentService");
 // ============================
 // Get All Projects
 // ============================
@@ -53,11 +55,8 @@ const getProject = async (req, res) => {
     try {
 
         const project = await Project.findById(req.params.id)
-            .populate("client")
-            .populate({
-    path: "requiredSkills.skill",
-    select: "name",
-})
+    .populate("client")
+    .populate("requiredSkills.skill");
 
         if (!project) {
 
@@ -85,29 +84,34 @@ const getProject = async (req, res) => {
 
                     assignment.project.toString() ===
 
-                    project._id.toString()
+                    project._id.toString() &&
+                    assignment.role?.name === employee.role
 
             );
 
             return {
 
-                _id: employee._id,
+    _id: employee._id,
 
-                empId: employee.empId,
+    empId: employee.empId,
 
-                name: employee.name,
-                location: employee.location,
-                position: employee.position,
+    name: employee.name,
 
-                experience: employee.experience,
+    position: employee.position,
 
-                startDate: assignment?.startDate || null,
+    experience: employee.experience,
 
-                endDate: assignment?.endDate || null,
+    location: employee.location,
 
-                allocation: assignment?.allocation || 0,
+    role: assignment?.role?.name || null,
 
-            };
+    startDate: assignment?.startDate || null,
+
+    endDate: assignment?.endDate || null,
+
+    allocation: assignment?.allocation || 0,
+
+};
 
         });
         res.status(200).json({
@@ -138,6 +142,183 @@ const getProject = async (req, res) => {
 
 };
 
+// ============================
+// Get Project Staffing Plan
+// ============================
+
+const getProjectStaffingPlan = async (req, res) => {
+
+    try {
+
+        const project = await Project.findById(req.params.id)
+
+            .populate("client")
+
+            .populate("requiredSkills.skill");
+
+        if (!project) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Project not found",
+
+            });
+
+        }
+
+        const assignedEmployees = await Employee.find({
+
+            "assignments.project": project._id,
+
+        });
+
+        const staffingPlan = [];
+
+        // Generate all required slots
+
+        for (const role of project.requiredSkills) {
+
+            // ---------- ONSHORE ----------
+
+            for (
+
+                let i = 0;
+
+                i < (role.resources?.onshore || 0);
+
+                i++
+
+            ) {
+
+                staffingPlan.push({
+
+                    role: role.skill.name,
+
+                    location: "Onshore / US",
+
+                    employee: null,
+
+                });
+
+            }
+
+            // ---------- OFFSHORE ----------
+
+            for (
+
+                let i = 0;
+
+                i < (role.resources?.offshore || 0);
+
+                i++
+
+            ) {
+
+                staffingPlan.push({
+
+                    role: role.skill.name,
+
+                    location: "Offshore / INDIA",
+
+                    employee: null,
+
+                });
+
+            }
+
+        }
+
+        // Fill slots with assigned employees
+
+        // Fill slots with assigned employees
+
+for (const employee of assignedEmployees) {
+
+    for (const assignment of employee.assignments) {
+
+        if (
+
+            assignment.project.toString() !==
+
+            project._id.toString()
+
+        ) {
+
+            continue;
+
+        }
+
+        const slot = staffingPlan.find(
+
+            item =>
+
+                !item.employee &&
+
+                item.role === assignment.role?.name &&
+
+                item.location === assignment.location
+
+        );
+
+        if (!slot) continue;
+
+        slot.employee = {
+
+            _id: employee._id,
+
+            empId: employee.empId,
+
+            name: employee.name,
+
+            position: employee.position,
+
+            experience: employee.experience,
+
+            location: employee.location,
+
+            startDate: assignment.startDate,
+
+            endDate: assignment.endDate,
+
+            allocation: assignment.allocation,
+
+        };
+
+    }
+
+}
+
+        res.status(200).json({
+
+            success: true,
+
+            data: {
+
+                project,
+
+                staffingPlan,
+
+            },
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
 // ============================
 // Create Project
 // ============================
@@ -405,23 +586,6 @@ const updateProject = async (req, res) => {
 
             }
 
-            else{
-
-                employee.assignments.push({
-
-                    client:project.client,
-
-                    project:project._id,
-
-                    startDate:project.startDate,
-
-                    endDate:project.endDate,
-
-                    allocation:100
-
-                });
-
-            }
 
             await employee.save();
 
@@ -715,11 +879,13 @@ const updateAssignment = async (req, res) => {
 
         const assignment = employee.assignments.find(
 
-            assignment =>
+    assignment =>
 
-                assignment.project.toString() === projectId
+        assignment.project.toString() === projectId &&
 
-        );
+        assignment.role?.name === req.body.role
+
+);
 
         if (!assignment) {
 
@@ -738,7 +904,7 @@ const updateAssignment = async (req, res) => {
         assignment.endDate = endDate || null;
 
         assignment.allocation = allocation;
-
+        
         await employee.save();
 
         res.status(200).json({
@@ -772,7 +938,7 @@ const deleteAssignment = async (req, res) => {
 
     try {
 
-        const { projectId, employeeId } = req.params;
+        const { projectId, employeeId, role } = req.params;
 
         const employee = await Employee.findById(employeeId);
 
@@ -788,22 +954,46 @@ const deleteAssignment = async (req, res) => {
 
         }
 
-        employee.assignments = employee.assignments.filter(
+        employee.assignments =
+    employee.assignments.filter(
 
-            assignment =>
+        assignment =>
 
-                assignment.project.toString() !== projectId
+            !(
 
-        );
+                assignment.project.toString() === projectId &&
+
+                assignment.role?.name === decodeURIComponent(role)
+
+            )
+
+    );
 
         await employee.save();
 const project = await Project.findById(projectId);
 
 if (project) {
 
-    project.assignedEmployees = project.assignedEmployees.filter(
-    id => id.toString() !== employeeId.toString()
+    const stillAssigned = employee.assignments.some(
+
+    assignment =>
+
+        assignment.project.toString() === projectId
+
 );
+
+if (!stillAssigned) {
+
+    project.assignedEmployees =
+        project.assignedEmployees.filter(
+
+            id =>
+
+                id.toString() !== employeeId
+
+        );
+
+}
 
     await project.save();
 
@@ -839,184 +1029,24 @@ const assignEmployee = async (req, res) => {
 
     try {
 
-        const { projectId } = req.params;
+        await assignEmployeeToProject({
 
-        const {
+            employeeId: req.body.employeeId,
 
-            employeeId,
+            projectId: req.params.projectId,
 
-            startDate,
+            role: req.body.role,
 
-            endDate,
+            location: req.body.location,
 
-            allocation,
+            startDate: req.body.startDate,
 
-        } = req.body;
+            endDate: req.body.endDate,
 
-        const project = await Project.findById(projectId)
-    .populate("client")
-    .populate("requiredSkills.skill");
-
-        if (!project) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Project not found",
-
-            });
-
-        }
-
-        const employee = await Employee.findById(employeeId);
-
-        if (!employee) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Employee not found",
-
-            });
-
-        }
-
-        const alreadyAssigned = employee.assignments.some(
-
-            assignment =>
-
-                assignment.project.toString() === projectId
-
-        );
-
-        if (alreadyAssigned) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message: "Employee already assigned to this project.",
-
-            });
-
-        }
-// ==========================================
-// RESOURCE VALIDATION
-// ==========================================
-
-const matchingRole = project.requiredSkills.find(role =>
-
-    employee.skills.some(
-
-        empSkill =>
-
-            empSkill.skill === role.skill.name
-
-    )
-
-);
-
-if (!matchingRole) {
-
-    return res.status(400).json({
-
-        success:false,
-
-        message:"Employee role is not required for this project."
-
-    });
-
-}
-
-const locationKey =
-
-    employee.location === "Onshore / US"
-
-        ? "onshore"
-
-        : "offshore";
-
-const assignedEmployees = await Employee.find({
-
-    "assignments.project": project._id
-
-});
-
-let currentCount = 0;
-
-for (const assigned of assignedEmployees) {
-
-    if (assigned.location !== employee.location)
-
-        continue;
-
-    const hasRole = assigned.skills.some(
-
-        empSkill =>
-
-            empSkill.skill === matchingRole.skill.name
-
-    );
-
-    if (hasRole)
-
-        currentCount++;
-
-}
-
-const requiredCount =
-
-    matchingRole.resources?.[locationKey] || 0;
-
-if (currentCount >= requiredCount) {
-
-    return res.status(400).json({
-
-        success:false,
-
-        message:
-
-`No more ${employee.location} resources required for "${matchingRole.skill.name}".`
-
-    });
-
-}
-        employee.assignments.push({
-
-            client: project.client._id,
-
-            project: project._id,
-
-            startDate,
-
-            endDate,
-
-            allocation,
+            allocation: req.body.allocation,
 
         });
 
-        await employee.save();
-// -----------------------------
-// Update Project
-// -----------------------------
-
-if (
-
-    !project.assignedEmployees.some(
-
-        id => id.toString() === employee._id.toString()
-
-    )
-
-) {
-
-    project.assignedEmployees.push(employee._id);
-
-    await project.save();
-
-}
         res.status(200).json({
 
             success: true,
@@ -1029,7 +1059,7 @@ if (
 
     catch (error) {
 
-        res.status(500).json({
+        res.status(400).json({
 
             success: false,
 
@@ -1045,6 +1075,7 @@ module.exports = {
     getProjects,
 
     getProject,
+    getProjectStaffingPlan,
     exportProjects,
     searchProjects,
 

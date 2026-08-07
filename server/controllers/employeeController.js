@@ -1,6 +1,11 @@
 const Employee = require("../models/Employee");
 const Skill = require("../models/Skill");
 const Project = require("../models/Project");
+const {
+
+    assignEmployeeToProject,
+
+} = require("../services/assignmentService");
 /*
 ==========================================
 HELPER
@@ -191,39 +196,73 @@ const createEmployee = async (req, res) => {
 
         }
 
-        if (!req.body.reportingManager) {
+        const {
 
-            req.body.reportingManager = null;
+            assignments = [],
 
-        }
+            ...employeeData
 
-        const employee = await Employee.create(req.body);
-for (const assignment of employee.assignments || []) {
+        } = req.body;
 
-    await Project.findByIdAndUpdate(
+        if (!employeeData.reportingManager) {
 
-        assignment.project,
-
-        {
-
-            $addToSet: {
-
-                assignedEmployees: employee._id,
-
-            },
+            employeeData.reportingManager = null;
 
         }
 
-    );
+        // -----------------------------
+        // Create employee WITHOUT assignments
+        // -----------------------------
 
-}
+        const employee = await Employee.create({
+
+            ...employeeData,
+
+            assignments: [],
+
+        });
+
+        // -----------------------------
+        // Assign projects using common service
+        // -----------------------------
+
+        for (const assignment of assignments) {
+
+            await assignEmployeeToProject({
+
+                employeeId: employee._id,
+
+                projectId: assignment.project,
+
+                role: assignment.role,
+
+                location: assignment.location,
+
+                startDate: assignment.startDate,
+
+                endDate: assignment.endDate,
+
+                allocation: assignment.allocation,
+
+            });
+
+        }
+
+        const createdEmployee = await Employee.findById(employee._id)
+
+            .populate("reportingManager", "name")
+
+            .populate("assignments.client", "name")
+
+            .populate("assignments.project", "name");
+
         res.status(201).json({
 
             success: true,
 
             message: "Employee Created",
 
-            data: employee,
+            data: createdEmployee,
 
         });
 
@@ -253,21 +292,15 @@ const updateEmployee = async (req, res) => {
 
     try {
 
-        const employee = await Employee.findByIdAndUpdate(
+        const {
 
-            req.params.id,
+            assignments = [],
 
-            req.body,
+            ...employeeData
 
-            {
+        } = req.body;
 
-                new: true,
-
-                runValidators: true,
-
-            }
-
-        );
+        const employee = await Employee.findById(req.params.id);
 
         if (!employee) {
 
@@ -281,11 +314,23 @@ const updateEmployee = async (req, res) => {
 
         }
 
-        // -----------------------------------
-        // Sync Project.assignedEmployees
-        // -----------------------------------
+        // -----------------------------
+        // Update employee basic details
+        // -----------------------------
 
+        employee.empId = employeeData.empId;
+        employee.name = employeeData.name;
+        employee.email = employeeData.email;
+        employee.mobile = employeeData.mobile;
+        employee.location = employeeData.location;
+        employee.position = employeeData.position;
+        employee.experience = employeeData.experience;
+        employee.reportingManager = employeeData.reportingManager || null;
+        employee.skills = employeeData.skills || [];
+
+        // -----------------------------
         // Remove employee from all projects
+        // -----------------------------
 
         await Project.updateMany(
 
@@ -303,27 +348,47 @@ const updateEmployee = async (req, res) => {
 
         );
 
-        // Add employee to assigned projects
+        // -----------------------------
+        // Clear old assignments
+        // -----------------------------
 
-        for (const assignment of employee.assignments) {
+        employee.assignments = [];
 
-            await Project.findByIdAndUpdate(
+        await employee.save();
 
-                assignment.project,
+        // -----------------------------
+        // Recreate assignments
+        // -----------------------------
 
-                {
+        for (const assignment of assignments) {
 
-                    $addToSet: {
+            await assignEmployeeToProject({
 
-                        assignedEmployees: employee._id,
+                employeeId: employee._id,
 
-                    },
+                projectId: assignment.project,
 
-                }
+                role: assignment.role,
 
-            );
+                location: assignment.location,
+
+                startDate: assignment.startDate,
+
+                endDate: assignment.endDate,
+
+                allocation: assignment.allocation,
+
+            });
 
         }
+
+        const updatedEmployee = await Employee.findById(employee._id)
+
+            .populate("reportingManager", "name")
+
+            .populate("assignments.client", "name")
+
+            .populate("assignments.project", "name");
 
         res.status(200).json({
 
@@ -331,7 +396,7 @@ const updateEmployee = async (req, res) => {
 
             message: "Employee updated successfully",
 
-            data: employee,
+            data: updatedEmployee,
 
         });
 
