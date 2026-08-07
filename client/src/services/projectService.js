@@ -68,13 +68,14 @@ export const deleteAssignment = async (
 
     projectId,
 
-    employeeId
+    employeeId,
+    role
 
 ) => {
 
     const response = await api.delete(
 
-        `/projects/${projectId}/assignment/${employeeId}`
+        `/projects/${projectId}/assign/${employeeId}/${encodeURIComponent(role)}`
 
     );
 
@@ -94,6 +95,17 @@ export const assignEmployee = async (
         `/projects/${projectId}/assignment`,
 
         data
+
+    );
+
+    return response.data;
+
+};
+export const getProjectStaffingPlan = async (id) => {
+
+    const response = await api.get(
+
+        `/projects/${id}/staffing-plan`
 
     );
 

@@ -7,15 +7,24 @@ const AssignmentSection = ({
     projects = [],
     assignments,
     setAssignments,
+    employeeLocation,
 }) => {
-
+    
     const [client, setClient] = useState("");
     const [project, setProject] = useState("");
+    const [role, setRole] = useState("");
+const [roles, setRoles] = useState([]);
+const [location, setLocation] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [allocation, setAllocation] = useState("");
     const [editingIndex, setEditingIndex] = useState(null);
 const [loadingProject, setLoadingProject] = useState(false);
+useEffect(() => {
+
+    setLocation(employeeLocation || "");
+
+}, [employeeLocation]);
     const filteredProjects = useMemo(() => {
 
         if (!client) return [];
@@ -32,6 +41,9 @@ const [loadingProject, setLoadingProject] = useState(false);
 
         setClient("");
         setProject("");
+        setRole("");
+        setRoles([]);
+        setLocation(employeeLocation || "");
         setStartDate("");
         setEndDate("");
         setAllocation("");
@@ -44,6 +56,8 @@ const [loadingProject, setLoadingProject] = useState(false);
         if (
             !client ||
             !project ||
+            !role ||
+            !location ||
             !startDate ||
             !endDate
         ) {
@@ -95,6 +109,8 @@ const [loadingProject, setLoadingProject] = useState(false);
             client,
 
             project,
+            role,
+            location,
 
             startDate,
 
@@ -136,18 +152,30 @@ const [loadingProject, setLoadingProject] = useState(false);
 
     };
 
-    const editAssignment = (assignment, index) => {
+    const editAssignment = async (assignment, index) => {
 
-        setClient(
-            assignment.client?._id ||
-            assignment.client
-        );
+        const projectId =
+    assignment.project?._id ||
+    assignment.project;
 
-        setProject(
-            assignment.project?._id ||
-            assignment.project
-        );
+setClient(
+    assignment.client?._id ||
+    assignment.client
+);
 
+setProject(projectId);
+
+// Load project roles first
+
+const res = await getProject(projectId);
+
+setRoles(res.data.project.requiredSkills);
+
+// Now select the role
+
+setRole(assignment.role);
+
+setLocation(assignment.location);
         setStartDate(
             assignment.startDate
                 ? assignment.startDate.split("T")[0]
@@ -200,7 +228,11 @@ const [loadingProject, setLoadingProject] = useState(false);
 
                             setClient(e.target.value);
 
-                            setProject("");
+setProject("");
+
+setRole("");
+
+setRoles([]);
 
                         }}
                     >
@@ -248,7 +280,9 @@ const [loadingProject, setLoadingProject] = useState(false);
             const res = await getProject(selectedProject);
 
             const projectData = res.data.project;
+setRoles(projectData.requiredSkills || []);
 
+setRole("");
             setStartDate(
 
                 projectData.startDate
@@ -300,6 +334,48 @@ const [loadingProject, setLoadingProject] = useState(false);
                     </select>
 
                 </div>
+                <div className="field">
+
+<label>Role</label>
+
+<select
+    value={role}
+    onChange={(e)=>setRole(e.target.value)}
+>
+
+<option value="">
+Select Role
+</option>
+
+{roles.map(item=>(
+
+<option
+    key={item.skill._id}
+    value={item.skill.name}
+>
+
+{item.skill.name}
+
+</option>
+
+))}
+
+</select>
+
+</div>
+<div className="field">
+
+<label>Location</label>
+
+<input
+
+value={location}
+
+disabled
+
+/>
+
+</div>
 
                 <div className="field">
 
@@ -411,6 +487,8 @@ const [loadingProject, setLoadingProject] = useState(false);
                             <th>Client</th>
 
                             <th>Project</th>
+                            <th>Role</th>
+                            <th>Location</th>
 
                             <th>Start Date</th>
 
@@ -457,7 +535,9 @@ const [loadingProject, setLoadingProject] = useState(false);
                                     }
 
                                 </td>
+                                    <td>{assignment.role}</td>
 
+<td>{assignment.location}</td>
                                 <td style={{textAlign: "left",}}>
 
                                     {assignment.startDate}

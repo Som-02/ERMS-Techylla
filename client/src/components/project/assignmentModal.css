@@ -19,6 +19,10 @@
 
     width:520px;
 
+    max-height:90vh;
+
+    overflow-y:auto;
+
     background:white;
 
     border-radius:12px;
@@ -26,6 +30,19 @@
     padding:30px;
 
     box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* IE & Edge */
+    -ms-overflow-style: none;
+
+}
+
+/* Chrome, Edge, Safari */
+.assignment-modal::-webkit-scrollbar{
+
+    display:none;
 
 }
 
@@ -72,21 +89,6 @@
     gap:10px;
 
     margin-top:20px;
-
-}
-.assignment-error{
-
-    background:#FEF2F2;
-
-    border:1px solid #FCA5A5;
-
-    color:#991B1B;
-
-    padding:14px;
-
-    border-radius:8px;
-
-    margin-bottom:18px;
 
 }
 
@@ -171,5 +173,24 @@
 .react-select__single-value{
 
     margin-left: 2px;
+
+}
+.assignment-error{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+
+    border:1px solid #fecaca;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    margin-top:18px;
+
+    font-size:14px;
+
+    font-weight:600;
 
 }

@@ -6,17 +6,18 @@ const AssignmentModal = ({
     open,
     mode = "edit",
     assignment,
+    slot,
     project,
     employees = [],
-    errorMessage,
     onClose,
     onSave,
+    errorMessage,
 }) => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [form, setForm] = useState({
         startDate: "",
         endDate: "",
-        allocation: 100,
+        allocation: "",
     });
     
     const employeeOptions = employees.map(employee => {
@@ -62,7 +63,7 @@ const AssignmentModal = ({
                 ? assignment.endDate.split("T")[0]
                 : "",
 
-            allocation: assignment.allocation || 100,
+            allocation: assignment.allocation || "",
 
         });
 
@@ -78,7 +79,7 @@ const AssignmentModal = ({
 
             endDate: "",
 
-            allocation: 100,
+            allocation: "",
 
         });
 
@@ -180,7 +181,49 @@ const AssignmentModal = ({
 )}
 
                 </div>
+{mode === "add" && (
 
+<>
+
+<div className="modal-group">
+
+<label>
+
+Role
+
+</label>
+
+<input
+
+disabled
+
+value={slot?.role || ""}
+
+/>
+
+</div>
+
+<div className="modal-group">
+
+<label>
+
+Location
+
+</label>
+
+<input
+
+disabled
+
+value={slot?.location || ""}
+
+/>
+
+</div>
+
+</>
+
+)}
                 <div className="modal-group">
 
                     <label>Project</label>
@@ -263,7 +306,15 @@ const AssignmentModal = ({
                     />
 
                 </div>
+{errorMessage && (
 
+<div className="assignment-error">
+
+{errorMessage}
+
+</div>
+
+)}
                 <div className="modal-buttons">
 
                     <button
@@ -275,10 +326,23 @@ const AssignmentModal = ({
 
                     <button
                         className="save-btn"
-                        onClick={() =>
+                       onClick={() =>
     onSave({
 
-        employeeId: selectedEmployee?.value,
+        employeeId:
+            mode === "edit"
+                ? assignment.employeeId
+                : selectedEmployee?.value,
+
+        role:
+            mode === "edit"
+                ? assignment.role
+                : slot?.role,
+
+        location:
+            mode === "edit"
+                ? assignment.location
+                : slot?.location,
 
         startDate: form.startDate,
 

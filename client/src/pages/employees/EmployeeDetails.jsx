@@ -82,7 +82,16 @@ const EmployeeDetails = () => {
             <h3>Assignments</h3>
 
 <table border="1" cellPadding="10">
-
+<colgroup>
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "20%" }} />
+        <col style={{ width: "10%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "10%" }} />
+        <col style={{ width: "10%" }} />
+    </colgroup>
     <thead>
         <tr>
             <th style={{
@@ -91,6 +100,8 @@ const EmployeeDetails = () => {
             <th style={{
         textAlign: "left",
     }}>Project</th>
+    <th style={{ textAlign: "left" }}>Role</th>
+        <th style={{ textAlign: "left" }}>Location</th>
             <th style={{
         textAlign: "left",
     }}>Start Date</th>
@@ -124,7 +135,13 @@ const EmployeeDetails = () => {
                         assignment.projectName ||
                         "-"}
                 </td>
+<td style={{ textAlign: "left" }}>
+    {assignment.role?.name || "-"}
+</td>
 
+<td style={{ textAlign: "left" }}>
+    {assignment.location || "-"}
+</td>
                 <td style={{
         textAlign: "left",
     }}>
@@ -141,7 +158,7 @@ const EmployeeDetails = () => {
         : "-"}
 </td>
 <td style={{
-        textAlign: "left",
+        textAlign: "right",
     }}>{assignment.allocation || "-"}</td>
             </tr>
 

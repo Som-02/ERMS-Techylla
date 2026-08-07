@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { getEmployeesBySkills } from "../../services/employeeService";
 import Loader from "../../components/common/Loader";
 import AssignmentModal from "../../components/project/AssignmentModal";
-import { getProject, updateAssignment, deleteAssignment, assignEmployee} from "../../services/projectService";
+import { getProject, getProjectStaffingPlan, updateAssignment, deleteAssignment, assignEmployee} from "../../services/projectService";
 import "./projectDetails.css";
 import { formatDate } from "../../utils/formatDate";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
@@ -13,13 +13,14 @@ const ProjectDetails = () => {
     const { id } = useParams();
 
     const [project, setProject] = useState(null);
-    const [employees, setEmployees] = useState([]);
+    const [staffingPlan, setStaffingPlan] = useState([]);
     const [loading, setLoading] = useState(true);
 const [showAssignmentModal, setShowAssignmentModal] = useState(false);
 
 const [assignmentMode, setAssignmentMode] = useState("edit");
 
 const [selectedAssignment, setSelectedAssignment] = useState(null);
+const [selectedSlot, setSelectedSlot] = useState(null);
 const [assignmentError, setAssignmentError] = useState("");
 const [availableEmployees, setAvailableEmployees] = useState([]);
 const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -111,11 +112,11 @@ useEffect(() => {
 
         try {
 
-            const res = await getProject(id);
+            const res = await getProjectStaffingPlan(id);
 
-            setProject(res.data.project);
+setProject(res.data.project);
 
-            setEmployees(res.data.employees);
+setStaffingPlan(res.data.staffingPlan);
 
         } catch (error) {
 
@@ -134,47 +135,7 @@ useEffect(() => {
         return <Loader />;
 
     }
-const openAssignModal = async () => {
 
-    try {
-
-        const skillIds = project.requiredSkills.map(
-
-    role => role.skill?._id || role.skill
-
-);
-
-        const res = await getEmployeesBySkills(skillIds);
-
-        const filteredEmployees = res.data.filter(employee =>
-
-            !employees.some(
-
-                assigned =>
-
-                    assigned._id === employee._id
-
-            )
-
-        );
-
-        setAvailableEmployees(filteredEmployees);
-
-        setAssignmentMode("add");
-
-        setSelectedAssignment(null);
-
-        setShowAssignmentModal(true);
-
-    }
-
-    catch (error) {
-
-        console.log(error);
-
-    }
-
-};
     return (
 
         <div className="project-details">
@@ -278,31 +239,23 @@ const openAssignModal = async () => {
 </div>
     <div className="detail">
 
-        <span>Project Start Date</span>
+    <span>Duration</span>
 
-        <strong>
+    <strong>
 
-            {project.startDate
-                ? formatDate(project.startDate)
-                : "-"}
+        {project.startDate
+            ? formatDate(project.startDate)
+            : "-"}
 
-        </strong>
+        {"  --  "}
 
-    </div>
+        {project.endDate
+            ? formatDate(project.endDate)
+            : "-"}
 
-    <div className="detail">
+    </strong>
 
-        <span>Project End Date</span>
-
-        <strong>
-
-            {project.endDate
-                ? formatDate(project.endDate)
-                : "-"}
-
-        </strong>
-
-    </div>
+</div>
 
     <div className="detail">
 
@@ -310,100 +263,30 @@ const openAssignModal = async () => {
 
         <strong>
 
-            {employees.length}
+            {staffingPlan.filter(slot => slot.employee).length}
 
         </strong>
 
     </div>
-    <div className="detail">
-
-    <span>Roles</span>
-
-    <div className="role-list-wrapper">
-
-    <div
-        className="role-list"
-        ref={roleListRef}
-    >
-
-        <ul>
-
-            {project.requiredSkills.map((role, index) => (
-
-    <li key={index}>
-
-        <strong>
-
-            {role.skill?.name || role.name || "Unknown Role"}
-
-        </strong>
-
-        <br />
-
-        <span>
-
-            (
-
-            {role.resources?.onshore ?? 0}
-
-            {" "}Onshore,
-
-            {" "}
-
-            {role.resources?.offshore ?? 0}
-
-            {" "}Offshore
-
-            )
-
-        </span>
-
-    </li>
-
-))}
-
-        </ul>
-
-    </div>
-
-    {showMore && (
-
-        <div className="scroll-hint">
-
-            ↓
-
-        </div>
-
-    )}
-
-</div>
-
-</div>
-
+    
 </div>
 
             <div className="table-header">
 
-    <h2>Assigned Employees</h2>
+    <h2>Project Resource Plan</h2>
 
-   <button
-    className="assign-btn"
-    onClick={openAssignModal}
->
-    + Assign Employee
-</button>
 
 </div>
 
             {
 
-                employees.length === 0 ?
+                staffingPlan.length === 0 ?
 
                 (
 
                     <div className="empty">
 
-                        No employees assigned.
+                        No resource requirements defined for this project.
 
                     </div>
 
@@ -412,83 +295,57 @@ const openAssignModal = async () => {
                 (
 
                     <table className="employee-table">
-
+<colgroup>
+        <col style={{ width: "25%" }} />
+        <col style={{ width: "10%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "10%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "10%" }} />
+        <col style={{ width: "10%" }} />
+    </colgroup>
                         <thead>
 
-                            <tr>
+<tr>
 
-    <th>Employee ID</th>
+<th>Role</th>
 
-    <th>Name</th>
+<th>Location</th>
 
-    <th>Position</th>
-    <th>Location</th>
-    <th>Experience</th>
+<th>ID</th>
 
-    <th>Start Date</th>
+<th>Name</th>
 
-    <th>End Date</th>
+<th>Start Date</th>
 
-    <th style={{
+<th>End Date</th>
+
+<th style={{
         textAlign: "right",
     }}>Allocation</th>
-    <th>Actions</th>
+
+<th style={{
+        textAlign: "center",
+    }}>Actions</th>
+
 </tr>
 
-                        </thead>
+</thead>
 
                         <tbody>
 
                             {
 
-                                employees.map(employee => (
+                                staffingPlan.map((slot, index) => (
 
-                                    <tr key={employee._id}>
+                                    <tr key={index}>
 
-                                        <td style={{
-        textAlign: "left",
-    }}>
-
-                                            {employee.empId}
-
-                                        </td>
-
-                                        <td style={{
-        textAlign: "left",
-    }}>
-
-                                            {employee.name}
-
-                                        </td>
-
-                                        <td style={{
-        textAlign: "left",
-    }}>
-
-                                            {employee.position}
-
-                                        </td>
 <td style={{
         textAlign: "left",
     }}>
 
-    {employee.location}
-
-</td>
-                                        <td style={{
-        textAlign: "left",
-    }}>
-                                            {employee.experience} Years
-
-                                        </td>
-
-                                        <td style={{
-        textAlign: "left",
-    }}>
-
-    {employee.startDate
-        ? formatDate(employee.startDate)
-        : "-"}
+{slot.role}
 
 </td>
 
@@ -496,40 +353,91 @@ const openAssignModal = async () => {
         textAlign: "left",
     }}>
 
-    {employee.endDate
-        ? formatDate(employee.endDate)
-        : "-"}
+{slot.location}
+
+</td>
+
+<td style={{
+        textAlign: "left",
+    }}>
+
+{slot.employee?.empId || "-"}
+
+</td>
+
+<td style={{
+        textAlign: "left",
+    }}>
+
+{slot.employee?.name || "Vacant"}
+
+</td>
+
+<td style={{
+        textAlign: "left",
+    }}>
+
+{slot.employee?.startDate
+? formatDate(slot.employee.startDate)
+: "-"}
+
+</td>
+
+<td style={{
+        textAlign: "left",
+    }}>
+
+{slot.employee?.endDate
+? formatDate(slot.employee.endDate)
+: "-"}
 
 </td>
 
 <td style={{
         textAlign: "right",
     }}>
-
-    {employee.allocation}%
-
+    {slot.employee
+        ? (
+            slot.employee.allocation === null ||
+            slot.employee.allocation === undefined ||
+            slot.employee.allocation === ""
+        )
+            ? "-"
+            : `${slot.employee.allocation}%`
+        : "-"}
 </td>
-<td>
+
+<td style={{
+        textAlign: "center",
+    }}>
+
+{slot.employee ? (
+
 <div className="table-actions">
+
 <button
+
 className="action-btn edit-btn"
-onClick={()=>{
+
+onClick={() => {
 
 setSelectedAssignment({
 
-employeeId:employee._id,
+employeeId: slot.employee._id,
 
-name:employee.name,
+name: slot.employee.name,
+role: slot.role,
 
-projectName:project.name,
+location: slot.location,
+projectName: project.name,
 
-clientName:project.client?.name,
+clientName: project.client?.name,
 
-startDate:employee.startDate,
+startDate: slot.employee.startDate,
 
-endDate:employee.endDate,
+endDate: slot.employee.endDate,
 
-allocation:employee.allocation,
+allocation: slot.employee.allocation,
 
 });
 
@@ -538,27 +446,135 @@ setAssignmentMode("edit");
 setShowAssignmentModal(true);
 
 }}
+
 >
 
 Edit
 
 </button>
+
 <button
-    className="action-btn delete-btn"
-    onClick={() => {
 
-        setEmployeeToDelete(employee);
+className="action-btn delete-btn"
 
-        setShowDeleteDialog(true);
+onClick={() => {
+setEmployeeToDelete({
 
-    }}
+    ...slot.employee,
+
+    role: slot.role,
+
+});
+
+setShowDeleteDialog(true);
+
+}}
+
 >
-    Delete
+
+Delete
+
 </button>
+
 </div>
+
+) : (
+
+<button
+
+className="assign-btn"
+
+onClick={async () => {
+
+try{
+
+// Remember which slot we clicked
+
+setSelectedSlot(slot);
+
+// Find the matching skill in the project
+
+const skill = project.requiredSkills.find(
+
+item =>
+
+item.skill.name === slot.role
+
+);
+
+if(!skill){
+
+toast.error("Role not found.");
+
+return;
+
+}
+
+// Load employees having that role
+
+const res = await getEmployeesBySkills([
+
+skill.skill._id
+
+]);
+
+// Filter by location
+
+const filtered = res.data.filter(
+
+employee =>
+
+employee.location === slot.location
+
+);
+
+// Remove already assigned employees
+
+const available = filtered.filter(employee =>
+
+    !staffingPlan.some(
+
+        s =>
+
+            s.employee?._id === employee._id &&
+
+            s.role === slot.role
+
+    )
+
+);
+
+setAvailableEmployees(available);
+
+setAssignmentMode("add");
+
+setSelectedAssignment(null);
+
+setAssignmentError("");
+
+setShowAssignmentModal(true);
+
+}
+
+catch(error){
+
+console.log(error);
+
+}
+
+}}
+
+>
+
+Assign
+
+</button>
+
+)}
+
 </td>
 
-                                    </tr>
+</tr>
 
                                 ))
 
@@ -579,7 +595,7 @@ Edit
     mode={assignmentMode}
 
     assignment={selectedAssignment}
-
+    slot={selectedSlot}
     project={project}
 
     employees={availableEmployees}
@@ -601,7 +617,7 @@ Edit
     setAssignmentError("");
 
     if (assignmentMode === "edit") {
-
+console.log(data);
         await updateAssignment(
             project._id,
             selectedAssignment.employeeId,
@@ -661,7 +677,8 @@ catch (error) {
 
                 project._id,
 
-                employeeToDelete._id
+                employeeToDelete._id,
+                employeeToDelete.role
 
             );
 
