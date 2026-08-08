@@ -1,11 +1,11 @@
 const Employee = require("../models/Employee");
 const Skill = require("../models/Skill");
 const Project = require("../models/Project");
-const {
+// const {
 
-    assignEmployeeToProject,
+//     assignEmployeeToProject,
 
-} = require("../services/assignmentService");
+// } = require("../services/assignmentService");
 /*
 ==========================================
 HELPER
@@ -196,14 +196,14 @@ const createEmployee = async (req, res) => {
 
         }
 
-        const {
+        // const {
 
-            assignments = [],
+        //     assignments = [],
 
-            ...employeeData
+        //     ...employeeData
 
-        } = req.body;
-
+        // } = req.body;
+        const employeeData = req.body;
         if (!employeeData.reportingManager) {
 
             employeeData.reportingManager = null;
@@ -214,39 +214,39 @@ const createEmployee = async (req, res) => {
         // Create employee WITHOUT assignments
         // -----------------------------
 
-        const employee = await Employee.create({
+        // const employee = await Employee.create({
 
-            ...employeeData,
+        //     ...employeeData,
 
-            assignments: [],
+        //     assignments: [],
 
-        });
-
+        // });
+const employee = await Employee.create(employeeData);
         // -----------------------------
         // Assign projects using common service
         // -----------------------------
 
-        for (const assignment of assignments) {
+        // for (const assignment of assignments) {
 
-            await assignEmployeeToProject({
+        //     await assignEmployeeToProject({
 
-                employeeId: employee._id,
+        //         employeeId: employee._id,
 
-                projectId: assignment.project,
+        //         projectId: assignment.project,
 
-                role: assignment.role,
+        //         role: assignment.role,
 
-                location: assignment.location,
+        //         location: assignment.location,
 
-                startDate: assignment.startDate,
+        //         startDate: assignment.startDate,
 
-                endDate: assignment.endDate,
+        //         endDate: assignment.endDate,
 
-                allocation: assignment.allocation,
+        //         allocation: assignment.allocation,
 
-            });
+        //     });
 
-        }
+        // }
 
         const createdEmployee = await Employee.findById(employee._id)
 
@@ -292,14 +292,14 @@ const updateEmployee = async (req, res) => {
 
     try {
 
-        const {
+        // const {
 
-            assignments = [],
+        //     assignments = [],
 
-            ...employeeData
+        //     ...employeeData
 
-        } = req.body;
-
+        // } = req.body;
+        const employeeData = req.body;
         const employee = await Employee.findById(req.params.id);
 
         if (!employee) {
@@ -332,56 +332,57 @@ const updateEmployee = async (req, res) => {
         // Remove employee from all projects
         // -----------------------------
 
-        await Project.updateMany(
+        // await Project.updateMany(
 
-            {},
+        //     {},
 
-            {
+        //     {
 
-                $pull: {
+        //         $pull: {
 
-                    assignedEmployees: employee._id,
+        //             assignedEmployees: employee._id,
 
-                },
+        //         },
 
-            }
+        //     }
 
-        );
+        // );
 
-        // -----------------------------
-        // Clear old assignments
-        // -----------------------------
+        // // -----------------------------
+        // // Clear old assignments
+        // // -----------------------------
 
-        employee.assignments = [];
+        // employee.assignments = [];
 
+        // await employee.save();
+
+        // // -----------------------------
+        // // Recreate assignments
+        // // -----------------------------
+
+        // for (const assignment of assignments) {
+
+        //     await assignEmployeeToProject({
+
+        //         employeeId: employee._id,
+
+        //         projectId: assignment.project,
+
+        //         role: assignment.role,
+
+        //         location: assignment.location,
+
+        //         startDate: assignment.startDate,
+
+        //         endDate: assignment.endDate,
+
+        //         allocation: assignment.allocation,
+
+        //     });
+
+        // }
+        employee.skills = employeeData.skills || [];
         await employee.save();
-
-        // -----------------------------
-        // Recreate assignments
-        // -----------------------------
-
-        for (const assignment of assignments) {
-
-            await assignEmployeeToProject({
-
-                employeeId: employee._id,
-
-                projectId: assignment.project,
-
-                role: assignment.role,
-
-                location: assignment.location,
-
-                startDate: assignment.startDate,
-
-                endDate: assignment.endDate,
-
-                allocation: assignment.allocation,
-
-            });
-
-        }
-
         const updatedEmployee = await Employee.findById(employee._id)
 
             .populate("reportingManager", "name")
