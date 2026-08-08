@@ -86,8 +86,6 @@ const ProjectStatusTable = ({ title, projects }) => {
                                                     }}
                                                 >
 
-                                                    <FolderKanban size={18}/>
-
                                                     <strong>
 
                                                         {project.name}
