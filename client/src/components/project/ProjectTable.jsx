@@ -12,8 +12,9 @@ const ProjectTable = ({
 
             <table className="project-table">
 <colgroup>
-        <col style={{ width: "20%" }} />
-        <col style={{ width: "9%" }} />
+        <col style={{ width: "1%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "15%" }} />
         <col style={{ width: "15%" }} />
         <col style={{ width: "15%" }} />
         <col style={{ width: "10%" }} />
@@ -22,7 +23,7 @@ const ProjectTable = ({
                 <thead>
 
                     <tr>
-
+    <th>S.No</th>
     <th>Project</th>
 
     <th>Client</th>
@@ -54,7 +55,7 @@ const ProjectTable = ({
                             <tr>
 
                                 <td
-                                    colSpan="6"
+                                    colSpan="7"
                                     className="empty-table"
                                 >
 
@@ -66,10 +67,11 @@ const ProjectTable = ({
 
                         ) : (
 
-                            projects.map(project => (
+                            projects.map((project,index) => (
 
                                 <ProjectRow
                                     key={project._id}
+                                    index={index}
                                     project={project}
                                     onDelete={onDelete}
                                 />

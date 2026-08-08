@@ -99,9 +99,10 @@
     box-shadow: 0 3px 12px rgba(0,0,0,.05);
 }
 
-.dashboard-table {
-    width: 100%;
-    border-collapse: collapse;
+.dashboard-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
 }
 
 .dashboard-table thead {
@@ -120,7 +121,16 @@
     padding: 16px 22px;
     border-top: 1px solid #f1f5f9;
 }
+.dashboard-table td,
+.dashboard-table th{
 
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
 .dashboard-table tbody tr {
     transition: .2s;
 }

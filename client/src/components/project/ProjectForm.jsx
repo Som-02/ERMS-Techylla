@@ -28,7 +28,7 @@ const ProjectForm = ({
     type: "",
     startDate: "",
     endDate: "",
-    status: "Active",
+    status: "Lead",
     requiredSkills: [],
     assignedEmployees:[],
 });
@@ -80,7 +80,7 @@ const availableSkillOptions = skillOptions.filter(
     endDate: project.endDate
         ? project.endDate.split("T")[0]
         : "",
-    status: project.status || "Active",
+    status: project.status || "Lead",
     requiredSkills:
     project.requiredSkills?.map((item) => ({
         skill: item.skill._id,
@@ -422,7 +422,7 @@ await updateProject(project._id, payload);
 </div>
                 <div className="form-group">
 
-    <label>Start Date</label>
+    <label>Project Start Date</label>
 
     <input
         type="date"
@@ -435,7 +435,7 @@ await updateProject(project._id, payload);
 
 <div className="form-group">
 
-    <label>End Date</label>
+    <label>Project End Date</label>
 
     <input
         type="date"
@@ -455,7 +455,10 @@ await updateProject(project._id, payload);
                         value={formData.status}
                         onChange={handleChange}
                     >
-
+                        <option value="Lead">
+                            Lead</option>
+                        <option value="Pipeline">
+                            Pipeline</option>
                         <option value="Active">
                             Active
                         </option>

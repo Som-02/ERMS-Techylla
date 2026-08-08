@@ -9,6 +9,7 @@ import { formatDate } from "../../utils/formatDate";
 import "./project.css";
 
 const ProjectRow = ({
+    index,
     project,
     onDelete,
 }) => {
@@ -16,7 +17,12 @@ const ProjectRow = ({
     const getStatusClass = () => {
 
         switch (project.status) {
+            case "Lead":
+                return "lead";
 
+            case "Pipeline":
+                return "pipeline";
+                
             case "Active":
                 return "active";
 
@@ -36,7 +42,7 @@ const ProjectRow = ({
     return (
 
         <tr>
-
+            <td>{index + 1}</td>
             <td className="project-name">
 
     {project.name}

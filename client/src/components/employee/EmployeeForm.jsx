@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import SkillsSection from "./SkillsSection";
-import AssignmentSection from "./AssignmentSection";
+// import AssignmentSection from "./AssignmentSection";
 
 import {
     createEmployee,
@@ -33,7 +33,7 @@ const EmployeeForm = ({
     });
 
     const [skills, setSkills] = useState([]);
-    const [assignments, setAssignments] = useState([]);
+    // const [assignments, setAssignments] = useState([]);
 
     useEffect(() => {
 
@@ -55,26 +55,26 @@ const EmployeeForm = ({
             });
 
             setSkills(employee.skills || []);
-            setAssignments(
-    (employee.assignments || []).map((assignment) => ({
-        client: assignment.client?._id || assignment.client,
-        project: assignment.project?._id || assignment.project,
-        role: assignment.role?.name || "",
-location: assignment.location || "",
-        startDate: assignment.startDate
-            ? assignment.startDate.split("T")[0]
-            : "",
+//             setAssignments(
+//     (employee.assignments || []).map((assignment) => ({
+//         client: assignment.client?._id || assignment.client,
+//         project: assignment.project?._id || assignment.project,
+//         role: assignment.role?.name || "",
+// location: assignment.location || "",
+//         startDate: assignment.startDate
+//             ? assignment.startDate.split("T")[0]
+//             : "",
 
-        endDate: assignment.endDate
-            ? assignment.endDate.split("T")[0]
-            : "",
+//         endDate: assignment.endDate
+//             ? assignment.endDate.split("T")[0]
+//             : "",
 
-        allocation: assignment.allocation ?? "",
+//         allocation: assignment.allocation ?? "",
 
-        clientName: assignment.client?.name,
-        projectName: assignment.project?.name,
-    }))
-);
+//         clientName: assignment.client?.name,
+//         projectName: assignment.project?.name,
+//     }))
+// );
 
         }
 
@@ -131,15 +131,15 @@ location: assignment.location || "",
             ? null
             : formData.reportingManager,
     skills,
-    assignments: assignments.map((assignment) => ({
-        client: assignment.client?._id || assignment.client,
-        project: assignment.project?._id || assignment.project,
-        role: assignment.role,
-    location: assignment.location,
-        startDate: assignment.startDate,
-    endDate: assignment.endDate,
-    allocation: assignment.allocation,
-    })),
+    // assignments: assignments.map((assignment) => ({
+    //     client: assignment.client?._id || assignment.client,
+    //     project: assignment.project?._id || assignment.project,
+    //     role: assignment.role,
+    // location: assignment.location,
+    //     startDate: assignment.startDate,
+    // endDate: assignment.endDate,
+    // allocation: assignment.allocation,
+    // })),
 };
 
         try {
@@ -370,7 +370,7 @@ location: assignment.location || "",
 
             <br />
 
-            <div className="form-card">
+            {/* <div className="form-card">
 
     <h3>Assignments</h3>
 
@@ -382,7 +382,7 @@ location: assignment.location || "",
         employeeLocation={formData.location}
     />
 
-</div>
+</div> */}
 
             <br />
 

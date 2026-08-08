@@ -369,7 +369,7 @@ setStaffingPlan(res.data.staffingPlan);
         textAlign: "left",
     }}>
 
-{slot.employee?.name || "Vacant"}
+{slot.employee?.name || "-"}
 
 </td>
 

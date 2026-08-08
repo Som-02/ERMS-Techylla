@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import {
     LayoutDashboard,
-    FolderKanban
 } from "lucide-react";
 
 import Loader from "../../components/common/Loader";
 import StatCard from "./StatCard";
 import { getDashboard } from "../../services/dashboardService";
-
+import ProjectStatusTable from "../../components/dashboard/ProjectStatusTable";
 import "./dashboard.css";
 
 const Dashboard = () => {
@@ -233,138 +232,35 @@ const Dashboard = () => {
                 }
 
             </section>
-                        {/* Active Projects */}
+                        {/* Lead Projects */}
 
-            <section className="section">
+<ProjectStatusTable
 
-                <div className="section-header">
+    title="Lead Projects"
 
-                    <h2 className="section-title">
+    projects={dashboard.leadProjects}
 
-                        Active Projects
+/>
 
-                    </h2>
+{/* Pipeline Projects */}
 
-                </div>
+<ProjectStatusTable
 
-                {
+    title="Pipeline Projects"
 
-                    dashboard.activeProjects.length === 0 ? (
+    projects={dashboard.pipelineProjects}
 
-                        <div className="empty-state">
+/>
 
-                            No active projects found.
+{/* Active Projects */}
 
-                        </div>
+<ProjectStatusTable
 
-                    ) : (
+    title="Active Projects"
 
-                        <div className="table-wrapper">
+    projects={dashboard.activeProjects}
 
-                            <table className="dashboard-table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
-
-                                            Project
-
-                                        </th>
-
-                                        <th>
-
-                                            Client
-
-                                        </th>
-
-                                        <th>
-
-                                            Status
-
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    {
-
-                                        dashboard.activeProjects.map(project => (
-
-                                            <tr
-                                                key={project._id}
-                                            >
-
-                                                <td>
-
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            gap: "10px"
-                                                        }}
-                                                    >
-
-                                                        <FolderKanban
-                                                            size={18}
-                                                            className="text-purple-600"
-                                                        />
-
-                                                        <strong>
-
-                                                            {project.name}
-
-                                                        </strong>
-
-                                                    </div>
-
-                                                </td>
-
-                                                <td>
-
-                                                    {project.client?.name || "-"}
-
-                                                </td>
-
-                                                <td>
-
-                                                    <span
-                                                        className={`status ${
-                                                            project.status === "Active"
-                                                                ? "active"
-                                                                : "inactive"
-                                                        }`}
-                                                    >
-
-                                                        <span className="status-dot"></span>
-
-                                                        {project.status}
-
-                                                    </span>
-
-                                                </td>
-
-                                            </tr>
-
-                                        ))
-
-                                    }
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    )
-
-                }
-
-            </section>
+/>
 
         </div>
 

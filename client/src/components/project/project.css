@@ -157,7 +157,21 @@
     border-radius:50%;
     background:currentColor;
 }
+.status.lead{
 
+    background:#fde3e3;
+
+    color:#c01515;
+
+}
+
+.status.pipeline{
+
+    background:#fbcdff;
+
+    color:#73139d;
+
+}
 .status.active{
     background:#dcfce7;
     color:#15803d;
