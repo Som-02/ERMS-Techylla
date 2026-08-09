@@ -36,25 +36,29 @@ const getDashboard = async (req, res) => {
 
         const today = new Date();
 
-        const projectsWithAging = projects.map(project => {
+const projectsWithAging = projects.map(project => {
 
-            const aging = Math.floor(
+    const agingStartDate =
+        project.statusChangedAt ||
+        project.createdAt;
 
-                (today - project.createdAt) /
+    const aging = Math.floor(
 
-                (1000 * 60 * 60 * 24)
+        (today - agingStartDate) /
 
-            );
+        (1000 * 60 * 60 * 24)
 
-            return {
+    );
 
-                ...project.toObject(),
+    return {
 
-                aging,
+        ...project.toObject(),
 
-            };
+        aging,
 
-        });
+    };
+
+});
 
         const leadProjects = projectsWithAging.filter(
 

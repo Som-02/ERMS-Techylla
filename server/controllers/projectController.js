@@ -359,7 +359,7 @@ const createProject = async (req, res) => {
 
 } = req.body;
 
-const project = await Project.create(projectData);
+const project = await Project.create({...projectData,statusChangedAt: new Date(),});
 
         if (
 
@@ -459,7 +459,19 @@ const updateProject = async (req, res) => {
             });
 
         }
+const existingProject = await Project.findById(req.params.id);
 
+if (!existingProject) {
+
+    return res.status(404).json({
+
+        success: false,
+
+        message: "Project not found"
+
+    });
+
+}
         const {
 
             assignedEmployees=[],
@@ -467,7 +479,14 @@ const updateProject = async (req, res) => {
             ...projectData
 
         } = req.body;
+if (
+    projectData.status &&
+    projectData.status !== existingProject.status
+) {
 
+    projectData.statusChangedAt = new Date();
+
+}
         // projectData.assignedEmployees = assignedEmployees;
 
         const project = await Project.findByIdAndUpdate(

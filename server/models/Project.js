@@ -19,6 +19,10 @@ const projectSchema=new mongoose.Schema({
         enum:["Lead","Pipeline","Active","Completed","On Hold"],
         default:"Lead"
     },
+    statusChangedAt: {
+    type: Date,
+    default: null
+},
     reference: {
     type: String,
     trim: true,
