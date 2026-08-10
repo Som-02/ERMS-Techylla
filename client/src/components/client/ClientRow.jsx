@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
-
+import {
+    Eye,
+    Pencil,
+    Trash2,
+} from "lucide-react";
+import "./client.css"
 const ClientRow = ({
     client,
     onDelete,
@@ -11,19 +16,19 @@ const ClientRow = ({
                 <div className="client-actions">
                     <Link
                         to={`/clients/${client._id}`}
-                        className="client-btn view-btn"
+                        className="client-btn client-view-btn"
                     >
-                        View
+                        <Eye size={18} />
                     </Link>
 
                     <Link
                         to={`/clients/edit/${client._id}`}
-                        className="client-btn edit-btn"
+                        className="client-btn client-edit-btn"
                     >
-                        Edit
+                        <Pencil size={18} />
                     </Link>
 
-                    <button className="client-btn delete-btn"onClick={() =>onDelete(client)}>Delete</button>
+                    <button className="client-btn delete-btn"onClick={() =>onDelete(client)}><Trash2 size={18} /></button>
                 </div>
             </td>
         </tr>

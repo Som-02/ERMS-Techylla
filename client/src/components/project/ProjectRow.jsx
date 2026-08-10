@@ -3,7 +3,6 @@ import {
     Eye,
     Pencil,
     Trash2,
-    FolderKanban,
 } from "lucide-react";
 import { formatDate } from "../../utils/formatDate";
 import "./project.css";
@@ -94,15 +93,15 @@ const ProjectRow = ({
                 <div className="project-actions">
                 <Link
     to={`/projects/${project._id}`}
-    className="project-btn view-btn"
+    className="project-btn project-view-btn"
 >
-    <span>View</span>
+    <Eye size={18} />
 </Link>
                     <Link
     to={`/projects/edit/${project._id}`}
-    className="project-btn edit-btn"
+    className="project-btn project-edit-btn"
 >
-    <span>Edit</span>
+   <Pencil size={18} />
 </Link>
 
                     <button
@@ -111,7 +110,7 @@ const ProjectRow = ({
                         onClick={() => onDelete(project)}
                     >
 
-                        <span>Delete</span>
+                        <Trash2 size={18} />
 
                     </button>
 

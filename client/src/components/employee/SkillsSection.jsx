@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import "./employeeSection.css";
 import { getSkills } from "../../services/skillService";
 import toast from "react-hot-toast";
-
+import {
+    Eye,
+    Pencil,
+    Trash2,
+} from "lucide-react";
 const SkillsSection = ({ skills, setSkills }) => {
     const [skill, setSkill] = useState("");
     const [rating, setRating] = useState(1);
@@ -160,7 +164,7 @@ const loadSkills = async () => {
 
                         <th>Rating</th>
 
-                        <th style={{textAlign: "center",}}>Actions</th>
+                        <th style={{textAlign: "right",}}>Actions</th>
 
                     </tr>
 
@@ -176,14 +180,14 @@ const loadSkills = async () => {
 
                             <td>{"★".repeat(item.rating)}</td>
 
-                            <td style={{textAlign: "center",}}>
+                            <td style={{textAlign: "right",}}>
 
                                 <button
                                     type="button"
                                     className="remove-btn"
                                     onClick={()=>removeSkill(index)}
                                 >
-                                    Remove
+                                    <Trash2 size={18} />
                                 </button>
 
                             </td>

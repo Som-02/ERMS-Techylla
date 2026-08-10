@@ -83,3 +83,11 @@
     color:white;
     cursor:pointer;
 }
+.remove-btn {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.remove-btn:hover {
+    background: #fee2e2;
+}

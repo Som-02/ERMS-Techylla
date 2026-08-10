@@ -123,31 +123,31 @@
     box-sizing:border-box;
 }
 
-.view-btn{
-    background:#eff6ff;
-    color:#2563eb;
+.project-view-btn {
+    background: #ecfdf5;
+    color: #22a316;
 }
 
-.view-btn:hover{
-    background:#dbeafe;
+.project-view-btn:hover {
+    background: #dcfce7;
 }
 
-.edit-btn{
-    background:#2563eb;
-    color:#fff;
+.project-edit-btn {
+    background: #eff6ff;
+    color: #546488;
 }
 
-.edit-btn:hover{
-    background:#1d4ed8;
+.project-edit-btn:hover {
+    background: #dbeafe;
 }
 
-.delete-btn{
-    background:#fef2f2;
-    color:#dc2626;
+.delete-btn {
+    background: #fef2f2;
+    color: #dc2626;
 }
 
-.delete-btn:hover{
-    background:#fee2e2;
+.delete-btn:hover {
+    background: #fee2e2;
 }
 
 

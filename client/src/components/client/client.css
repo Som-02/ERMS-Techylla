@@ -54,39 +54,45 @@
     gap:10px;
 }
 .client-btn{
-    padding:8px 14px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    min-width:70px;
+    height:42px;
+    padding:0 16px;
     border:none;
-    border-radius:8px;
-    font-size:.85rem;
-    font-weight:600;
+    border-radius:10px;
     cursor:pointer;
-    transition:.2s;
     text-decoration:none;
+    font-weight:600;
+    transition:.2s;
+    box-sizing:border-box;
 }
 
-.view-btn{
-    background:#eff6ff;
-    color:#2563eb;
+.client-view-btn {
+    background: #ecfdf5;
+    color: #22a316;
 }
 
-.view-btn:hover{
-    background:#dbeafe;
+.client-view-btn:hover {
+    background: #dcfce7;
 }
 
-.edit-btn{
-    background:#ecfdf5;
-    color:#16a34a;
+.client-edit-btn {
+    background: #eff6ff;
+    color: #546488;
 }
 
-.edit-btn:hover{
-    background:#dcfce7;
+.client-edit-btn:hover {
+    background: #dbeafe;
 }
 
-.delete-btn{
-    background:#fef2f2;
-    color:#dc2626;
+.delete-btn {
+    background: #fef2f2;
+    color: #dc2626;
 }
 
-.delete-btn:hover{
-    background:#fee2e2;
+.delete-btn:hover {
+    background: #fee2e2;
 }

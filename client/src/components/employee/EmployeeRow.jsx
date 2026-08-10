@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
 import { formatDate } from "../../utils/formatDate";
+import {
+    Eye,
+    Pencil,
+    Trash2,
+} from "lucide-react";
 const EmployeeRow = ({
     employee,
     onDelete,
@@ -81,24 +86,24 @@ const EmployeeRow = ({
                 <div className="actions">
 
                     <Link
-                        className="action-btn view-btn"
+                        className="action-btn employee-view-btn"
                         to={`/employees/${employee._id}`}
                     >
-                        View
+                        <Eye size={18} />
                     </Link>
 
                     <Link
-                        className="action-btn edit-btn"
+                        className="action-btn employee-edit-btn"
                         to={`/employees/edit/${employee._id}`}
                     >
-                        Edit
+                        <Pencil size={18} />
                     </Link>
 
                     <button
                         className="action-btn delete-btn"
                         onClick={() => onDelete(employee)}
                     >
-                        Delete
+                        <Trash2 size={18} />
                     </button>
 
                 </div>

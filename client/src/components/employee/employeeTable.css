@@ -56,31 +56,61 @@
 }
 
 .action-btn{
-    padding:8px 12px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    font-size:13px;
-    font-weight:500;
-    text-decoration:none;
-    display:inline-flex;
+   display:inline-flex;
     align-items:center;
     justify-content:center;
+    gap:6px;
+    min-width:70px;
+    height:42px;
+    padding:0 16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    text-decoration:none;
+    font-weight:600;
+    transition:.2s;
+    box-sizing:border-box;
+}
+.view-btn {
+    background: #ecfdf5;
+    color: #22a316;
 }
 
-.view-btn{
-    background:#eff6ff;
-    color:#2563eb;
+.view-btn:hover {
+    background: #dcfce7;
+}
+.employee-view-btn {
+    background: #ecfdf5;
+    color: #22a316;
 }
 
-.edit-btn{
-    background:#ecfdf5;
-    color:#16a34a;
+.employee-view-btn:hover {
+    background: #dcfce7;
 }
 
-.delete-btn{
-    background:#fef2f2;
-    color:#dc2626;
+.employee-edit-btn {
+    background: #eff6ff;
+    color: #546488;
+}
+
+.employee-edit-btn:hover {
+    background: #dbeafe;
+}
+.skill-edit-btn {
+    background: #eff6ff;
+    color: #546488;
+}
+
+.skill-edit-btn:hover {
+    background: #dbeafe;
+}
+.delete-btn {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #fee2e2;
 }
 
 .action-btn:hover{
@@ -88,7 +118,7 @@
 }
 .employee-underutilized td{
 
-    background:#a2ffd4;
+    background:#a2ffcd;
 
 }
 

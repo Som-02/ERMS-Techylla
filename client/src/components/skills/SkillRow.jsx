@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
 import "../employee/employeeTable.css";
+import {
+    Eye,
+    Pencil,
+    Trash2,
+} from "lucide-react";
 const SkillRow = ({
 
     skill,
@@ -26,13 +31,13 @@ const SkillRow = ({
 
                     <Link
 
-                        className="action-btn edit-btn"
+                        className="action-btn skill-edit-btn"
 
                         to={`/skills/edit/${skill._id}`}
 
                     >
 
-                        Edit
+                        <Pencil size={18} />
 
                     </Link>
 
@@ -44,7 +49,7 @@ const SkillRow = ({
 
                     >
 
-                        Delete
+                        <Trash2 size={18} />
 
                     </button>
 
