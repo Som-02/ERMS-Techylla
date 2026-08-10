@@ -146,7 +146,7 @@ const Login = () => {
 
                 <div className="login-footer">
 
-                    Employee Resource Management System
+                    Human Resource Management System
 
                 </div>
 
