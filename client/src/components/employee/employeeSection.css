@@ -57,7 +57,21 @@
     color:white;
     cursor:pointer;
 }
+.skill-edit-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #546488;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.skill-edit-btn:hover {
+    background: #dbeafe;
+}
 .data-table{
     width:100%;
     border-collapse:collapse;

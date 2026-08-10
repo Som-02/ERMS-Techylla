@@ -3,207 +3,404 @@ import "./employeeSection.css";
 import { getSkills } from "../../services/skillService";
 import toast from "react-hot-toast";
 import {
-    Eye,
     Pencil,
     Trash2,
 } from "lucide-react";
+
 const SkillsSection = ({ skills, setSkills }) => {
+
     const [skill, setSkill] = useState("");
     const [rating, setRating] = useState(1);
-const [availableSkills, setAvailableSkills] = useState([]);
-useEffect(() => {
+    const [availableSkills, setAvailableSkills] = useState([]);
 
-    loadSkills();
+    // NEW
+    const [editingIndex, setEditingIndex] = useState(null);
 
-}, []);
+    useEffect(() => {
 
-const loadSkills = async () => {
+        loadSkills();
 
-    try {
+    }, []);
 
-        const res = await getSkills();
+    const loadSkills = async () => {
 
-        setAvailableSkills(res.data);
+        try {
 
-    }
+            const res = await getSkills();
 
-    catch (error) {
-
-        console.log(error);
-
-    }
-
-};
-    const addSkill = () => {
-
-    if (!skill) return;
-
-    const exists = skills.some(
-        s => s.skill === skill
-    );
-
-    if (exists) {
-
-        alert("Skill already added");
-
-        return;
-
-    }
-
-    setSkills([
-
-        ...skills,
-
-        {
-
-            skill,
-
-            rating: Number(rating)
+            setAvailableSkills(res.data);
 
         }
 
-    ]);
+        catch (error) {
 
-    setSkill("");
+            console.log(error);
 
-    setRating(1);
+        }
 
-};
+    };
+
+    const addSkill = () => {
+
+        if (!skill) {
+
+            toast.error("Please select a skill");
+
+            return;
+
+        }
+
+        const exists = skills.some(
+            (s, index) =>
+                s.skill === skill &&
+                index !== editingIndex
+        );
+
+        if (exists) {
+
+            toast.error("Skill already added");
+
+            return;
+
+        }
+
+        // ============================
+        // EDIT MODE
+        // ============================
+
+        if (editingIndex !== null) {
+
+            const updatedSkills = [...skills];
+
+            updatedSkills[editingIndex] = {
+
+                skill,
+
+                rating: Number(rating),
+
+            };
+
+            setSkills(updatedSkills);
+
+            toast.success("Skill Updated");
+
+            setEditingIndex(null);
+
+        }
+
+        // ============================
+        // ADD MODE
+        // ============================
+
+        else {
+
+            setSkills([
+
+                ...skills,
+
+                {
+
+                    skill,
+
+                    rating: Number(rating),
+
+                },
+
+            ]);
+
+            toast.success("Skill Added");
+
+        }
+
+        clearForm();
+
+    };
+
+    // ============================
+    // EDIT SKILL
+    // ============================
+
+    const editSkill = (item, index) => {
+
+        setSkill(item.skill);
+
+        setRating(item.rating);
+
+        setEditingIndex(index);
+
+    };
+
+    // ============================
+    // REMOVE SKILL
+    // ============================
 
     const removeSkill = (index) => {
-        setSkills(skills.filter((_, i) => i !== index));
+
+        setSkills(
+            skills.filter((_, i) => i !== index)
+        );
+
+        // If the skill being edited is deleted
+        if (editingIndex === index) {
+
+            clearForm();
+
+        }
+
+        toast.success("Skill Removed");
+
+    };
+
+    // ============================
+    // CLEAR FORM
+    // ============================
+
+    const clearForm = () => {
+
+        setSkill("");
+
+        setRating(1);
+
+        setEditingIndex(null);
+
     };
 
     return (
 
-    <>
+        <>
 
-        <div className="section-grid">
+            <div className="section-grid">
 
-            <div className="field">
+                <div className="field">
 
-                <label>Skill</label>
+                    <label>Skill</label>
 
-                <select
-    value={skill}
-    onChange={(e) => setSkill(e.target.value)}
->
+                    <select
+                        value={skill}
+                        onChange={(e) =>
+                            setSkill(e.target.value)
+                        }
+                    >
 
-    <option value="">
+                        <option value="">
+                            Select Skill
+                        </option>
 
-        Select Skill
+                        {
 
-    </option>
+                            availableSkills.map(item => (
 
-    {
-
-        availableSkills.map(item=>(
-
-            <option
-
-                key={item._id}
-
-                value={item.name}
-
-            >
-
-                {item.name}
-
-            </option>
-
-        ))
-
-    }
-
-</select>
-
-            </div>
-
-            <div className="field">
-
-                <label>Rating</label>
-
-                <select
-                    value={rating}
-                    onChange={(e)=>setRating(e.target.value)}
-                >
-                    <option value={1}>1 ★</option>
-                    <option value={2}>2 ★★</option>
-                    <option value={3}>3 ★★★</option>
-                    <option value={4}>4 ★★★★</option>
-                    <option value={5}>5 ★★★★★</option>
-                </select>
-
-            </div>
-
-            <button
-                type="button"
-                className="primary-btn"
-                onClick={addSkill}
-            >
-                + Add
-            </button>
-
-        </div>
-
-        {skills.length===0 ? (
-
-            <div className="empty">
-                No skills added
-            </div>
-
-        ) : (
-
-            <table className="data-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Skill</th>
-
-                        <th>Rating</th>
-
-                        <th style={{textAlign: "right",}}>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {skills.map((item,index)=>(
-
-                        <tr key={index}>
-
-                            <td>{item.skill}</td>
-
-                            <td>{"★".repeat(item.rating)}</td>
-
-                            <td style={{textAlign: "right",}}>
-
-                                <button
-                                    type="button"
-                                    className="remove-btn"
-                                    onClick={()=>removeSkill(index)}
+                                <option
+                                    key={item._id}
+                                    value={item.name}
                                 >
-                                    <Trash2 size={18} />
-                                </button>
 
-                            </td>
+                                    {item.name}
 
-                        </tr>
+                                </option>
 
-                    ))}
+                            ))
 
-                </tbody>
+                        }
 
-            </table>
+                    </select>
 
-        )}
+                </div>
 
-    </>
+                <div className="field">
 
-);
-}
+                    <label>Rating</label>
+
+                    <select
+                        value={rating}
+                        onChange={(e) =>
+                            setRating(
+                                Number(e.target.value)
+                            )
+                        }
+                    >
+
+                        <option value={1}>
+                            1 ★
+                        </option>
+
+                        <option value={2}>
+                            2 ★★
+                        </option>
+
+                        <option value={3}>
+                            3 ★★★
+                        </option>
+
+                        <option value={4}>
+                            4 ★★★★
+                        </option>
+
+                        <option value={5}>
+                            5 ★★★★★
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <button
+                    type="button"
+                    className="primary-btn"
+                    onClick={addSkill}
+                >
+
+                    {editingIndex !== null
+                        ? "Update"
+                        : "+ Add"}
+
+                </button>
+
+            </div>
+
+            {
+
+                skills.length === 0 ? (
+
+                    <div className="empty">
+
+                        No skills added
+
+                    </div>
+
+                ) : (
+
+                    <table className="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Skill
+                                </th>
+
+                                <th>
+                                    Rating
+                                </th>
+
+                                <th
+                                    style={{
+                                        textAlign: "right",
+                                        paddingRight: "35px",
+                                    }}
+                                >
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {
+
+                                skills.map(
+                                    (item, index) => (
+
+                                        <tr
+                                            key={index}
+                                        >
+
+                                            <td>
+
+                                                {item.skill}
+
+                                            </td>
+
+                                            <td>
+
+                                                {"★".repeat(
+                                                    item.rating
+                                                )}
+
+                                            </td>
+
+                                            <td
+                                                style={{
+                                                    textAlign:
+                                                        "center",
+                                                }}
+                                            >
+
+                                                <div
+                                                    style={{
+                                                        display:
+                                                            "flex",
+                                                        justifyContent:
+                                                            "flex-end",
+                                                        gap: "8px",
+                                                    }}
+                                                >
+
+                                                    {/* EDIT */}
+
+                                                    <button
+                                                        type="button"
+                                                        className="skill-edit-btn"
+                                                        title="Edit Skill"
+                                                        onClick={() =>
+                                                            editSkill(
+                                                                item,
+                                                                index
+                                                            )
+                                                        }
+                                                    >
+
+                                                        <Pencil
+                                                            size={18}
+                                                        />
+
+                                                    </button>
+
+                                                    {/* DELETE */}
+
+                                                    <button
+                                                        type="button"
+                                                        className="remove-btn"
+                                                        title="Delete Skill"
+                                                        onClick={() =>
+                                                            removeSkill(
+                                                                index
+                                                            )
+                                                        }
+                                                    >
+
+                                                        <Trash2
+                                                            size={18}
+                                                        />
+
+                                                    </button>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    )
+                                )
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                )
+
+            }
+
+        </>
+
+    );
+
+};
+
 export default SkillsSection;

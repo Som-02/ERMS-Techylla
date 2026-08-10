@@ -35,8 +35,8 @@ const EmployeeTable = ({
                         <th style={{
         textAlign: "right",
     }}>Total Projects</th>
-                        <th >Allocation Date (Earliest)</th>
-                        <th>Release Date (Max)</th>
+                        <th>Allocation Date</th>
+                        <th>Release Date</th>
                         <th style={{
         textAlign: "right",
     }}>Total Allocation</th>
