@@ -381,7 +381,20 @@ const microsoftLogin = async (req, res) => {
         // ==========================================
         // MICROSOFT SIGNING KEYS
         // ==========================================
+        console.log(
+    "Microsoft Tenant ID:",
+    process.env.MICROSOFT_TENANT_ID
+);
 
+console.log(
+    "Microsoft Client ID:",
+    process.env.MICROSOFT_CLIENT_ID
+);
+
+console.log(
+    "JWKS URL:",
+    `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/discovery/v2.0/keys`
+);
         const client = jwksClient({
 
             jwksUri:
