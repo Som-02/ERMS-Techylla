@@ -132,7 +132,12 @@ const Dashboard = () => {
                         <div className="table-wrapper">
 
                             <table className="dashboard-table">
-
+<colgroup>
+  <col style={{ width: "25%" }} />
+  <col style={{ width: "40%" }} />
+  <col style={{ width: "20%" }} />
+  <col style={{ width: "15%" }} />
+    </colgroup>
                                 <thead>
 
                                     <tr>
@@ -154,7 +159,12 @@ const Dashboard = () => {
                                             Position
 
                                         </th>
+                                        
+                                        <th>
 
+                                            Location
+
+                                        </th>
                                     </tr>
 
                                 </thead>
@@ -183,7 +193,7 @@ const Dashboard = () => {
 
                                                     <div className="employee-cell">
 
-                                                        <div className="employee-avatar">
+                                                        {/* <div className="employee-avatar">
 
                                                             {
 
@@ -193,7 +203,7 @@ const Dashboard = () => {
 
                                                             }
 
-                                                        </div>
+                                                        </div> */}
 
                                                         <div>
 
@@ -212,6 +222,12 @@ const Dashboard = () => {
                                                 <td>
 
                                                     {employee.position}
+
+                                                </td>
+
+                                                <td>
+
+                                                    {employee.location}
 
                                                 </td>
 
