@@ -39,14 +39,24 @@
     padding:12px 18px;
     border:none;
     border-radius:8px;
-    background:var(--primary);
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
     color:white;
     cursor:pointer;
     font-weight:600;
 }
 
 .primary-btn:hover{
-    background:var(--primary-hover);
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
 }
 
 .remove-btn{
@@ -75,6 +85,8 @@
 .data-table{
     width:100%;
     border-collapse:collapse;
+    border: 1px solid var(--border);
+    border-radius: 12px;
     margin-top:15px;
 }
 
@@ -94,4 +106,146 @@
     text-align:center;
     color:var(--muted);
     padding:30px;
+}
+.skill-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.cancel-btn {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #e2e8f0;
+    color: #374151;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cancel-btn:hover {
+    background: #cbd5e1;
+}
+/* ==========================================
+   PENDING SKILL REQUESTS
+========================================== */
+
+.pending-skill-card {
+    margin-top: 30px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+
+.pending-skill-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 22px;
+    background: #fffaf0;
+    border-bottom: 1px solid #f3e8d0;
+}
+
+
+.pending-skill-header h3 {
+    margin: 0 0 5px;
+    color: var(--heading);
+    font-size: 18px;
+}
+
+
+.pending-skill-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+.pending-count {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background: #fff7ed;
+    color: #c2410c;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.pending-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+.pending-skill-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.pending-skill-table th {
+    padding: 14px 16px;
+
+    text-align: left;
+
+    background: #f8fafc;
+
+    color: #374151;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.pending-skill-table td {
+    padding: 14px 16px;
+
+    border-bottom: 1px solid var(--border);
+
+    color: #374151;
+}
+
+
+.pending-skill-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.pending-skill-table tbody tr:hover {
+    background: #fafafa;
+}
+
+
+.pending-status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    background: #fff7ed;
+
+    color: #c2410c;
+
+    font-size: 13px;
+
+    font-weight: 600;
 }

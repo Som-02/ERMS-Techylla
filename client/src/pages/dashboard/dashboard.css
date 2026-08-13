@@ -26,10 +26,15 @@
 }
 
 .dashboard-card {
-    background: #fff;
+    background: linear-gradient(
+        145deg,
+        #080b12,
+        #141c2a 55%,
+        #152f84
+    );
     border-radius: 14px;
     padding: 1.5rem;
-    border: 1px solid #e5e7eb;
+    border:none;
     box-shadow: 0 3px 12px rgba(0,0,0,.05);
     transition: all .25s ease;
 }
@@ -47,7 +52,7 @@
 
 .dashboard-card-title {
     font-size: .9rem;
-    color: #6b7280;
+    color: #ffffff;
     font-weight: 600;
 }
 
@@ -55,12 +60,12 @@
     margin-top: .8rem;
     font-size: 2.3rem;
     font-weight: 700;
-    color: #111827;
+    color: #dcd4d4;
 }
 
 .dashboard-card-subtitle {
     margin-top: .5rem;
-    color: #9ca3af;
+    color: #dcd4d4;
     font-size: .8rem;
 }
 
@@ -92,7 +97,7 @@
 }
 
 .table-wrapper {
-    background: white;
+    background: #ffffff;
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
@@ -113,11 +118,12 @@
     text-align: left;
     padding: 16px 22px;
     color: #374151;
-    font-weight: 600;
+    font-weight: 700;
     font-size: .9rem;
 }
 
 .dashboard-table td {
+    
     padding: 16px 22px;
     border-top: 1px solid #f1f5f9;
 }
@@ -136,7 +142,7 @@
 }
 
 .dashboard-table tbody tr:hover {
-    background: #f9fafb;
+    background: #f9fafbd3;
 }
 
 .employee-cell {
@@ -159,7 +165,7 @@
 
 .emp-id {
     background: #eff6ff;
-    color: #2563eb;
+    color: #2b53ab;
     padding: 4px 10px;
     border-radius: 6px;
     font-weight: 600;

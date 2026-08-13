@@ -4,7 +4,16 @@ export const login = async (data) => {
     const response = await api.post("/auth/login", data);
     return response.data;
 };
+export const microsoftLogin = async (idToken) => {
 
+    const response = await api.post(
+        "/auth/microsoft-login",
+        {
+            idToken
+        }
+    );
+    return response.data;
+};
 export const changePassword = async (data) => {
     const response = await api.put("/auth/change-password", data);
     return response.data;

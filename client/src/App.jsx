@@ -29,6 +29,9 @@ import AddSkill from "./pages/skills/AddSkill";
 import EditSkill from "./pages/skills/EditSkill";
 import SkillMatrix from "./pages/skills/SkillMatrix";
 import ProjectDetails from "./pages/projects/ProjectDetails";
+import EmployeePortal from "./pages/employee/EmployeePortal";
+import EmployeeEdit from "./pages/employee/EmployeeEdit";
+import SkillRequests from "./pages/skillRequests/SkillRequests";
 
 function App() {
     return (
@@ -48,7 +51,7 @@ function App() {
             <Route
                 path="/dashboard"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <Dashboard />
                         </DashboardLayout>
@@ -57,11 +60,52 @@ function App() {
             />
 
             {/* Employees */}
+<Route
+    path="/employee"
+    element={
 
+        <ProtectedRoute
+            allowedRoles={["Employee"]}
+        >
+
+            <DashboardLayout>
+
+                <EmployeePortal />
+
+            </DashboardLayout>
+
+        </ProtectedRoute>
+
+    }
+/>
+<Route
+    path="/employee/:id"
+    element={
+        <ProtectedRoute
+            allowedRoles={["Employee"]}
+        >
+            <DashboardLayout>
+                <EmployeeDetails />
+            </DashboardLayout>
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/edit/:id"
+    element={
+        <ProtectedRoute
+            allowedRoles={["Employee"]}
+        >
+            <DashboardLayout>
+                <EmployeeEdit />
+            </DashboardLayout>
+        </ProtectedRoute>
+    }
+/>
             <Route
                 path="/employees"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <Employees />
                         </DashboardLayout>
@@ -72,7 +116,7 @@ function App() {
             <Route
                 path="/employees/add"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <AddEmployee />
                         </DashboardLayout>
@@ -83,7 +127,7 @@ function App() {
             <Route
                 path="/employees/edit/:id"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <EditEmployee />
                         </DashboardLayout>
@@ -94,7 +138,7 @@ function App() {
             <Route
                 path="/employees/:id"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <EmployeeDetails />
                         </DashboardLayout>
@@ -104,7 +148,7 @@ function App() {
 <Route
     path="/skills"
     element={
-        <ProtectedRoute>
+        <ProtectedRoute  allowedRoles={["Administrator"]}>
             <DashboardLayout>
                 <SkillSets />
             </DashboardLayout>
@@ -115,7 +159,7 @@ function App() {
 <Route
     path="/skills/add"
     element={
-        <ProtectedRoute>
+        <ProtectedRoute  allowedRoles={["Administrator"]}>
             <DashboardLayout>
                 <AddSkill />
             </DashboardLayout>
@@ -126,7 +170,7 @@ function App() {
 <Route
     path="/skills/edit/:id"
     element={
-        <ProtectedRoute>
+        <ProtectedRoute  allowedRoles={["Administrator"]}>
             <DashboardLayout>
                 <EditSkill />
             </DashboardLayout>
@@ -136,7 +180,7 @@ function App() {
 <Route
     path="/skill-matrix"
     element={
-        <ProtectedRoute>
+        <ProtectedRoute  allowedRoles={["Administrator"]}>
             <DashboardLayout>
                 <SkillMatrix />
             </DashboardLayout>
@@ -148,7 +192,7 @@ function App() {
             <Route
                 path="/clients"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <Clients />
                         </DashboardLayout>
@@ -159,7 +203,7 @@ function App() {
             <Route
                 path="/clients/add"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <AddClient />
                         </DashboardLayout>
@@ -170,7 +214,7 @@ function App() {
             <Route
                 path="/clients/edit/:id"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <EditClient />
                         </DashboardLayout>
@@ -181,7 +225,7 @@ function App() {
             <Route
                 path="/clients/:id"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <ClientDetails />
                         </DashboardLayout>
@@ -194,7 +238,7 @@ function App() {
             <Route
                 path="/projects"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <Projects />
                         </DashboardLayout>
@@ -205,7 +249,7 @@ function App() {
             <Route
                 path="/projects/add"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <AddProject />
                         </DashboardLayout>
@@ -216,7 +260,7 @@ function App() {
             <Route
     path="/projects/:id"
     element={
-        <ProtectedRoute>
+        <ProtectedRoute  allowedRoles={["Administrator"]}>
             <DashboardLayout>
                 <ProjectDetails />
             </DashboardLayout>
@@ -227,14 +271,23 @@ function App() {
             <Route
                 path="/projects/edit/:id"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute  allowedRoles={["Administrator"]}>
                         <DashboardLayout>
                             <EditProject />
                         </DashboardLayout>
                     </ProtectedRoute>
                 }
             />
-
+<Route
+    path="/skill-requests"
+    element={
+        <ProtectedRoute allowedRoles={["Administrator"]}>
+            <DashboardLayout>
+                <SkillRequests />
+            </DashboardLayout>
+        </ProtectedRoute>
+    }
+/>
             {/* Settings */}
 <Route
     path="/settings"

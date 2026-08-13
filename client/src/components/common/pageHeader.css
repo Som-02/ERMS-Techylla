@@ -29,20 +29,46 @@
 
 .page-btn{
     padding:12px 20px;
-    border:none;
+    border: 1px solid #e5e7eb;
     border-radius:8px;
-    background:#2563eb;
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+    
     color:#fff;
     text-decoration:none;
     font-weight:600;
 }
-
+.page-btn:hover{
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+}
 .secondary-btn{
     padding:16px 20px;
-    border:none;
+    border: 1px solid #e5e7eb;
     border-radius:8px;
-    background:#10b981;
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
     color:white;
     font-weight:600;
     cursor:pointer;
+}
+.secondary-btn:hover{
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
 }

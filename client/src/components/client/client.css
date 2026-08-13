@@ -1,9 +1,9 @@
 .client-table-wrapper{
-    background:#fff;
-    border:1px solid #e5e7eb;
+    background:#ffffff;
     border-radius:14px;
     overflow:hidden;
     box-shadow:0 3px 12px rgba(0,0,0,.05);
+    border: 1px solid #e5e7eb;
 }
 
 .client-table{
@@ -12,7 +12,7 @@
 }
 
 .client-table thead{
-    background:#a0c8f0;
+    background:#f8fafc;
 }
 .client-table thead th:last-child{
     text-align: center;
@@ -21,12 +21,13 @@
     text-align:left;
     vertical-align:left;
     padding:16px 22px;
-    color:#374151;
-    font-weight:600;
+    color:#0f1115;
+    font-weight:700;
     font-size:.9rem;
 }
 
 .client-table td{
+    color:#0f1115;
     text-align:left;
     vertical-align:left;
     padding:16px 22px;
@@ -38,13 +39,13 @@
 }
 
 .client-table tbody tr:hover{
-    background:#f9fafb;
+    background:#f9fafbd3;
 }
 
 .client-name{
     text-align:left;
     font-weight:600;
-    color:#1f2937;
+    color:#0d1015;
 }
 
 .client-actions{
@@ -95,4 +96,50 @@
 
 .delete-btn:hover {
     background: #fee2e2;
+}
+
+.client-form{
+                background:#ffffff;
+                max-width: 650px;
+                border-radius: 14px;
+                padding: 30px;
+                border: none;
+                box-shadow: 0 3px 12px rgba(0,0,0,.05)
+            }
+.cancel-btn{
+    background:#f3f4f6;
+    color:#374151;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.2s;
+}
+
+.cancel-btn:hover{
+    background:#e5e7eb;
+}
+.edit-btn{
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #191f33 100%
+        );
+    color:#fff;
+    border: 1px solid #e5e7eb;
+    padding:10px 22px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.2s;
+}
+.edit-btn:hover:not(:disabled){
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #191f33 100%
+        );
 }

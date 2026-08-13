@@ -1,0 +1,377 @@
+.skill-requests-page {
+    width: 100%;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.skill-requests-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.skill-requests-header h1 {
+    margin: 0 0 6px;
+    font-size: 30px;
+    color: var(--heading);
+}
+
+.skill-requests-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+
+/* ==========================================
+   REFRESH BUTTON
+========================================== */
+
+.refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 11px 17px;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    background: #fff;
+    color: var(--heading);
+
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.refresh-btn:hover {
+    background: #f8fafc;
+}
+
+.refresh-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   SUMMARY
+========================================== */
+
+.request-summary-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    padding: 20px 24px;
+
+    margin-bottom: 20px;
+
+    box-shadow: var(--shadow);
+}
+
+.request-summary-card > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.summary-label {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.request-summary-card strong {
+    font-size: 28px;
+    color: var(--heading);
+}
+
+
+/* ==========================================
+   TABLE CARD
+========================================== */
+
+.skill-request-table-card {
+    background: #fff;
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow);
+}
+
+.skill-request-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+/* ==========================================
+   TABLE
+========================================== */
+
+.skill-request-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.skill-request-table thead {
+    background: #a0c8f0;
+}
+
+.skill-request-table th {
+    padding: 16px;
+
+    text-align: left;
+
+    color: #374151;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.skill-request-table td {
+    padding: 17px 16px;
+
+    border-top: 1px solid var(--border);
+
+    vertical-align: middle;
+
+    color: #374151;
+}
+
+.skill-request-table tbody tr {
+    transition: .2s;
+}
+
+.skill-request-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* ==========================================
+   EMPLOYEE
+========================================== */
+
+.employee-request-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.employee-request-name strong {
+    color: #1f2937;
+    font-size: 15px;
+}
+
+.employee-request-name span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+/* ==========================================
+   SKILL
+========================================== */
+
+.skill-name {
+    color: #1e3a5f;
+}
+
+
+/* ==========================================
+   REQUEST TYPE
+========================================== */
+
+.request-type {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.request-type-add {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.request-type-update {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.request-type-remove {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* ==========================================
+   RATING
+========================================== */
+
+.skill-rating {
+    white-space: nowrap;
+
+    color: #1e3a5f;
+
+    font-weight: 500;
+}
+
+
+/* ==========================================
+   ACTIONS
+========================================== */
+
+.request-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.approve-request-btn,
+.reject-request-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    height: 38px;
+
+    padding: 0 13px;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+    white-space: nowrap;
+}
+
+.approve-request-btn {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.approve-request-btn:hover {
+    background: #dcfce7;
+}
+
+.reject-request-btn {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.reject-request-btn:hover {
+    background: #fee2e2;
+}
+
+.approve-request-btn:disabled,
+.reject-request-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   EMPTY
+========================================== */
+
+.skill-request-empty {
+    padding: 70px 30px;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 50px;
+    height: 50px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ecfdf5;
+    color: #16a34a;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.skill-request-empty h3 {
+    margin: 0 0 8px;
+
+    color: var(--heading);
+
+    font-size: 18px;
+}
+
+.skill-request-empty p {
+    margin: 0;
+
+    color: var(--muted);
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+
+    .skill-requests-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .request-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .approve-request-btn,
+    .reject-request-btn {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .skill-requests-header {
+        flex-direction: column;
+    }
+
+    .refresh-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+}

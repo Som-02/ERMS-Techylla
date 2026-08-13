@@ -9,7 +9,13 @@ export const getEmployee = async (id) => {
     const response = await api.get(`/employees/${id}`);
     return response.data;
 };
+export const getMyEmployee = async () => {
 
+    const response = await api.get("/employees/me");
+
+    return response.data;
+
+};
 export const createEmployee = async (data) => {
     const response = await api.post("/employees", data);
     return response.data;

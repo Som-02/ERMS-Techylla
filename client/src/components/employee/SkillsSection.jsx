@@ -1,184 +1,452 @@
 import { useEffect, useState } from "react";
-import "./employeeSection.css";
-import { getSkills } from "../../services/skillService";
+
 import toast from "react-hot-toast";
+
 import {
     Pencil,
     Trash2,
 } from "lucide-react";
 
-const SkillsSection = ({ skills, setSkills }) => {
+import { getSkills } from "../../services/skillService";
+
+import {
+    createSkillRequest,
+    getMySkillRequests,
+} from "../../services/skillRequestService";
+
+import "./employeeSection.css";
+
+
+const SkillsSection = ({
+    skills,
+    setSkills,
+}) => {
 
     const [skill, setSkill] = useState("");
-    const [rating, setRating] = useState(1);
-    const [availableSkills, setAvailableSkills] = useState([]);
 
-    // NEW
-    const [editingIndex, setEditingIndex] = useState(null);
+    const [rating, setRating] = useState(1);
+
+    const [availableSkills, setAvailableSkills] =
+        useState([]);
+
+    const [pendingRequests, setPendingRequests] =
+        useState([]);
+
+    /*
+    Used when editing an existing skill.
+    */
+
+    const [editingSkill, setEditingSkill] =
+        useState(null);
+
+
+    // ==========================================
+    // LOAD AVAILABLE SKILLS + REQUESTS
+    // ==========================================
 
     useEffect(() => {
 
         loadSkills();
 
+        loadPendingRequests();
+
     }, []);
+
 
     const loadSkills = async () => {
 
         try {
 
-            const res = await getSkills();
+            const res =
+                await getSkills();
 
-            setAvailableSkills(res.data);
+            setAvailableSkills(
+                res.data || []
+            );
 
         }
 
         catch (error) {
 
-            console.log(error);
+            console.error(
+                "Failed to load skills:",
+                error
+            );
 
         }
 
     };
 
-    const addSkill = () => {
 
-        if (!skill) {
+    const loadPendingRequests = async () => {
 
-            toast.error("Please select a skill");
+        try {
 
-            return;
+            const res =
+                await getMySkillRequests();
 
-        }
+            /*
+            We only want PENDING requests
+            in this card.
+            */
 
-        const exists = skills.some(
-            (s, index) =>
-                s.skill === skill &&
-                index !== editingIndex
-        );
+            const pending =
+                (res.data || []).filter(
+                    request =>
+                        request.status === "PENDING"
+                );
 
-        if (exists) {
-
-            toast.error("Skill already added");
-
-            return;
-
-        }
-
-        // ============================
-        // EDIT MODE
-        // ============================
-
-        if (editingIndex !== null) {
-
-            const updatedSkills = [...skills];
-
-            updatedSkills[editingIndex] = {
-
-                skill,
-
-                rating: Number(rating),
-
-            };
-
-            setSkills(updatedSkills);
-
-            toast.success("Skill Updated");
-
-            setEditingIndex(null);
+            setPendingRequests(pending);
 
         }
 
-        // ============================
-        // ADD MODE
-        // ============================
+        catch (error) {
 
-        else {
-
-            setSkills([
-
-                ...skills,
-
-                {
-
-                    skill,
-
-                    rating: Number(rating),
-
-                },
-
-            ]);
-
-            toast.success("Skill Added");
+            console.error(
+                "Failed to load skill requests:",
+                error
+            );
 
         }
-
-        clearForm();
 
     };
 
-    // ============================
-    // EDIT SKILL
-    // ============================
 
-    const editSkill = (item, index) => {
+    // ==========================================
+    // RESET TOP FORM
+    // ==========================================
 
-        setSkill(item.skill);
-
-        setRating(item.rating);
-
-        setEditingIndex(index);
-
-    };
-
-    // ============================
-    // REMOVE SKILL
-    // ============================
-
-    const removeSkill = (index) => {
-
-        setSkills(
-            skills.filter((_, i) => i !== index)
-        );
-
-        // If the skill being edited is deleted
-        if (editingIndex === index) {
-
-            clearForm();
-
-        }
-
-        toast.success("Skill Removed");
-
-    };
-
-    // ============================
-    // CLEAR FORM
-    // ============================
-
-    const clearForm = () => {
+    const resetForm = () => {
 
         setSkill("");
 
         setRating(1);
 
-        setEditingIndex(null);
+        setEditingSkill(null);
 
     };
+
+
+    // ==========================================
+    // ADD / UPDATE SKILL REQUEST
+    // ==========================================
+
+    const handleSubmitSkill = async () => {
+
+        if (!skill) {
+
+            toast.error(
+                "Please select a skill"
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ======================================
+        UPDATE EXISTING SKILL
+        ======================================
+        */
+
+        if (editingSkill) {
+
+            /*
+            If rating didn't change,
+            don't create a request.
+            */
+
+            if (
+                Number(editingSkill.rating) ===
+                Number(rating)
+            ) {
+
+                toast.error(
+                    "Please change the rating"
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                await createSkillRequest({
+
+                    type: "UPDATE",
+
+                    skill:
+                        editingSkill.skill,
+
+                    oldRating:
+                        Number(
+                            editingSkill.rating
+                        ),
+
+                    newRating:
+                        Number(rating),
+
+                });
+
+
+                toast.success(
+                    "Skill update request submitted"
+                );
+
+
+                /*
+                IMPORTANT:
+                Do NOT change `skills` here.
+
+                The old rating stays visible
+                until Admin approves.
+                */
+
+                resetForm();
+
+                await loadPendingRequests();
+
+            }
+
+            catch (error) {
+
+                toast.error(
+
+                    error.response?.data?.message ||
+
+                    "Failed to submit skill update request"
+
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        /*
+        ======================================
+        ADD NEW SKILL
+        ======================================
+        */
+
+        const exists =
+            skills.some(
+                item =>
+                    item.skill.toLowerCase() ===
+                    skill.toLowerCase()
+            );
+
+
+        if (exists) {
+
+            toast.error(
+                "Skill already exists"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            await createSkillRequest({
+
+                type: "ADD",
+
+                skill,
+
+                oldRating: null,
+
+                newRating:
+                    Number(rating),
+
+            });
+
+
+            toast.success(
+                "Skill addition request submitted"
+            );
+
+
+            /*
+            Do NOT add it to `skills`.
+
+            It will appear in Current Skills
+            only after Admin approves.
+            */
+
+            resetForm();
+
+            await loadPendingRequests();
+
+        }
+
+        catch (error) {
+
+            toast.error(
+
+                error.response?.data?.message ||
+
+                "Failed to submit skill request"
+
+            );
+
+        }
+
+    };
+
+
+    // ==========================================
+    // EDIT EXISTING SKILL
+    // ==========================================
+
+    const editSkill = (item) => {
+
+        setEditingSkill(item);
+
+        setSkill(item.skill);
+
+        setRating(
+            Number(item.rating)
+        );
+
+        /*
+        Scroll to the top of this section
+        so user can immediately see the
+        Skill + Rating fields.
+        */
+
+        window.scrollTo({
+
+            top:
+                window.scrollY - 100,
+
+            behavior: "smooth",
+
+        });
+
+    };
+
+
+    // ==========================================
+    // REMOVE SKILL REQUEST
+    // ==========================================
+
+    const removeSkill = async (item) => {
+
+        /*
+        Check whether this skill already
+        has a pending request.
+        */
+
+        const alreadyPending =
+            pendingRequests.some(
+                request =>
+                    request.skill.toLowerCase() ===
+                    item.skill.toLowerCase()
+            );
+
+
+        if (alreadyPending) {
+
+            toast.error(
+                "A pending request already exists for this skill"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            await createSkillRequest({
+
+                type: "REMOVE",
+
+                skill: item.skill,
+
+                oldRating:
+                    Number(item.rating),
+
+                newRating: null,
+
+            });
+
+
+            toast.success(
+                "Skill removal request submitted"
+            );
+
+
+            /*
+            Do NOT remove it from the
+            current skills table.
+
+            It stays there until Admin
+            approves the request.
+            */
+
+            await loadPendingRequests();
+
+        }
+
+        catch (error) {
+
+            toast.error(
+
+                error.response?.data?.message ||
+
+                "Failed to submit skill removal request"
+
+            );
+
+        }
+
+    };
+
+
+    // ==========================================
+    // CANCEL EDIT
+    // ==========================================
+
+    const cancelEdit = () => {
+
+        resetForm();
+
+    };
+
 
     return (
 
         <>
 
+            {/* =====================================
+                SKILL INPUT SECTION
+            ====================================== */}
+
             <div className="section-grid">
 
                 <div className="field">
 
-                    <label>Skill</label>
+                    <label>
+                        Skill
+                    </label>
 
                     <select
                         value={skill}
                         onChange={(e) =>
-                            setSkill(e.target.value)
+                            setSkill(
+                                e.target.value
+                            )
+                        }
+                        disabled={
+                            !!editingSkill
                         }
                     >
 
@@ -186,36 +454,43 @@ const SkillsSection = ({ skills, setSkills }) => {
                             Select Skill
                         </option>
 
-                        {
-
-                            availableSkills.map(item => (
+                        {availableSkills.map(
+                            (item) => (
 
                                 <option
-                                    key={item._id}
-                                    value={item.name}
+                                    key={
+                                        item._id
+                                    }
+                                    value={
+                                        item.name
+                                    }
                                 >
 
                                     {item.name}
 
                                 </option>
 
-                            ))
-
-                        }
+                            )
+                        )}
 
                     </select>
 
                 </div>
 
+
                 <div className="field">
 
-                    <label>Rating</label>
+                    <label>
+                        Rating
+                    </label>
 
                     <select
                         value={rating}
                         onChange={(e) =>
                             setRating(
-                                Number(e.target.value)
+                                Number(
+                                    e.target.value
+                                )
                             )
                         }
                     >
@@ -244,163 +519,381 @@ const SkillsSection = ({ skills, setSkills }) => {
 
                 </div>
 
-                <button
-                    type="button"
-                    className="primary-btn"
-                    onClick={addSkill}
+
+                <div
+                    style={{
+                        display: "flex",
+                        gap: "8px",
+                    }}
                 >
 
-                    {editingIndex !== null
-                        ? "Update"
-                        : "+ Add"}
+                    <button
+                        type="button"
+                        className="primary-btn"
+                        onClick={
+                            handleSubmitSkill
+                        }
+                    >
 
-                </button>
+                        {editingSkill
+                            ? "Update"
+                            : "+ Add"}
+
+                    </button>
+
+
+                    {editingSkill && (
+
+                        <button
+                            type="button"
+                            className="cancel-btn"
+                            onClick={
+                                cancelEdit
+                            }
+                        >
+
+                            Cancel
+
+                        </button>
+
+                    )}
+
+                </div>
 
             </div>
 
-            {
 
-                skills.length === 0 ? (
+            {/* =====================================
+                CURRENT SKILLS
+            ====================================== */}
 
-                    <div className="empty">
+            {skills.length === 0 ? (
 
-                        No skills added
+                <div className="empty">
 
-                    </div>
+                    No skills added
 
-                ) : (
+                </div>
 
-                    <table className="data-table">
+            ) : (
 
-                        <thead>
+                <table className="data-table">
 
-                            <tr>
+                    <thead>
 
-                                <th>
-                                    Skill
-                                </th>
+                        <tr>
 
-                                <th>
-                                    Rating
-                                </th>
+                            <th>
+                                Skill
+                            </th>
 
-                                <th
-                                    style={{
-                                        textAlign: "right",
-                                        paddingRight: "35px",
-                                    }}
+                            <th>
+                                Rating
+                            </th>
+
+                            <th
+                                style={{
+                                    textAlign:
+                                        "right", paddingRight:"35px",
+                                }}
+                            >
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {skills.map(
+                            (item, index) => (
+
+                                <tr
+                                    key={
+                                        index
+                                    }
                                 >
-                                    Actions
-                                </th>
+
+                                    <td>
+                                        {
+                                            item.skill
+                                        }
+                                    </td>
+
+
+                                    <td>
+
+                                        {"★".repeat(
+                                            Number(
+                                                item.rating
+                                            )
+                                        )}
+
+                                    </td>
+
+
+                                    <td
+                                        style={{
+                                            textAlign:
+                                                "right",
+                                        }}
+                                    >
+
+                                        <div
+                                            style={{
+                                                display:
+                                                    "flex",
+                                                justifyContent:
+                                                    "flex-end",
+                                                gap:
+                                                    "8px",
+                                            }}
+                                        >
+
+                                            {/* EDIT */}
+
+                                            <button
+                                                type="button"
+                                                className="skill-edit-btn"
+                                                onClick={() =>
+                                                    editSkill(
+                                                        item
+                                                    )
+                                                }
+                                                title="Edit Skill"
+                                            >
+
+                                                <Pencil
+                                                    size={
+                                                        18
+                                                    }
+                                                />
+
+                                            </button>
+
+
+                                            {/* REMOVE */}
+
+                                            <button
+                                                type="button"
+                                                className="remove-btn"
+                                                onClick={() =>
+                                                    removeSkill(
+                                                        item
+                                                    )
+                                                }
+                                                title="Request Skill Removal"
+                                            >
+
+                                                <Trash2
+                                                    size={
+                                                        18
+                                                    }
+                                                />
+
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            )
+                        )}
+
+                    </tbody>
+
+                </table>
+
+            )}
+
+
+            {/* =====================================
+                PENDING REQUESTS
+            ====================================== */}
+
+            {pendingRequests.length > 0 && (
+
+    <div className="pending-skill-card">
+
+        <div className="pending-skill-header">
+
+            <div>
+
+                <h3>
+                    Pending Skill Requests
+                </h3>
+
+                <p>
+                    These changes are waiting for
+                    administrator approval.
+                </p>
+
+            </div>
+
+            <span className="pending-count">
+                {pendingRequests.length}
+            </span>
+
+        </div>
+
+
+        <div className="pending-table-wrapper">
+
+            <table className="pending-skill-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Skill
+                        </th>
+
+                        <th>
+                            Request
+                        </th>
+
+                        <th>
+                            Rating
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {pendingRequests.map(
+                        (request) => (
+
+                            <tr
+                                key={
+                                    request._id
+                                }
+                            >
+
+                                <td>
+                                    {request.skill}
+                                </td>
+
+
+                                <td>
+
+                                    {request.type ===
+                                        "ADD" &&
+                                        "Add"}
+
+                                    {request.type ===
+                                        "REMOVE" &&
+                                        "Remove"}
+
+                                    {request.type ===
+                                        "UPDATE" &&
+                                        "Update"}
+
+                                </td>
+
+
+                                <td>
+
+                                    {request.type ===
+                                        "ADD" && (
+
+                                        <>
+                                           
+
+                                            {"★".repeat(
+                                                Number(
+                                                    request.newRating
+                                                )
+                                            )}
+
+                                        </>
+
+                                    )}
+
+
+                                    {request.type ===
+                                        "REMOVE" && (
+
+                                        <>
+                                            {"★".repeat(
+                                                Number(
+                                                    request.oldRating
+                                                )
+                                            )}
+
+                                            {" → Removed"}
+
+                                        </>
+
+                                    )}
+
+
+                                    {request.type ===
+                                        "UPDATE" && (
+
+                                        <>
+                                            {"★".repeat(
+                                                Number(
+                                                    request.oldRating
+                                                )
+                                            )}
+
+                                            {" → "}
+
+                                            {"★".repeat(
+                                                Number(
+                                                    request.newRating
+                                                )
+                                            )}
+
+                                        </>
+
+                                    )}
+
+                                </td>
+
+
+                                <td>
+
+                                    <span className="pending-status">
+
+                                        Pending
+
+                                    </span>
+
+                                </td>
 
                             </tr>
 
-                        </thead>
+                        )
+                    )}
 
-                        <tbody>
+                </tbody>
 
-                            {
+            </table>
 
-                                skills.map(
-                                    (item, index) => (
+        </div>
 
-                                        <tr
-                                            key={index}
-                                        >
+    </div>
 
-                                            <td>
-
-                                                {item.skill}
-
-                                            </td>
-
-                                            <td>
-
-                                                {"★".repeat(
-                                                    item.rating
-                                                )}
-
-                                            </td>
-
-                                            <td
-                                                style={{
-                                                    textAlign:
-                                                        "center",
-                                                }}
-                                            >
-
-                                                <div
-                                                    style={{
-                                                        display:
-                                                            "flex",
-                                                        justifyContent:
-                                                            "flex-end",
-                                                        gap: "8px",
-                                                    }}
-                                                >
-
-                                                    {/* EDIT */}
-
-                                                    <button
-                                                        type="button"
-                                                        className="skill-edit-btn"
-                                                        title="Edit Skill"
-                                                        onClick={() =>
-                                                            editSkill(
-                                                                item,
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-
-                                                        <Pencil
-                                                            size={18}
-                                                        />
-
-                                                    </button>
-
-                                                    {/* DELETE */}
-
-                                                    <button
-                                                        type="button"
-                                                        className="remove-btn"
-                                                        title="Delete Skill"
-                                                        onClick={() =>
-                                                            removeSkill(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-
-                                                        <Trash2
-                                                            size={18}
-                                                        />
-
-                                                    </button>
-
-                                                </div>
-
-                                            </td>
-
-                                        </tr>
-
-                                    )
-                                )
-
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                )
-
-            }
+)}
 
         </>
 
     );
 
 };
+
 
 export default SkillsSection;

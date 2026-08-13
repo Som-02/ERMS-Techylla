@@ -2,8 +2,18 @@
 
     /* Primary */
 
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
+    --primary: linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #191f33 100%
+        );
+    --primary-hover: linear-gradient(
+            135deg,
+            #ecf5ff 0%,
+            #9fc3f5 42%,
+            #131d3d 100%
+        );
 
     /* Status */
 
@@ -13,13 +23,13 @@
 
     /* Background */
 
-    --background: #f8fafc;
+    --background: #ffffff;
     --card: #ffffff;
 
     /* Text */
 
     --heading: #0f172a;
-    --text: #334155;
+    --text: #000000;
     --muted: #64748b;
 
     /* Border */

@@ -227,7 +227,7 @@ const EmployeeForm = ({
 
         <div className="form-group">
 
-            <label>Email</label>
+            <label>Email ★</label>
 
             <input placeholder="Email"
                 type="email"

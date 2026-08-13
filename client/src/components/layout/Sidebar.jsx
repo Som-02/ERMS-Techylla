@@ -2,12 +2,15 @@ import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import techyllaLogo from "../../assets/techylla-logo.png";
 const Sidebar = () => {
-    const { logout } = useAuth();
+   const {
+    logout,
+    isAdmin,
+    isEmployee
+} = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
-        navigate("/");
     };
 
     return (
@@ -29,33 +32,54 @@ const Sidebar = () => {
 
     <nav className="sidebar-nav">
 
-        <NavLink to="/dashboard">
-            Dashboard
-        </NavLink>
-<NavLink to="/clients">
-            Clients
-        </NavLink>
+    {isAdmin && (
 
-        <NavLink to="/projects">
-            Projects
-        </NavLink>
-        <NavLink to="/employees">
+        <>
+
+            <NavLink to="/dashboard">
+                Dashboard
+            </NavLink>
+
+            <NavLink to="/clients">
+                Clients
+            </NavLink>
+
+            <NavLink to="/projects">
+                Projects
+            </NavLink>
+
+            <NavLink to="/employees">
+                Employee Master
+            </NavLink>
+
+            <NavLink to="/skills">
+                Role Sets
+            </NavLink>
+
+            <NavLink to="/skill-matrix">
+                Role Matrix
+            </NavLink>
+
+            <NavLink to="/skill-requests">
+                Role Requests
+            </NavLink>
+        </>
+
+    )}
+
+    {isEmployee && (
+
+        <NavLink to="/employee">
             Employee Master
         </NavLink>
 
-        <NavLink to="/skills">
-    Role Sets
-</NavLink>
-<NavLink to="/skill-matrix">
-    Role Matrix
-</NavLink>
-        
+    )}
 
-        <NavLink to="/settings">
-            Settings
-        </NavLink>
+    <NavLink to="/settings">
+        Settings
+    </NavLink>
 
-    </nav>
+</nav>
 
     <button
         className="logout-btn"

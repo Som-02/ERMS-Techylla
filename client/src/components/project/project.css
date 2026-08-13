@@ -1,6 +1,6 @@
 .project-table-wrapper{
-    background:#fff;
-    border:1px solid #e5e7eb;
+    background:#ffffff;
+    border: 1px solid #e5e7eb;
     border-radius:14px;
     overflow-x:auto;
     overflow-y:hidden;
@@ -29,7 +29,7 @@
 }
 
 .project-table thead{
-    background:#a0c8f0;
+    background:#f8fafc;
 }
 
 .project-table th{
@@ -37,13 +37,14 @@
     text-align:left;
     padding:16px 22px;
     font-size:.9rem;
-    font-weight:600;
-    color:#374151;
+    font-weight:700;
+    color:#0f1115;
 }
 .project-table thead th:last-child{
     text-align: center;
 }
 .project-table td{
+    color:#0f1115;
     vertical-align:left;
     padding:16px 22px;
     border-top:1px solid #f1f5f9;
@@ -79,7 +80,7 @@
     min-width:90px;
     margin:0 auto;
     background:#eff6ff;
-    color:#2563eb;
+    color:#2d5ec9;
     padding:6px 14px;
     border-radius:999px;
     font-size:.82rem;
@@ -189,8 +190,8 @@
 
 .project-form-card{
     max-width:700px;
-    background:#fff;
-    border:1px solid #e5e7eb;
+    background:#ffffff;
+    border: none;
     border-radius:14px;
     padding:30px;
     box-shadow:0 3px 12px rgba(0,0,0,.05);
@@ -203,7 +204,7 @@
 .form-group label{
     display:block;
     margin-bottom:8px;
-    color:#374151;
+    color:#000000;
     font-weight:600;
 }
 
@@ -252,39 +253,91 @@ height:36px;
 }
 
 }
-.cancel-btn{
-    background:#f3f4f6;
-    color:#374151;
-    border:none;
-    padding:10px 20px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:600;
-    transition:.2s;
+/* ==========================================
+   CANCEL BUTTON
+========================================== */
+
+.cancel-btn {
+    background: #f3f4f6;
+    color: #374151;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
-.cancel-btn:hover{
-    background:#e5e7eb;
+.cancel-btn:hover {
+    background: #e5e7eb;
 }
 
-.save-btn{
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    padding:10px 22px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:600;
-    transition:.2s;
+
+/* ==========================================
+   SAVE / ADD / UPDATE BUTTON
+========================================== */
+
+.save-btn {
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color: #ffffff;
+
+    border: none;
+
+    padding: 10px 22px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+    box-shadow:
+        0 4px 10px rgba(25, 31, 51, 0.18);
 }
 
-.save-btn:hover:not(:disabled){
-    background:#1d4ed8;
+
+/* Hover */
+
+.save-btn:hover:not(:disabled) {
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(25, 31, 51, 0.28);
 }
 
-.save-btn:disabled{
-    opacity:.7;
-    cursor:not-allowed;
+
+/* Click */
+
+.save-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+
+/* Disabled */
+
+.save-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 .form-group.full{
     grid-column:1 / -1;
@@ -315,7 +368,7 @@ height:36px;
 
 .form-group textarea:focus{
 
-    border-color:#2563eb;
+    border-color:#000000;
 
     box-shadow:0 0 0 3px rgba(37,99,235,.12);
 

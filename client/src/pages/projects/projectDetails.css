@@ -6,7 +6,7 @@
 .back-link{
     display:inline-block;
     margin-bottom:20px;
-    color:#2563eb;
+    color:#030406;
     text-decoration:none;
     font-weight:600;
 }
@@ -29,7 +29,12 @@
 }
 
 .detail{
-    background:#fff;
+    background: linear-gradient(
+        145deg,
+        #080b12,
+        #141c2a 55%,
+        #152f84
+    );
     border:1px solid #e5e7eb;
     border-radius:12px;
     padding:18px;
@@ -39,27 +44,27 @@
 
 .detail span{
     display:block;
-    color:#6b7280;
+    color:#e5e7ec;
     font-size:.85rem;
     margin-bottom:6px;
 }
 
 .detail strong{
     font-size:1rem;
-    color:#111827;
+    color:#ffffff;
 }
 
 .project-details h2{
     margin-bottom:18px;
-    color:#111827;
+    color:#fefeff;
 }
 
 .employee-table{
     width:100%;
     border-collapse:collapse;
-    background:#fff;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
+    background:#aeb5cb;
+    border: 1px solid #e5e7eb;
+    border-radius:14px;
     overflow:hidden;
     box-shadow:0 3px 12px rgba(0,0,0,.05);
 }
@@ -131,10 +136,41 @@
     margin:20px 0;
 
 }
-
+.delete-btn{
+    padding: 10px 18px;
+    border-radius:8px;
+    border:none;
+}
 .assign-btn{
 
-    background:#2563eb;
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color:#fff;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+.edit-btn{
+
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
 
     color:#fff;
 
@@ -150,9 +186,24 @@
 
 }
 
+.edit-btn:hover{
+
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+}
 .assign-btn:hover{
 
-    background:#1d4ed8;
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
 
 }
 .role-list{
@@ -271,8 +322,8 @@
 
     margin-top:12px;
 
-    max-height:90px;
-    color:#000000;
+    max-height:88px;
+    color:#e6e0e0;
     overflow-y:auto;
     font-weight:600;
     white-space:pre-wrap;
@@ -318,13 +369,9 @@
 
     font-weight:600;
 
-    color:#6b7280;
+    color:#868788;
 
-    background:linear-gradient(
-        to top,
-        white 45%,
-        rgba(255,255,255,0)
-    );
+    background:transparent;
 
     pointer-events:none;
 

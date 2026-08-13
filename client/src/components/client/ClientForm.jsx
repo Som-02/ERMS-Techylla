@@ -74,14 +74,7 @@ const ClientForm = ({
     return (
 
         <div
-            style={{
-                maxWidth: "650px",
-                background: "#fff",
-                borderRadius: "14px",
-                padding: "30px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 3px 12px rgba(0,0,0,.05)"
-            }}
+            className="client-form"
         >
 
             <form onSubmit={submitHandler}>
@@ -134,7 +127,7 @@ const ClientForm = ({
                     <button
                         type="button"
                         onClick={() => navigate("/clients")}
-                        className="client-btn view-btn"
+                        className="cancel-btn"
                     >
 
                         Cancel
@@ -143,7 +136,7 @@ const ClientForm = ({
 
                     <button
                         type="submit"
-                        className="client-btn edit-btn"
+                        className="edit-btn"
                     >
 
                         {

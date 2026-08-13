@@ -1,14 +1,15 @@
 .employee-table-card{
-    background:#fff;
+    background:#ffffff;
     border-radius:12px;
-    border:1px solid var(--border);
+    border: none;
     overflow:hidden;
-    box-shadow:var(--shadow);
+    box-shadow:0 3px 12px rgba(0,0,0,.05);
 }
 
 .employee-table{
     width:100%;
     border-collapse:collapse;
+    border: none;
 }
 
 .employee-table thead{
@@ -19,7 +20,8 @@
 }
 .employee-table th{
     text-align:left;
-    color:#374151;
+    color:#18191b;
+    border:none;
     padding:16px;
     font-size:14px;
 }
@@ -31,9 +33,14 @@
     text-align:left;
     vertical-align:middle;
     padding:18px 16px;
+    border:none;
     border-top:1px solid var(--border);
+    background: #ffffff;
+    transition: background 0.2s ease;
 }
-
+.employee-table tbody tr:not(.employee-underutilized):not(.employee-overloaded):hover td {
+    background: #f8fafc;
+}
 .employee-table tbody tr:hover{
     background:#f8fafc;
 }
@@ -118,7 +125,7 @@
 }
 .employee-underutilized td{
 
-    background:#a2ffcd;
+    background:#8cdab0;
 
 }
 
@@ -130,12 +137,12 @@
 
 .employee-overloaded td{
 
-    background:#eca9a9;
+    background:#ef8888;
 
 }
 
 .employee-overloaded:hover td{
 
-    background:#fee2e2;
+    background:#e7a6a6;
 
 }

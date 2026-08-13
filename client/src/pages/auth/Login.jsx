@@ -1,65 +1,179 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import "./login.css";
-
-import { login } from "../../services/authService";
 import useAuth from "../../hooks/useAuth";
+import {
+    useMsal,
+} from "@azure/msal-react";
 
-import logo from "../../assets/image.png";
+import {
+    InteractionStatus,
+} from "@azure/msal-browser";
 
+import "./login.css";
+import microsoftLogo from "../../assets/microsoft-logo.png";
+import logo from "../../assets/vite.svg";
+import { loginRequest } from "../../config/authConfig";
+import {
+    microsoftLogin,
+} from "../../services/authService";
 const Login = () => {
 
     const navigate = useNavigate();
-
-    const { loginUser } = useAuth();
-
-    const [email, setEmail] = useState("");
-
-    const [password, setPassword] = useState("");
+const { loginUser } = useAuth();
+    const {
+        instance,
+        accounts,
+        inProgress,
+    } = useMsal();
 
     const [loading, setLoading] = useState(false);
 
-    const submitHandler = async (e) => {
+    useEffect(() => {
 
-        e.preventDefault();
+        if (
+            inProgress !== InteractionStatus.None
+        ) {
+            return;
+        }
 
-        setLoading(true);
+        const handleRedirect = async () => {
+
+    try {
+
+        const response =
+            await instance.handleRedirectPromise();
+
+        if (!response) {
+            return;
+        }
+
+        console.log(
+            "Microsoft login response:",
+            response
+        );
+
+        const account = response.account;
+
+        console.log(
+            "Microsoft account:",
+            account
+        );
+
+        const claims =
+            response.idTokenClaims;
+
+        console.log(
+            "Microsoft ID token claims:",
+            claims
+        );
+
+        const roles =
+            claims?.roles || [];
+
+        console.log(
+            "Microsoft roles:",
+            roles
+        );
+
+        console.log(
+            "✅ ADMINISTRATOR ROLE VERIFIED"
+        );
+
+        // Send Microsoft ID token to your backend
+        const backendResponse =
+            await microsoftLogin(
+                response.idToken
+            );
+
+        // Store YOUR application's JWT + admin data
+       loginUser(
+    backendResponse.user,
+    backendResponse.token
+);
+
+        toast.success(
+            "Microsoft login successful!"
+        );
+
+        if (
+    backendResponse.user.role === "Administrator"
+) {
+
+    navigate("/dashboard");
+
+} else if (
+    backendResponse.user.role === "Employee"
+) {
+
+    navigate("/employees");
+
+}
+
+    } catch (error) {
+
+        console.error(
+            "Microsoft redirect login error:",
+            error
+        );
+
+        toast.error(
+            error?.errorMessage ||
+            error?.message ||
+            "Microsoft login failed"
+        );
+
+    } finally {
+
+        setLoading(false);
+
+    }
+};
+
+        handleRedirect();
+
+    }, [
+        instance,
+        inProgress,
+        navigate,
+    ]);
+
+
+    const handleMicrosoftLogin = async () => {
+
+        if (
+            inProgress !== InteractionStatus.None
+        ) {
+            return;
+        }
 
         try {
 
-            const res = await login({
-                email,
-                password,
-            });
+            setLoading(true);
 
-            loginUser(res.admin, res.token);
-
-            toast.success("Login Successful");
-
-            if (res.mustChangePassword) {
-
-                navigate("/change-password");
-
-            } else {
-
-                navigate("/dashboard");
-
-            }
+            await instance.loginRedirect(
+                loginRequest
+            );
 
         } catch (error) {
 
-            toast.error(
-                error.response?.data?.message || "Login Failed"
+            console.error(
+                "Microsoft login error:",
+                error
             );
 
-        } finally {
+            toast.error(
+                error?.errorMessage ||
+                error?.message ||
+                "Microsoft login failed"
+            );
 
             setLoading(false);
 
         }
 
     };
+
 
     return (
 
@@ -77,72 +191,50 @@ const Login = () => {
 
                 </div>
 
+
                 <h1 className="login-title">
 
-                    Human Resource Management System
+                    Human Resource
+                    <br />
+                    Management System
 
                 </h1>
 
+
                 <p className="login-subtitle">
 
-                    Sign in to continue to your dashboard
+                    Sign in using your company
+                    Microsoft account
 
                 </p>
 
-                <form
-                    className="login-form"
-                    onSubmit={submitHandler}
-                >
 
-                    <div className="login-group">
+                <button
+    className="login-btn"
+    type="button"
+    onClick={handleMicrosoftLogin}
+    disabled={
+        loading ||
+        inProgress !== InteractionStatus.None
+    }
+>
+    {loading ? (
+        "Signing in..."
+    ) : (
+        <>
+            <img
+                src={microsoftLogo}
+                alt=""
+                className="microsoft-logo"
+            />
 
-                        <label>
+            <span>
+                Sign in with Microsoft
+            </span>
+        </>
+    )}
+</button>
 
-                            Email Address
-
-                        </label>
-
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={loading}
-                        />
-
-                    </div>
-
-                    <div className="login-group">
-
-                        <label>
-
-                            Password
-
-                        </label>
-
-                        <input
-                            type="password"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={loading}
-                        />
-
-                    </div>
-
-                    <button
-                        className="login-btn"
-                        type="submit"
-                        disabled={loading}
-                    >
-
-                        {loading
-                            ? "Please wait, logging you in..."
-                            : "Sign In"}
-
-                    </button>
-
-                </form>
 
                 <div className="login-footer">
 

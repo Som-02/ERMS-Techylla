@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { User, Shield } from "lucide-react";
+
+import { User } from "lucide-react";
+
 import "./settings.css";
+
 import Loader from "../../components/common/Loader";
 import PageHeader from "../../components/common/PageHeader";
+
 import useAuth from "../../hooks/useAuth";
 
-import {
-    getProfile,
-    updateProfile,
-    changePassword,
-} from "../../services/authService";
+import { getProfile } from "../../services/authService";
+
 
 const Settings = () => {
 
-    const { updateAdmin } = useAuth();
+    const { user } = useAuth();
 
-    const [editingProfile, setEditingProfile] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const [profile, setProfile] = useState({
@@ -24,30 +23,58 @@ const Settings = () => {
         email: "",
     });
 
-    const [passwordData, setPasswordData] = useState({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-    });
 
     useEffect(() => {
+
         loadProfile();
+
     }, []);
+
 
     const loadProfile = async () => {
 
         try {
 
+            /*
+            Get the currently authenticated
+            user's profile from the backend.
+            */
+
             const res = await getProfile();
 
             setProfile({
-                name: res.data.name,
-                email: res.data.email,
+
+                name:
+                    res.data?.name ||
+                    user?.name ||
+                    "",
+
+                email:
+                    res.data?.email ||
+                    user?.email ||
+                    "",
+
             });
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Failed to load profile:",
+                error
+            );
+
+            /*
+            Fallback to authenticated user
+            information if profile API fails.
+            */
+
+            setProfile({
+
+                name: user?.name || "",
+
+                email: user?.email || "",
+
+            });
 
         } finally {
 
@@ -57,80 +84,6 @@ const Settings = () => {
 
     };
 
-    const profileChangeHandler = (e) => {
-
-        setProfile({
-            ...profile,
-            [e.target.name]: e.target.value,
-        });
-
-    };
-
-    const passwordChangeHandler = (e) => {
-
-        setPasswordData({
-            ...passwordData,
-            [e.target.name]: e.target.value,
-        });
-
-    };
-
-    const saveProfile = async (e) => {
-
-        e.preventDefault();
-
-        try {
-
-            const res = await updateProfile(profile);
-
-            updateAdmin(res.admin);
-
-            setProfile({
-                name: res.admin.name,
-                email: res.admin.email,
-            });
-
-            setEditingProfile(false);
-
-            toast.success(res.message);
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.message ||
-                "Unable to update profile"
-            );
-
-        }
-
-    };
-
-    const updatePassword = async (e) => {
-
-        e.preventDefault();
-
-        try {
-
-            const res = await changePassword(passwordData);
-
-            toast.success(res.message);
-
-            setPasswordData({
-                currentPassword: "",
-                newPassword: "",
-                confirmPassword: "",
-            });
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.message ||
-                "Unable to change password"
-            );
-
-        }
-
-    };
 
     if (loading) {
 
@@ -138,16 +91,23 @@ const Settings = () => {
 
     }
 
+
     return (
 
         <div className="settings-page">
 
             <PageHeader
                 title="Settings"
-                subtitle="Manage your account information and security."
+                subtitle="View your account information."
             />
 
+
             <div className="settings-card">
+
+
+                {/* =================================
+                    PROFILE HEADER
+                ================================= */}
 
                 <div className="profile-header">
 
@@ -155,29 +115,43 @@ const Settings = () => {
 
                         <div className="profile-avatar">
 
-                            {profile.name.charAt(0).toUpperCase()}
+                            {profile.name
+                                ? profile.name
+                                    .charAt(0)
+                                    .toUpperCase()
+                                : "U"}
 
                         </div>
+
 
                         <div>
 
                             <div className="profile-name">
 
-                                {profile.name}
+                                {profile.name || "User"}
 
                             </div>
+
 
                             <div className="profile-email">
 
-                                {profile.email}
+                                {profile.email || "-"}
 
                             </div>
-
+                            
+                            <div className="profile-role">
+                                {user?.role || "-"}
+                            </div>
                         </div>
 
                     </div>
 
                 </div>
+
+
+                {/* =================================
+                    ACCOUNT INFORMATION
+                ================================= */}
 
                 <h3>
 
@@ -187,216 +161,50 @@ const Settings = () => {
 
                 </h3>
 
-                {
 
-                    !editingProfile ? (
+                <div className="info-row">
 
-                        <>
+                    <div className="info-label">
 
-                            <div className="info-row">
-
-                                <div className="info-label">
-
-                                    Full Name
-
-                                </div>
-
-                                <div className="info-value">
-
-                                    {profile.name}
-
-                                </div>
-
-                            </div>
-
-                            <div className="info-row">
-
-                                <div className="info-label">
-
-                                    Email Address
-
-                                </div>
-
-                                <div className="info-value">
-
-                                    {profile.email}
-
-                                </div>
-
-                            </div>
-
-                            <div className="button-group">
-
-    <button
-        className="edit-btn"
-        onClick={() => setEditingProfile(true)}
-    >
-        Edit Profile
-    </button>
-
-</div>
-
-                        </>
-
-                    ) : (
-
-                        <form
-                            className="settings-form"
-                            onSubmit={saveProfile}
-                        >
-
-                            <div>
-
-                                <label>
-
-                                    Full Name
-
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={profile.name}
-                                    onChange={profileChangeHandler}
-                                />
-
-                            </div>
-
-                            <div>
-
-                                <label>
-
-                                    Email Address
-
-                                </label>
-
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={profile.email}
-                                    onChange={profileChangeHandler}
-                                />
-
-                            </div>
-
-                            <div className="button-group">
-
-                                <button
-                                    type="button"
-                                    className="cancel-btn"
-                                    onClick={() => {
-
-                                        loadProfile();
-
-                                        setEditingProfile(false);
-
-                                    }}
-                                >
-
-                                    Cancel
-
-                                </button>
-
-                                <button
-                                    type="submit"
-                                    className="save-btn"
-                                >
-
-                                    Save Changes
-
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    )
-
-                }
-
-            </div>
-
-            <div className="settings-card">
-
-                <h3>
-
-                    <Shield size={20} />
-
-                    Change Password
-
-                </h3>
-
-                <form
-                    className="settings-form"
-                    onSubmit={updatePassword}
-                >
-
-                    <div>
-
-                        <label>
-
-                            Current Password
-
-                        </label>
-
-                        <input
-                            type="password"
-                            name="currentPassword"
-                            value={passwordData.currentPassword}
-                            onChange={passwordChangeHandler}
-                        />
+                        Full Name
 
                     </div>
 
-                    <div>
+                    <div className="info-value">
 
-                        <label>
-
-                            New Password
-
-                        </label>
-
-                        <input
-                            type="password"
-                            name="newPassword"
-                            value={passwordData.newPassword}
-                            onChange={passwordChangeHandler}
-                        />
+                        {profile.name || "-"}
 
                     </div>
 
-                    <div>
+                </div>
 
-                        <label>
 
-                            Confirm Password
+                <div className="info-row">
 
-                        </label>
+                    <div className="info-label">
 
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            value={passwordData.confirmPassword}
-                            onChange={passwordChangeHandler}
-                        />
+                        Email Address
 
                     </div>
 
-                    <div className="button-group">
+                    <div className="info-value">
 
-                        <button
-                            className="save-btn"
-                            type="submit"
-                        >
-
-                            Update Password
-
-                        </button>
+                        {profile.email || "-"}
 
                     </div>
 
-                </form>
+                </div>
+                
+                <div className="info-row">
 
+                    <div className="info-label">
+                        Role
+                    </div>
+
+                    <div className="info-value">
+                        {user?.role || "-"}
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -404,5 +212,6 @@ const Settings = () => {
     );
 
 };
+
 
 export default Settings;

@@ -1,7 +1,7 @@
 import useAuth from "../../hooks/useAuth";
 
 const Navbar = () => {
-    const { admin } = useAuth();
+    const { user } = useAuth();
 
     return (
         <header className="navbar">
@@ -15,7 +15,7 @@ const Navbar = () => {
         Welcome,&nbsp;
 
         <strong>
-            {admin?.name}
+            {user?.name}
         </strong>
 
     </div>

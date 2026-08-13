@@ -1,13 +1,19 @@
 .search-wrapper{
-    background:white;
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #191f33 100%
+        );
     padding:20px;
     border-radius:12px;
-    border:1px solid var(--border);
+    border: 1px solid #e5e7eb;
     box-shadow:var(--shadow);
     margin-bottom:24px;
 }
 
 .search-input{
+    
     width:100%;
     padding:13px 16px;
     border:1px solid var(--border);

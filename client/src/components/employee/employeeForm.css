@@ -18,8 +18,8 @@
 }
 
 .form-card{
-    background: #fff;
-    border: 1px solid var(--border);
+    background:#ffffff;
+    border: none;
     border-radius: 12px;
     padding: 28px;
     margin-bottom: 24px;
@@ -67,21 +67,93 @@
     margin-top:30px;
 }
 
-.cancel-btn{
-    padding:12px 22px;
-    border:none;
-    border-radius:8px;
-    background:#e2e8f0;
-    cursor:pointer;
+
+
+/* ==========================================
+   CANCEL BUTTON
+========================================== */
+
+.cancel-btn {
+    background: #f3f4f6;
+    color: #374151;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
-.save-btn{
-    padding:12px 28px;
-    border:none;
-    border-radius:8px;
-    background:var(--primary);
-    color:white;
-    cursor:pointer;
+.cancel-btn:hover {
+    background: #e5e7eb;
+}
+
+
+/* ==========================================
+   SAVE / ADD / UPDATE BUTTON
+========================================== */
+
+.save-btn {
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color: #ffffff;
+
+    border: none;
+
+    padding: 10px 22px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+    box-shadow:
+        0 4px 10px rgba(25, 31, 51, 0.18);
+}
+
+
+/* Hover */
+
+.save-btn:hover:not(:disabled) {
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(25, 31, 51, 0.28);
+}
+
+
+/* Click */
+
+.save-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+
+/* Disabled */
+
+.save-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 .remove-btn {
     background: #fef2f2;

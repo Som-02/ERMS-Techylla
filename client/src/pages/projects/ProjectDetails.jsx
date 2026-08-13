@@ -8,6 +8,11 @@ import "./projectDetails.css";
 import { formatDate } from "../../utils/formatDate";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import toast from "react-hot-toast";
+import {
+    Eye,
+    Pencil,
+    Trash2,
+} from "lucide-react";
 const ProjectDetails = () => {
 
     const { id } = useParams();
@@ -417,7 +422,7 @@ setStaffingPlan(res.data.staffingPlan);
 
 <button
 
-className="action-btn edit-btn"
+className="edit-btn"
 
 onClick={() => {
 
@@ -449,13 +454,13 @@ setShowAssignmentModal(true);
 
 >
 
-Edit
+<Pencil size={18} />
 
 </button>
 
 <button
 
-className="action-btn delete-btn"
+className="delete-btn"
 
 onClick={() => {
 setEmployeeToDelete({
@@ -472,7 +477,7 @@ setShowDeleteDialog(true);
 
 >
 
-Delete
+<Trash2 size={18} />
 
 </button>
 

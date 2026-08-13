@@ -138,36 +138,6 @@
     margin-top:10px;
 }
 
-.edit-btn,
-.save-btn{
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    border-radius:8px;
-    padding:11px 22px;
-    cursor:pointer;
-    font-weight:600;
-    transition:.2s;
-}
-
-.edit-btn:hover,
-.save-btn:hover{
-    background:#1d4ed8;
-}
-
-.cancel-btn{
-    background:#f3f4f6;
-    color:#374151;
-    border:none;
-    border-radius:8px;
-    padding:11px 22px;
-    cursor:pointer;
-    font-weight:600;
-}
-
-.cancel-btn:hover{
-    background:#e5e7eb;
-}
 
 @media(max-width:768px){
 
@@ -193,4 +163,10 @@
     width:100%;
 }
 
+}
+.profile-role {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
 }
