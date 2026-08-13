@@ -103,7 +103,7 @@ const SkillsSection = ({
         catch (error) {
 
             console.error(
-                "Failed to load skill requests:",
+                "Failed to load role requests:",
                 error
             );
 
@@ -136,7 +136,7 @@ const SkillsSection = ({
         if (!skill) {
 
             toast.error(
-                "Please select a skill"
+                "Please select a role"
             );
 
             return;
@@ -244,7 +244,7 @@ const SkillsSection = ({
         if (exists) {
 
             toast.error(
-                "Skill already exists"
+                "Role already exists"
             );
 
             return;
@@ -571,7 +571,7 @@ const SkillsSection = ({
 
                 <div className="empty">
 
-                    No skills added
+                    No roles added
 
                 </div>
 

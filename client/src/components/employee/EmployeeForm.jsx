@@ -359,7 +359,7 @@ const EmployeeForm = ({
 
             <div className="form-card">
 
-    <h3>Skills</h3>
+    <h3>Roles</h3>
 
     <SkillsSection
         skills={skills}
