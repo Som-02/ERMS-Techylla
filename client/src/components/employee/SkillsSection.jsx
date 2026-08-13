@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 
 import {
@@ -21,7 +21,10 @@ const SkillsSection = ({
     skills,
     setSkills,
 }) => {
+    const { user } = useAuth();
 
+    const isAdmin =
+        user?.role === "Administrator";
     const [skill, setSkill] = useState("");
 
     const [rating, setRating] = useState(1);
@@ -46,11 +49,13 @@ const SkillsSection = ({
 
     useEffect(() => {
 
-        loadSkills();
+    loadSkills();
 
+    if (!isAdmin) {
         loadPendingRequests();
+    }
 
-    }, []);
+}, [isAdmin]);
 
 
     const loadSkills = async () => {
@@ -133,113 +138,57 @@ const SkillsSection = ({
 
     const handleSubmitSkill = async () => {
 
-        if (!skill) {
+    if (!skill) {
 
-            toast.error(
-                "Please select a role"
-            );
+        toast.error("Please select a role");
 
-            return;
+        return;
 
-        }
+    }
 
 
-        /*
-        ======================================
-        UPDATE EXISTING SKILL
-        ======================================
-        */
+    // ==========================================
+    // ADMINISTRATOR
+    // ==========================================
+
+    if (isAdmin) {
+
+        // --------------------------------------
+        // UPDATE EXISTING SKILL
+        // --------------------------------------
 
         if (editingSkill) {
 
-            /*
-            If rating didn't change,
-            don't create a request.
-            */
+            setSkills((prev) =>
+                prev.map((item) =>
+                    item.skill === editingSkill.skill
+                        ? {
+                              ...item,
+                              rating: Number(rating),
+                          }
+                        : item
+                )
+            );
 
-            if (
-                Number(editingSkill.rating) ===
-                Number(rating)
-            ) {
+            toast.success(
+                "Role updated successfully"
+            );
 
-                toast.error(
-                    "Please change the rating"
-                );
-
-                return;
-
-            }
-
-
-            try {
-
-                await createSkillRequest({
-
-                    type: "UPDATE",
-
-                    skill:
-                        editingSkill.skill,
-
-                    oldRating:
-                        Number(
-                            editingSkill.rating
-                        ),
-
-                    newRating:
-                        Number(rating),
-
-                });
-
-
-                toast.success(
-                    "Skill update request submitted"
-                );
-
-
-                /*
-                IMPORTANT:
-                Do NOT change `skills` here.
-
-                The old rating stays visible
-                until Admin approves.
-                */
-
-                resetForm();
-
-                await loadPendingRequests();
-
-            }
-
-            catch (error) {
-
-                toast.error(
-
-                    error.response?.data?.message ||
-
-                    "Failed to submit skill update request"
-
-                );
-
-            }
+            resetForm();
 
             return;
-
         }
 
 
-        /*
-        ======================================
-        ADD NEW SKILL
-        ======================================
-        */
+        // --------------------------------------
+        // ADD NEW SKILL
+        // --------------------------------------
 
-        const exists =
-            skills.some(
-                item =>
-                    item.skill.toLowerCase() ===
-                    skill.toLowerCase()
-            );
-
+        const exists = skills.some(
+            (item) =>
+                item.skill.toLowerCase() ===
+                skill.toLowerCase()
+        );
 
         if (exists) {
 
@@ -252,15 +201,60 @@ const SkillsSection = ({
         }
 
 
+        setSkills((prev) => [
+            ...prev,
+            {
+                skill,
+                rating: Number(rating),
+            },
+        ]);
+
+        toast.success(
+            "Role added successfully"
+        );
+
+        resetForm();
+
+        return;
+    }
+
+
+    // ==========================================
+    // EMPLOYEE
+    // ==========================================
+
+    // ------------------------------------------
+    // UPDATE EXISTING SKILL REQUEST
+    // ------------------------------------------
+
+    if (editingSkill) {
+
+        if (
+            Number(editingSkill.rating) ===
+            Number(rating)
+        ) {
+
+            toast.error(
+                "Please change the rating"
+            );
+
+            return;
+
+        }
+
+
         try {
 
             await createSkillRequest({
 
-                type: "ADD",
+                type: "UPDATE",
 
-                skill,
+                skill: editingSkill.skill,
 
-                oldRating: null,
+                oldRating:
+                    Number(
+                        editingSkill.rating
+                    ),
 
                 newRating:
                     Number(rating),
@@ -269,16 +263,9 @@ const SkillsSection = ({
 
 
             toast.success(
-                "Skill addition request submitted"
+                "Skill update request submitted"
             );
 
-
-            /*
-            Do NOT add it to `skills`.
-
-            It will appear in Current Skills
-            only after Admin approves.
-            */
 
             resetForm();
 
@@ -291,14 +278,77 @@ const SkillsSection = ({
             toast.error(
 
                 error.response?.data?.message ||
-
-                "Failed to submit skill request"
+                "Failed to submit skill update request"
 
             );
 
         }
 
-    };
+        return;
+    }
+
+
+    // ------------------------------------------
+    // ADD NEW SKILL REQUEST
+    // ------------------------------------------
+
+    const exists = skills.some(
+        (item) =>
+            item.skill.toLowerCase() ===
+            skill.toLowerCase()
+    );
+
+
+    if (exists) {
+
+        toast.error(
+            "Role already exists"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await createSkillRequest({
+
+            type: "ADD",
+
+            skill,
+
+            oldRating: null,
+
+            newRating:
+                Number(rating),
+
+        });
+
+
+        toast.success(
+            "Skill addition request submitted"
+        );
+
+
+        resetForm();
+
+        await loadPendingRequests();
+
+    }
+
+    catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+            "Failed to submit role request"
+
+        );
+
+    }
+
+};
 
 
     // ==========================================
@@ -339,76 +389,88 @@ const SkillsSection = ({
 
     const removeSkill = async (item) => {
 
-        /*
-        Check whether this skill already
-        has a pending request.
-        */
+    // ==========================================
+    // ADMINISTRATOR
+    // ==========================================
 
-        const alreadyPending =
-            pendingRequests.some(
-                request =>
-                    request.skill.toLowerCase() ===
-                    item.skill.toLowerCase()
-            );
+    if (isAdmin) {
 
+        setSkills((prev) =>
+            prev.filter(
+                (skillItem) =>
+                    skillItem.skill !== item.skill
+            )
+        );
 
-        if (alreadyPending) {
+        toast.success(
+            "Role removed successfully"
+        );
 
-            toast.error(
-                "A pending request already exists for this skill"
-            );
-
-            return;
-
-        }
+        return;
+    }
 
 
-        try {
+    // ==========================================
+    // EMPLOYEE
+    // ==========================================
 
-            await createSkillRequest({
-
-                type: "REMOVE",
-
-                skill: item.skill,
-
-                oldRating:
-                    Number(item.rating),
-
-                newRating: null,
-
-            });
+    const alreadyPending =
+        pendingRequests.some(
+            (request) =>
+                request.skill.toLowerCase() ===
+                item.skill.toLowerCase()
+        );
 
 
-            toast.success(
-                "Skill removal request submitted"
-            );
+    if (alreadyPending) {
+
+        toast.error(
+            "A pending request already exists for this skill"
+        );
+
+        return;
+
+    }
 
 
-            /*
-            Do NOT remove it from the
-            current skills table.
+    try {
 
-            It stays there until Admin
-            approves the request.
-            */
+        await createSkillRequest({
 
-            await loadPendingRequests();
+            type: "REMOVE",
 
-        }
+            skill: item.skill,
 
-        catch (error) {
+            oldRating:
+                Number(item.rating),
 
-            toast.error(
+            newRating: null,
 
-                error.response?.data?.message ||
+        });
 
-                "Failed to submit skill removal request"
 
-            );
+        toast.success(
+            "Skill removal request submitted"
+        );
 
-        }
 
-    };
+        await loadPendingRequests();
+
+    }
+
+    catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+
+            "Failed to submit role removal request"
+
+        );
+
+    }
+
+};
 
 
     // ==========================================
@@ -715,7 +777,7 @@ const SkillsSection = ({
                 PENDING REQUESTS
             ====================================== */}
 
-            {pendingRequests.length > 0 && (
+            {!isAdmin && pendingRequests.length > 0 && (
 
     <div className="pending-skill-card">
 
