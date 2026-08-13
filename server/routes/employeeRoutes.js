@@ -7,6 +7,7 @@ const {
   createEmployee,
   getEmployees,
   getEmployeeById,
+  getMyEmployee,
   updateEmployee,
   deleteEmployee,
   searchEmployees,
@@ -22,6 +23,11 @@ router.get(
     "/filter-by-skills",
     protect,
     getEmployeesBySkills
+);
+router.get(
+    "/me",
+    protect,
+    getMyEmployee
 );
 router.get("/:id", protect, getEmployeeById);
 router.get("/", protect, getEmployees);

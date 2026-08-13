@@ -13,26 +13,32 @@ HELPER
 */
 
 const enrichEmployee = (employee) => {
-    const totalProjects = employee.assignments.length;
-    const assignments = employee.assignments || [];
 
-    const startDates = assignments
-        .filter(a => a.startDate)
-        .map(a => new Date(a.startDate));
+    const assignments =
+        employee.assignments || [];
 
-    const endDates = assignments
-        .filter(a => a.endDate)
-        .map(a => new Date(a.endDate));
+    const totalProjects =
+        assignments.length;
 
-    const totalAllocation = assignments.reduce(
+    const startDates =
+        assignments
+            .filter(a => a.startDate)
+            .map(a => new Date(a.startDate));
 
-        (sum, assignment) =>
+    const endDates =
+        assignments
+            .filter(a => a.endDate)
+            .map(a => new Date(a.endDate));
 
-            sum + (assignment.allocation || 0),
+    const totalAllocation =
+        assignments.reduce(
 
-        0
+            (sum, assignment) =>
+                sum + (assignment.allocation || 0),
 
-    );
+            0
+
+        );
 
     return {
 
@@ -44,7 +50,9 @@ const enrichEmployee = (employee) => {
 
             startDates.length > 0
 
-                ? new Date(Math.min(...startDates))
+                ? new Date(
+                    Math.min(...startDates)
+                )
 
                 : null,
 
@@ -52,7 +60,9 @@ const enrichEmployee = (employee) => {
 
             endDates.length > 0
 
-                ? new Date(Math.max(...endDates))
+                ? new Date(
+                    Math.max(...endDates)
+                )
 
                 : null,
 
@@ -167,7 +177,57 @@ const getEmployeeById = async (req, res) => {
     }
 
 };
+/*
+==========================================
+Get Logged In Employee
+==========================================
+*/
 
+const getMyEmployee = async (req, res) => {
+
+    try {
+
+        const employee = await Employee.findById(req.user.id)
+            .populate("reportingManager", "name")
+            .populate("assignments.client", "name")
+            .populate("assignments.project", "name");
+
+        if (!employee) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Employee not found"
+            });
+
+        }
+
+        const enrichedEmployee =
+            enrichEmployee(employee);
+
+        return res.status(200).json({
+
+            success: true,
+            data: enrichedEmployee
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Get my employee error:",
+            error
+        );
+
+        return res.status(500).json({
+
+            success: false,
+            message: error.message
+
+        });
+
+    }
+
+};
 /*
 ==========================================
 Create Employee
@@ -680,9 +740,9 @@ const getEmployeesBySkills = async (req, res) => {
 module.exports = {
 
     getEmployees,
-
+    
     getEmployeeById,
-
+    getMyEmployee,
     createEmployee,
 
     updateEmployee,

@@ -5,7 +5,7 @@ const router = express.Router();
 const {
 
     login,
-
+    microsoftLogin,
     changePassword,
 
     getProfile,
@@ -20,6 +20,10 @@ const {
 } = require("../middleware/authMiddleware");
 
 router.post("/login", login);
+router.post(
+    "/microsoft-login",
+    microsoftLogin
+);
 router.get("/me", protect, getProfile);
 router.put(
     "/change-password",

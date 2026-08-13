@@ -14,7 +14,7 @@ const clientRoutes = require("./routes/clientRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const skillRoutes = require("./routes/skillRoutes");
-
+const skillChangeRequestRoutes = require("./routes/skillChangeRequestRoutes");
 const app = express();
 app.set("trust proxy", 1);
 // =======================
@@ -46,6 +46,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/skills", skillRoutes);
+app.use(
+    "/api/skill-change-requests",
+    skillChangeRequestRoutes
+);
 // =======================
 // Rate Limiter
 // =======================
