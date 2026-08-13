@@ -421,52 +421,74 @@ const microsoftLogin = async (req, res) => {
         // VERIFY MICROSOFT ID TOKEN
         // ==========================================
 
-        const decoded =
-            await new Promise(
+        const decoded = await new Promise(
+    (resolve, reject) => {
 
-                (resolve, reject) => {
+        jwt.verify(
+            idToken,
+            getKey,
+            {
+                audience:
+                    process.env.MICROSOFT_CLIENT_ID,
 
-                    jwt.verify(
+                issuer:
+                    `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/v2.0`
+            },
 
-                        idToken,
+            (error, decodedToken) => {
 
-                        getKey,
+                if (error) {
 
-                        {
-
-                            audience:
-                                process.env.MICROSOFT_CLIENT_ID,
-
-                            issuer:
-                                `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/v2.0`
-
-                        },
-
-                        (
-                            error,
-                            decodedToken
-                        ) => {
-
-                            if (error) {
-
-                                reject(error);
-
-                            }
-                            else {
-
-                                resolve(
-                                    decodedToken
-                                );
-
-                            }
-
-                        }
-
+                    console.error(
+                        "❌ Microsoft JWT verification failed:"
                     );
 
+                    console.error(
+                        "Name:",
+                        error.name
+                    );
+
+                    console.error(
+                        "Message:",
+                        error.message
+                    );
+
+                    reject(error);
+
+                    return;
                 }
 
-            );
+                console.log(
+                    "✅ Microsoft JWT verified successfully"
+                );
+
+                console.log(
+                    "Token audience:",
+                    decodedToken.aud
+                );
+
+                console.log(
+                    "Expected audience:",
+                    process.env.MICROSOFT_CLIENT_ID
+                );
+
+                console.log(
+                    "Token issuer:",
+                    decodedToken.iss
+                );
+
+                console.log(
+                    "Expected issuer:",
+                    `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/v2.0`
+                );
+
+                resolve(decodedToken);
+            }
+        );
+
+    }
+);
+
 
         // ==========================================
         // GET MICROSOFT EMAIL
@@ -674,21 +696,22 @@ const microsoftLogin = async (req, res) => {
 
     catch (error) {
 
-        console.error(
-            "Microsoft login error:",
-            error
-        );
+    console.error(
+        "❌ Microsoft login error:",
+        error
+    );
 
-        return res.status(401).json({
+    return res.status(401).json({
 
-            success: false,
+        success: false,
 
-            message:
-                "Microsoft authentication failed"
+        message:
+            error.message ||
+            "Microsoft authentication failed"
 
-        });
+    });
 
-    }
+}
 
 };
 
