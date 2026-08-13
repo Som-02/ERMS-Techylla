@@ -435,7 +435,7 @@ const SkillsSection = ({
                 <div className="field">
 
                     <label>
-                        Skill
+                        Role
                     </label>
 
                     <select
@@ -451,7 +451,7 @@ const SkillsSection = ({
                     >
 
                         <option value="">
-                            Select Skill
+                            Select Role
                         </option>
 
                         {availableSkills.map(
@@ -584,7 +584,7 @@ const SkillsSection = ({
                         <tr>
 
                             <th>
-                                Skill
+                                Role
                             </th>
 
                             <th>
@@ -724,7 +724,7 @@ const SkillsSection = ({
             <div>
 
                 <h3>
-                    Pending Skill Requests
+                    Pending Role Requests
                 </h3>
 
                 <p>
@@ -750,7 +750,7 @@ const SkillsSection = ({
                     <tr>
 
                         <th>
-                            Skill
+                            Role
                         </th>
 
                         <th>

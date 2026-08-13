@@ -528,7 +528,7 @@ const SkillRequests = () => {
 
                         <p>
 
-                            All employee skill
+                            All employee role
                             changes have been reviewed.
 
                         </p>
@@ -601,7 +601,7 @@ const SkillRequests = () => {
                                     </th>
 
                                     <th>
-                                        Skill
+                                        Role
                                     </th>
 
                                     <th>
