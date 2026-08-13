@@ -47,7 +47,7 @@ const { loginUser } = useAuth();
         if (!response) {
             return;
         }
-
+        setLoading(true);
         console.log(
             "Microsoft login response:",
             response
@@ -122,11 +122,7 @@ const { loginUser } = useAuth();
             error?.message ||
             "Microsoft login failed"
         );
-
-    } finally {
-
         setLoading(false);
-
     }
 };
 
