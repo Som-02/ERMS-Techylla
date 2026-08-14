@@ -12,7 +12,11 @@ const clientSchema = new mongoose.Schema(
     description:{
         type:String,
         default:""
-    }
+    },
+    logo: {
+        type: String,
+        default: ""
+    },
 
 },
 {

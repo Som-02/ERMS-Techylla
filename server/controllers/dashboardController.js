@@ -26,7 +26,7 @@ const getDashboard = async (req, res) => {
 
         const projects = await Project.find()
 
-            .populate("client")
+            .populate("client", "name logo")
 
             .sort({ createdAt: -1 });
 

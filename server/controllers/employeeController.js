@@ -138,7 +138,7 @@ const getEmployeeById = async (req, res) => {
 
             .populate("reportingManager", "name")
 
-            .populate("assignments.client", "name")
+            .populate("assignments.client", "name logo")
 
             .populate("assignments.project", "name");
 
@@ -189,7 +189,7 @@ const getMyEmployee = async (req, res) => {
 
         const employee = await Employee.findById(req.user.id)
             .populate("reportingManager", "name")
-            .populate("assignments.client", "name")
+            .populate("assignments.client", "name logo")
             .populate("assignments.project", "name");
 
         if (!employee) {
@@ -312,7 +312,7 @@ const employee = await Employee.create(employeeData);
 
             .populate("reportingManager", "name")
 
-            .populate("assignments.client", "name")
+            .populate("assignments.client", "name logo")
 
             .populate("assignments.project", "name");
 
@@ -447,7 +447,7 @@ const updateEmployee = async (req, res) => {
 
             .populate("reportingManager", "name")
 
-            .populate("assignments.client", "name")
+            .populate("assignments.client", "name logo")
 
             .populate("assignments.project", "name");
 
@@ -599,7 +599,7 @@ const searchEmployees = async (req, res) => {
 
             .populate("reportingManager", "name")
 
-            .populate("assignments.client", "name")
+            .populate("assignments.client", "name logo")
 
             .populate("assignments.project", "name");
 
