@@ -4,6 +4,7 @@ import {
     Pencil,
     Trash2,
 } from "lucide-react";
+import ClientDisplay from "./ClientDisplay";
 import "./client.css"
 const ClientRow = ({
     client,
@@ -11,7 +12,7 @@ const ClientRow = ({
 }) => {
     return (
         <tr>
-            <td className="client-name">{client.name}</td>
+            <td className="client-name"><ClientDisplay client={client} /></td>
             <td>
                 <div className="client-actions">
                     <Link

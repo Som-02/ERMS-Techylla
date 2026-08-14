@@ -49,13 +49,15 @@ const ProjectRow = ({
 </td>
 
             <td>
-
-    <span className="client-badge">
-
-        {project.client?.name || "-"}
-
-    </span>
-
+    {project.client?.logo ? (
+        <img
+            src={project.client.logo}
+            alt={project.client.name || "Client"}
+            className="project-client-logo"
+        />
+    ) : (
+        project.client?.name || "-"
+    )}
 </td>
 
 <td>

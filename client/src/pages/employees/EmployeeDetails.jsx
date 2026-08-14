@@ -4,6 +4,7 @@ import Loader from "../../components/common/Loader";
 import { getEmployee } from "../../services/employeeService";
 import "../../pages/employees/employeeDetails.css";
 import { formatDate } from "../../utils/formatDate";
+import ClientDisplay from "../../components/client/ClientDisplay";
 const EmployeeDetails = () => {
     const { id } = useParams();
 
@@ -121,12 +122,20 @@ const EmployeeDetails = () => {
             <tr key={index}>
 
                 <td style={{
-        textAlign: "left",
-    }}>
-                    {assignment.client?.name ||
-                        assignment.clientName ||
-                        "-"}
-                </td>
+    textAlign: "left",
+}}>
+    {assignment.client?.logo ? (
+        <img
+            src={assignment.client.logo}
+            alt={assignment.client.name || "Client"}
+            className="employee-client-logo"
+        />
+    ) : (
+        assignment.client?.name ||
+        assignment.clientName ||
+        "-"
+    )}
+</td>
 
                 <td style={{
         textAlign: "left",

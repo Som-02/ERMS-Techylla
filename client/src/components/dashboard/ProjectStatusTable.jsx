@@ -71,10 +71,16 @@ const ProjectStatusTable = ({ title, projects }) => {
                                         <tr key={project._id}>
 
                                             <td>
-
-                                                {project.client?.name || "-"}
-
-                                            </td>
+    {project.client?.logo ? (
+        <img
+            src={project.client.logo}
+            alt={project.client.name || "Client"}
+            className="dashboard-client-logo"
+        />
+    ) : (
+        project.client?.name || "-"
+    )}
+</td>
 
                                             <td>
 

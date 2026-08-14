@@ -373,3 +373,20 @@ height:36px;
     box-shadow:0 0 0 3px rgba(37,99,235,.12);
 
 }
+.project-client-logo {
+    width: 60px;
+    height: 45px;
+    object-fit: contain;
+}
+.client-select-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.client-select-logo {
+    width: 50px;
+    height: 35px;
+    object-fit: contain;
+    flex-shrink: 0;
+}

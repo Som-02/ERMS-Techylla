@@ -225,10 +225,22 @@ const EmployeeDetails = () => {
 
                                 <tr key={index}>
 
-                                    <td>
-                                        {assignment.client?.name ||
-                                            "-"}
-                                    </td>
+                                    <td style={{
+    textAlign: "left",
+}}>
+    {assignment.client?.logo ? (
+        <img
+            src={assignment.client.logo}
+            alt={assignment.client.name || "Client"}
+            className="employee-client-logo"
+        />
+    ) : (
+        assignment.client?.name ||
+        assignment.clientName ||
+        "-"
+    )}
+</td>
+
 
                                     <td>
                                         {assignment.project?.name ||

@@ -6,7 +6,7 @@ import Loader from "../../components/common/Loader";
 import PageHeader from "../../components/common/PageHeader";
 
 import { getClient } from "../../services/clientService";
-
+import ClientDisplay from "../../components/client/ClientDisplay";
 import "../../components/client/client.css";
 
 const ClientDetails = () => {
@@ -80,7 +80,7 @@ const ClientDetails = () => {
                             }}
                         >
 
-                            {client.name}
+                            <ClientDisplay client={client} />
 
                         </h2>
 

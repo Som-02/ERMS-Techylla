@@ -143,3 +143,42 @@
             #191f33 100%
         );
 }
+/* ==========================================
+   CLIENT DISPLAY
+========================================== */
+
+.client-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.client-display-logo {
+    width: 60px;
+    height: 45px;
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    flex-shrink: 0;
+}
+
+.client-display-name {
+    font-weight: 600;
+    color: #0d1015;
+}
+
+.client-display-logo-only {
+    width: 42px;
+    height: 42px;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    display: block;
+}

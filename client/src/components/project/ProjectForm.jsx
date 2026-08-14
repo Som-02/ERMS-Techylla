@@ -5,7 +5,7 @@ import {
     createProject,
     updateProject,
 } from "../../services/projectService";
-import Select from "react-select";
+import Select, { components } from "react-select";
 import { getClients } from "../../services/clientService";
 import { getSkills } from "../../services/skillService";
 import { getEmployeesBySkills } from "../../services/employeeService";
@@ -13,6 +13,45 @@ import { getSkillMatrix } from "../../services/skillService";
 import "./project.css";
 import RoleResourceModal from "../../components/project/RoleResourceModal";
 import AllocatedRolesTable from "../../components/project/AllocatedRolesTable";
+const ClientOption = (props) => (
+    <components.Option {...props}>
+        <div className="client-select-option">
+
+            {props.data.logo && (
+                <img
+                    src={props.data.logo}
+                    alt=""
+                    className="client-select-logo"
+                />
+            )}
+
+            <span>
+                {props.data.label}
+            </span>
+
+        </div>
+    </components.Option>
+);
+
+const ClientSingleValue = (props) => (
+    <components.SingleValue {...props}>
+        <div className="client-select-option">
+
+            {props.data.logo && (
+                <img
+                    src={props.data.logo}
+                    alt=""
+                    className="client-select-logo"
+                />
+            )}
+
+            <span>
+                {props.data.label}
+            </span>
+
+        </div>
+    </components.SingleValue>
+);
 const ProjectForm = ({
     mode = "add",
     project = null,
@@ -40,7 +79,12 @@ const ProjectForm = ({
 const [roleModalOpen, setRoleModalOpen] = useState(false);
 const [selectedRole, setSelectedRole] = useState(null);
 const [editingRoleIndex, setEditingRoleIndex] = useState(null);
-    const employeeOptions = employees.map((employee) => ({
+const clientOptions = clients.map((client) => ({
+    value: client._id,
+    label: client.name,
+    logo: client.logo || "",
+}));    
+const employeeOptions = employees.map((employee) => ({
 
     value: employee._id,
 
@@ -322,29 +366,29 @@ await updateProject(project._id, payload);
 
                     <label>Client</label>
 
-                    <select
-                        className="form-control"
-                        name="client"
-                        value={formData.client}
-                        onChange={handleChange}
-                    >
-
-                        <option value="">
-                            Select Client
-                        </option>
-
-                        {clients.map(client => (
-
-                            <option
-                                key={client._id}
-                                value={client._id}
-                            >
-                                {client.name}
-                            </option>
-
-                        ))}
-
-                    </select>
+                    <Select
+    options={clientOptions}
+    placeholder="Select Client..."
+    value={
+        clientOptions.find(
+            option =>
+                option.value === formData.client
+        ) || null
+    }
+    onChange={(selected) =>
+        setFormData(prev => ({
+            ...prev,
+            client: selected
+                ? selected.value
+                : "",
+        }))
+    }
+    components={{
+        Option: ClientOption,
+        SingleValue: ClientSingleValue,
+    }}
+    isClearable
+/>
 
                 </div>
                 <div className="form-group">

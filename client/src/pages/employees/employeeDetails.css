@@ -112,6 +112,12 @@
     background:#f9fafb;
 }
 
+.employee-client-logo {
+    width: 60px;
+    height: 50px;
+    object-fit: contain;
+    display: block;
+}
 @media(max-width:768px){
 
 .employee-details p{
