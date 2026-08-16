@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import techyllaLogo from "../../assets/techylla-logo.png";
 const Sidebar = () => {
@@ -69,11 +69,36 @@ const Sidebar = () => {
 
     {isEmployee && (
 
-        <NavLink to="/employee">
-            Employee Master
-        </NavLink>
+<>
 
-    )}
+<NavLink
+    to="/employee"
+    className={() =>
+        location.pathname.startsWith("/employee/projects")
+            ? ""
+            : location.pathname.startsWith("/employee")
+            ? "active"
+            : ""
+    }
+>
+Employee Master
+</NavLink>
+
+
+<NavLink
+    to="/employee/projects"
+    className={() =>
+        location.pathname.startsWith("/employee/projects")
+            ? "active"
+            : ""
+    }
+>
+Project Master
+</NavLink>
+
+</>
+
+)}
 
     <NavLink to="/settings">
         Settings

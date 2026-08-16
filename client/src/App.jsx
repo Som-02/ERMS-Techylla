@@ -32,7 +32,8 @@ import ProjectDetails from "./pages/projects/ProjectDetails";
 import EmployeePortal from "./pages/employee/EmployeePortal";
 import EmployeeEdit from "./pages/employee/EmployeeEdit";
 import SkillRequests from "./pages/skillRequests/SkillRequests";
-
+import EmployeeProjects from "./pages/employee/EmployeeProjects";
+import EmployeeProjectDetails from "./pages/employee/EmployeeProjectDetails";
 function App() {
     return (
         <Routes>
@@ -101,6 +102,37 @@ function App() {
             </DashboardLayout>
         </ProtectedRoute>
     }
+/>
+<Route
+path="/employee/projects"
+element={
+<ProtectedRoute allowedRoles={["Employee"]}>
+
+<DashboardLayout>
+
+<EmployeeProjects/>
+
+</DashboardLayout>
+
+</ProtectedRoute>
+}
+/>
+
+
+
+<Route
+path="/employee/projects/:id"
+element={
+<ProtectedRoute allowedRoles={["Employee"]}>
+
+<DashboardLayout>
+
+<EmployeeProjectDetails/>
+
+</DashboardLayout>
+
+</ProtectedRoute>
+}
 />
             <Route
                 path="/employees"

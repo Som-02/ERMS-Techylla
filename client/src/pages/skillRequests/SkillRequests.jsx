@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
+import ReasonDialog from "../../components/common/ReasonDialog";
+import ReasonInputDialog from "../../components/common/ReasonInputDialog";
 import {
     Check,
     X,
     RefreshCw,
+    Eye,
 } from "lucide-react";
 
 import Loader from "../../components/common/Loader";
@@ -41,10 +43,15 @@ const SkillRequests = () => {
 
     const [selectedRequest, setSelectedRequest] =
         useState(null);
-
+    const [reasonRequest,setReasonRequest]=useState(null);
+    const [showReason,setShowReason]=useState(false);
     const [dialogAction, setDialogAction] =
         useState(null);
+    const [approvalReason,setApprovalReason] =
+    useState("");
 
+const [showReasonInput,setShowReasonInput] =
+    useState(false);
 
     // ==========================================
     // LOAD PENDING REQUESTS
@@ -99,30 +106,34 @@ const SkillRequests = () => {
     // OPEN APPROVE DIALOG
     // ==========================================
 
-    const openApproveDialog = (request) => {
+    const openApproveDialog = (request)=>{
 
-        setSelectedRequest(request);
+    setSelectedRequest(request);
 
-        setDialogAction("APPROVE");
+    setDialogAction("APPROVE");
 
-        setShowConfirmDialog(true);
+    setApprovalReason("");
 
-    };
+    setShowReasonInput(true);
+
+};
 
 
     // ==========================================
     // OPEN REJECT DIALOG
     // ==========================================
 
-    const openRejectDialog = (request) => {
+    const openRejectDialog=(request)=>{
 
-        setSelectedRequest(request);
+    setSelectedRequest(request);
 
-        setDialogAction("REJECT");
+    setDialogAction("REJECT");
 
-        setShowConfirmDialog(true);
+    setApprovalReason("");
 
-    };
+    setShowReasonInput(true);
+
+};
 
 
     // ==========================================
@@ -176,7 +187,7 @@ const SkillRequests = () => {
             ) {
 
                 await approveSkillRequest(
-                    selectedRequest._id
+                    selectedRequest._id,approvalReason
                 );
 
                 toast.success(
@@ -196,7 +207,7 @@ const SkillRequests = () => {
 
                 await rejectSkillRequest(
                     selectedRequest._id,
-                    ""
+                    approvalReason
                 );
 
                 toast.success(
@@ -395,7 +406,13 @@ const SkillRequests = () => {
             ? "Approve"
             : "Reject";
 
+    const openReason = (request)=>{
 
+    setReasonRequest(request);
+
+    setShowReason(true);
+
+};
     return (
 
         <div className="skill-requests-page">
@@ -404,7 +421,77 @@ const SkillRequests = () => {
             {/* =================================
                 CONFIRMATION DIALOG
             ================================= */}
+<ReasonDialog
 
+open={showReason}
+
+title="Skill Change Reason"
+
+reason={
+    reasonRequest?.reason ||
+    reasonRequest?.reviewReason ||
+    "No reason provided"
+}
+
+readOnly={true}
+
+onCancel={()=>{
+
+    setShowReason(false);
+
+    setReasonRequest(null);
+
+}}
+
+/>
+            <ReasonInputDialog
+
+open={showReasonInput}
+
+title={
+    dialogAction === "APPROVE"
+    ?
+    "Reason for Approval"
+    :
+    "Reason for Rejection"
+}
+
+reason={approvalReason}
+
+setReason={setApprovalReason}
+
+onCancel={()=>{
+
+    setShowReasonInput(false);
+
+    setApprovalReason("");
+
+    setSelectedRequest(null);
+
+}}
+
+onSubmit={()=>{
+
+
+if(!approvalReason.trim()){
+
+    toast.error(
+        "Reason is required"
+    );
+
+    return;
+
+}
+
+
+setShowReasonInput(false);
+
+setShowConfirmDialog(true);
+
+
+}}
+
+/>
             <ConfirmDialog
 
                 open={
@@ -545,7 +632,7 @@ const SkillRequests = () => {
 
                                 <col
                                     style={{
-                                        width: "10%"
+                                        width: "15%"
                                     }}
                                 />
 
@@ -563,12 +650,6 @@ const SkillRequests = () => {
 
                                 <col
                                     style={{
-                                        width: "7%"
-                                    }}
-                                />
-
-                                <col
-                                    style={{
                                         width: "10%"
                                     }}
                                 />
@@ -581,10 +662,20 @@ const SkillRequests = () => {
 
                                 <col
                                     style={{
-                                        width: "10%"
+                                        width: "15%"
                                     }}
                                 />
 
+                                <col
+                                    style={{
+                                        width: "10%"
+                                    }}
+                                />
+                                <col
+style={{
+ width:"10%"
+}}
+/>
                             </colgroup>
 
 
@@ -615,7 +706,9 @@ const SkillRequests = () => {
                                     <th>
                                         Requested On
                                     </th>
-
+                                    <th>
+                                        Reason
+                                    </th>
                                     <th
                                         style={{
                                             textAlign:
@@ -758,7 +851,24 @@ const SkillRequests = () => {
                                                     }
 
                                                 </td>
+                                                
+                                                <td>
 
+<button
+
+className="view-reason-btn"
+
+onClick={() =>
+    openReason(request)
+}
+
+>
+
+<Eye size={17}/>
+
+</button>
+
+</td>
 
                                                 {/* Actions */}
 

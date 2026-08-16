@@ -44,28 +44,35 @@ export const getPendingSkillRequests =
     };
 
 
-export const approveSkillRequest =
-    async (id) => {
+export const approveSkillRequest = async (
+    id,
+    reason
+) => {
 
-        const response =
-            await api.put(
-                `/skill-change-requests/${id}/approve`
-            );
+    const response = await api.put(
+        `/skill-change-requests/${id}/approve`,
+        {
+            reason
+        }
+    );
 
-        return response.data;
-    };
+    return response.data;
+
+};
 
 
-export const rejectSkillRequest =
-    async (id, reason = "") => {
+export const rejectSkillRequest = async (
+    id,
+    reason
+) => {
 
-        const response =
-            await api.put(
-                `/skill-change-requests/${id}/reject`,
-                {
-                    reason,
-                }
-            );
+    const response = await api.put(
+        `/skill-change-requests/${id}/reject`,
+        {
+            reason
+        }
+    );
 
-        return response.data;
-    };
+    return response.data;
+
+};

@@ -249,3 +249,86 @@
 
     font-weight: 600;
 }
+/* ==========================
+   Skill Change Reason
+========================== */
+
+
+.skill-reason-input {
+
+    width:100%;
+
+    resize:vertical;
+
+    min-height:100px;
+
+    padding:12px 14px;
+
+    border-radius:10px;
+
+    border:1px solid #d1d5db;
+
+    font-size:14px;
+
+    font-family:inherit;
+
+    color:#111827;
+
+    background:#ffffff;
+
+    transition:.2s;
+
+    outline:none;
+
+}
+
+
+.skill-reason-input::placeholder {
+
+    color:#9ca3af;
+
+}
+
+
+.skill-reason-input:focus {
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.12);
+
+}
+.view-reason-btn {
+
+    padding:6px 14px;
+
+    border:none;
+
+    border-radius:6px;
+
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+}
+
+
+.view-reason-btn:hover {
+
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+}

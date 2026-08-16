@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import {
     Pencil,
     Trash2,
+    Eye,
 } from "lucide-react";
 
 import { getSkills } from "../../services/skillService";
@@ -15,7 +16,7 @@ import {
 } from "../../services/skillRequestService";
 
 import "./employeeSection.css";
-
+import ReasonDialog from "../common/ReasonDialog";
 
 const SkillsSection = ({
     skills,
@@ -28,13 +29,25 @@ const SkillsSection = ({
     const [skill, setSkill] = useState("");
 
     const [rating, setRating] = useState(1);
-
+    const [showReasonDialog,setShowReasonDialog]=useState(false);
+    const [requestReason,setRequestReason]=useState("");
+    const [pendingRequestData,setPendingRequestData]=useState(null);
+    const [showViewReason,setShowViewReason] = useState(false);
+    const [selectedReason,setSelectedReason] = useState("");
     const [availableSkills, setAvailableSkills] =
         useState([]);
 
     const [pendingRequests, setPendingRequests] =
         useState([]);
+    const openReasonView = (reason) => {
 
+    setSelectedReason(
+        reason || "No reason provided"
+    );
+
+    setShowViewReason(true);
+
+    };
     /*
     Used when editing an existing skill.
     */
@@ -126,7 +139,7 @@ const SkillsSection = ({
         setSkill("");
 
         setRating(1);
-
+        setReason("");
         setEditingSkill(null);
 
     };
@@ -137,7 +150,7 @@ const SkillsSection = ({
     // ==========================================
 
     const handleSubmitSkill = async () => {
-
+    
     if (!skill) {
 
         toast.error("Please select a role");
@@ -145,7 +158,6 @@ const SkillsSection = ({
         return;
 
     }
-
 
     // ==========================================
     // ADMINISTRATOR
@@ -222,7 +234,31 @@ const SkillsSection = ({
     // ==========================================
     // EMPLOYEE
     // ==========================================
+    setPendingRequestData({
 
+    type: editingSkill
+        ? "UPDATE"
+        : "ADD",
+
+    skill:
+        editingSkill
+        ? editingSkill.skill
+        : skill,
+
+    oldRating:
+        editingSkill
+        ? Number(editingSkill.rating)
+        : null,
+
+    newRating:
+        Number(rating)
+
+});
+
+
+setShowReasonDialog(true);
+
+return;
     // ------------------------------------------
     // UPDATE EXISTING SKILL REQUEST
     // ------------------------------------------
@@ -258,7 +294,7 @@ const SkillsSection = ({
 
                 newRating:
                     Number(rating),
-
+                reason,
             });
 
 
@@ -322,7 +358,7 @@ const SkillsSection = ({
 
             newRating:
                 Number(rating),
-
+            reason,
         });
 
 
@@ -413,7 +449,22 @@ const SkillsSection = ({
     // ==========================================
     // EMPLOYEE
     // ==========================================
+    setPendingRequestData({
 
+    type:"REMOVE",
+
+    skill:item.skill,
+
+    oldRating:Number(item.rating),
+
+    newRating:null
+
+});
+
+
+setShowReasonDialog(true);
+
+return;
     const alreadyPending =
         pendingRequests.some(
             (request) =>
@@ -445,7 +496,7 @@ const SkillsSection = ({
                 Number(item.rating),
 
             newRating: null,
-
+            reason,
         });
 
 
@@ -539,7 +590,6 @@ const SkillsSection = ({
 
                 </div>
 
-
                 <div className="field">
 
                     <label>
@@ -580,7 +630,6 @@ const SkillsSection = ({
                     </select>
 
                 </div>
-
 
                 <div
                     style={{
@@ -822,6 +871,10 @@ const SkillsSection = ({
                         <th>
                             Rating
                         </th>
+                        
+                        <th>
+                            Reason
+                        </th>
 
                         <th>
                             Status
@@ -925,6 +978,27 @@ const SkillsSection = ({
 
                                 </td>
 
+                                <td>
+
+    <button
+
+        type="button"
+
+        className="view-reason-btn"
+
+        onClick={() =>
+            openReasonView(
+                request.reason
+            )
+        }
+
+    >
+
+        <Eye size={17}/>
+
+    </button>
+
+</td>
 
                                 <td>
 
@@ -950,7 +1024,103 @@ const SkillsSection = ({
     </div>
 
 )}
+<ReasonDialog
 
+    open={showViewReason}
+
+    title="Skill Change Reason"
+
+    reason={selectedReason}
+
+    setReason={()=>{}}
+
+    onCancel={()=>{
+
+        setShowViewReason(false);
+
+        setSelectedReason("");
+
+    }}
+
+    readOnly={true}
+
+/>
+<ReasonDialog
+
+open={showReasonDialog}
+
+title="Reason for Skill Change"
+
+reason={requestReason}
+
+setReason={setRequestReason}
+
+
+onCancel={()=>{
+
+setShowReasonDialog(false);
+
+setRequestReason("");
+
+}}
+
+
+onSubmit={async()=>{
+
+
+if(!requestReason.trim()){
+
+toast.error(
+"Reason is required"
+);
+
+return;
+
+}
+
+
+try{
+
+
+await createSkillRequest({
+
+    ...pendingRequestData,
+
+    reason:requestReason
+
+});
+
+
+toast.success(
+"Skill request submitted"
+);
+
+
+setShowReasonDialog(false);
+
+setRequestReason("");
+
+setPendingRequestData(null);
+
+loadPendingRequests();
+
+
+}
+
+catch(error){
+
+toast.error(
+error.response?.data?.message ||
+"Request failed"
+);
+
+}
+
+
+
+}}
+
+/>
         </>
 
     );
