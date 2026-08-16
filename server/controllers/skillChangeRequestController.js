@@ -1,6 +1,9 @@
 const SkillChangeRequest = require("../models/SkillChangeRequest");
 const Employee = require("../models/Employee");
-
+const {
+    notifyAdministrators,
+    escapeHtml,
+} = require("../services/notificationService");
 
 // ==========================================
 // CREATE SKILL CHANGE REQUEST
@@ -16,6 +19,7 @@ const createSkillChangeRequest = async (req, res) => {
             skill,
             oldRating,
             newRating,
+            reason,
         } = req.body;
 
 
@@ -27,7 +31,17 @@ const createSkillChangeRequest = async (req, res) => {
             });
 
         }
+        if (!reason || !reason.trim()) {
 
+    return res.status(400).json({
+
+        success:false,
+
+        message:"Reason is required for skill request",
+
+    });
+
+}
 
         if (
             ![
@@ -225,7 +239,7 @@ const createSkillChangeRequest = async (req, res) => {
 
                 newRating:
                     newRating ?? null,
-
+                reason,
                 status: "PENDING",
 
             });
@@ -238,7 +252,63 @@ const createSkillChangeRequest = async (req, res) => {
                     "employee",
                     "empId name email position"
                 );
+            
+        await notifyAdministrators({
 
+    senderEmail:
+        employee.email,
+
+    subject:
+        `Skill Request - ${employee.name}`,
+
+    html: `
+
+        <div style="font-family: Arial, sans-serif;">
+
+            <h2>
+                New Skill Request
+            </h2>
+
+            <p>
+                <strong>
+                    ${escapeHtml(employee.name)}
+                </strong>
+                has submitted a skill change request.
+            </p>
+
+            <p>
+                <strong>Employee ID:</strong>
+                ${escapeHtml(employee.empId)}
+            </p>
+
+            <p>
+                <strong>Request:</strong>
+                ${escapeHtml(type)}
+            </p>
+
+            <p>
+                <strong>Role:</strong>
+                ${escapeHtml(skill)}
+            </p>
+
+            <p>
+                <strong>Current Rating:</strong>
+                ${escapeHtml(oldRating ?? "-")}
+            </p>
+
+            <p>
+                <strong>Requested Rating:</strong>
+                ${escapeHtml(newRating ?? "-")}
+            </p>
+            <p>
+                <strong>Reason:</strong>
+                ${escapeHtml(reason)}
+            </p>
+        </div>
+
+    `,
+
+});
 
         return res.status(201).json({
 
@@ -554,9 +624,91 @@ const approveSkillChangeRequest = async (
         request.reviewedAt =
             new Date();
 
-
+        request.reviewReason =
+        req.body.reason || "";
         await request.save();
 
+        const admin =
+    await Employee.findById(
+        req.user.id
+    ).select("name email");
+
+
+await notifyAdministrators({
+
+    senderEmail:
+        admin?.email || req.user.email,
+
+    subject:
+        `Skill Request Approved - ${employee.name}`,
+
+    html: `
+
+        <div style="font-family: Arial, sans-serif;">
+
+            <h2>
+                Skill Request Approved
+            </h2>
+
+            <p>
+                <strong>
+                    ${escapeHtml(
+                        admin?.name ||
+                        req.user.name
+                    )}
+                </strong>
+                approved a skill request for
+                <strong>
+                    ${escapeHtml(
+                        employee.name
+                    )}
+                </strong>.
+            </p>
+
+            <p>
+                <strong>Employee ID:</strong>
+                ${escapeHtml(
+                    employee.empId
+                )}
+            </p>
+
+            <p>
+                <strong>Request:</strong>
+                ${escapeHtml(
+                    request.type
+                )}
+            </p>
+
+            <p>
+                <strong>Role:</strong>
+                ${escapeHtml(
+                    request.skill
+                )}
+            </p>
+
+            <p>
+                <strong>New Rating:</strong>
+                ${escapeHtml(
+                    request.newRating ?? "-"
+                )}
+            </p>
+            <p>
+
+<strong>
+Approval Reason:
+</strong>
+
+${escapeHtml(
+    request.reviewReason ||
+    "No reason provided"
+)}
+
+</p>
+        </div>
+
+    `,
+
+});
 
         return res.json({
 
@@ -649,12 +801,95 @@ const rejectSkillChangeRequest = async (
         request.reviewedAt =
             new Date();
 
-        request.rejectionReason =
-            req.body.reason || "";
+        request.reviewReason =
+    req.body.reason || "";
 
 
         await request.save();
 
+        const employee =
+    await Employee.findById(
+        request.employee
+    ).select(
+        "empId name email position"
+    );
+
+
+const admin =
+    await Employee.findById(
+        req.user.id
+    ).select(
+        "name email"
+    );
+
+
+await notifyAdministrators({
+
+    senderEmail:
+        admin?.email || req.user.email,
+
+    subject:
+        `Skill Request Rejected - ${employee?.name || "Employee"}`,
+
+    html: `
+
+        <div style="font-family: Arial, sans-serif;">
+
+            <h2>
+                Skill Request Rejected
+            </h2>
+
+            <p>
+                <strong>
+                    ${escapeHtml(
+                        admin?.name ||
+                        req.user.name
+                    )}
+                </strong>
+                rejected a skill request for
+                <strong>
+                    ${escapeHtml(
+                        employee?.name ||
+                        "Employee"
+                    )}
+                </strong>.
+            </p>
+
+            <p>
+                <strong>Employee ID:</strong>
+                ${escapeHtml(
+                    employee?.empId ||
+                    "-"
+                )}
+            </p>
+
+            <p>
+                <strong>Request:</strong>
+                ${escapeHtml(
+                    request.type
+                )}
+            </p>
+
+            <p>
+                <strong>Role:</strong>
+                ${escapeHtml(
+                    request.skill
+                )}
+            </p>
+
+            <p>
+                <strong>Reason:</strong>
+                ${escapeHtml(
+                    request.reviewReason ||
+                    "No reason provided"
+                )}
+            </p>
+
+        </div>
+
+    `,
+
+});
 
         return res.json({
 

@@ -9,6 +9,7 @@ const { protect } = require("../middleware/authMiddleware");
 const {
 
     getProjects,
+    getMyProjects,
     exportProjects,
     getProject,
     getProjectStaffingPlan,
@@ -23,7 +24,11 @@ const {
 } = require("../controllers/projectController");
 
 router.get("/", protect, getProjects);
-
+router.get(
+    "/my-projects",
+    protect,
+    getMyProjects
+);
 router.get("/search", protect, searchProjects);
 
 router.post("/", protect, createProject);

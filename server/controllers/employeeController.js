@@ -1,6 +1,10 @@
 const Employee = require("../models/Employee");
 const Skill = require("../models/Skill");
 const Project = require("../models/Project");
+const {
+    notifyAdministrators,
+    escapeHtml,
+} = require("../services/notificationService");
 // const {
 
 //     assignEmployeeToProject,
@@ -373,7 +377,16 @@ const updateEmployee = async (req, res) => {
             });
 
         }
+        const oldSkills =
+    (employee.skills || []).map(
+        skill => ({
+            skill:
+                skill.skill,
 
+            rating:
+                Number(skill.rating),
+        })
+    );
         // -----------------------------
         // Update employee basic details
         // -----------------------------
@@ -443,6 +456,228 @@ const updateEmployee = async (req, res) => {
         // }
         employee.skills = employeeData.skills || [];
         await employee.save();
+        /*
+==================================================
+ADMIN SKILL CHANGE NOTIFICATION
+==================================================
+*/
+
+const newSkills =
+    (employee.skills || []).map(
+        skill => ({
+            skill:
+                skill.skill,
+
+            rating:
+                Number(skill.rating),
+        })
+    );
+
+
+const skillsChanged =
+    JSON.stringify(oldSkills) !==
+    JSON.stringify(newSkills);
+
+
+if (
+    skillsChanged &&
+    req.user?.role ===
+        "Administrator"
+) {
+
+    const addedSkills =
+        newSkills.filter(
+            newSkill =>
+                !oldSkills.some(
+                    oldSkill =>
+                        oldSkill.skill
+                            .toLowerCase() ===
+                        newSkill.skill
+                            .toLowerCase()
+                )
+        );
+
+
+    const removedSkills =
+        oldSkills.filter(
+            oldSkill =>
+                !newSkills.some(
+                    newSkill =>
+                        newSkill.skill
+                            .toLowerCase() ===
+                        oldSkill.skill
+                            .toLowerCase()
+                )
+        );
+
+
+    const updatedSkills =
+        newSkills.filter(
+            newSkill => {
+
+                const oldSkill =
+                    oldSkills.find(
+                        oldSkill =>
+                            oldSkill.skill
+                                .toLowerCase() ===
+                            newSkill.skill
+                                .toLowerCase()
+                    );
+
+
+                return (
+                    oldSkill &&
+                    Number(
+                        oldSkill.rating
+                    ) !==
+                    Number(
+                        newSkill.rating
+                    )
+                );
+
+            }
+        );
+
+
+    let changeLines = "";
+
+
+    if (addedSkills.length > 0) {
+
+        changeLines += `
+
+            <p>
+                <strong>Added:</strong>
+                ${addedSkills
+                    .map(
+                        item =>
+                            `${escapeHtml(item.skill)}
+                             (${item.rating}/5)`
+                    )
+                    .join(", ")}
+            </p>
+
+        `;
+
+    }
+
+
+    if (removedSkills.length > 0) {
+
+        changeLines += `
+
+            <p>
+                <strong>Removed:</strong>
+                ${removedSkills
+                    .map(
+                        item =>
+                            `${escapeHtml(item.skill)}
+                             (${item.rating}/5)`
+                    )
+                    .join(", ")}
+            </p>
+
+        `;
+
+    }
+
+
+    if (updatedSkills.length > 0) {
+
+        changeLines += `
+
+            <p>
+                <strong>Updated:</strong>
+                ${updatedSkills
+                    .map(
+                        item => {
+
+                            const oldSkill =
+                                oldSkills.find(
+                                    oldItem =>
+                                        oldItem.skill
+                                            .toLowerCase() ===
+                                        item.skill
+                                            .toLowerCase()
+                                );
+
+                            return `
+                                ${escapeHtml(item.skill)}
+                                (${oldSkill.rating}/5
+                                → ${item.rating}/5)
+                            `;
+
+                        }
+                    )
+                    .join(", ")}
+            </p>
+
+        `;
+
+    }
+
+
+    await notifyAdministrators({
+
+        senderEmail:
+            req.user.email,
+
+        subject:
+            `Employee Skills Updated - ${employee.name}`,
+
+        html: `
+
+            <div
+                style="
+                    font-family: Arial, sans-serif;
+                "
+            >
+
+                <h2>
+                    Employee Skills Updated
+                </h2>
+
+                <p>
+
+                    <strong>
+                        ${escapeHtml(
+                            req.user.name
+                        )}
+                    </strong>
+
+                    updated the skills of
+
+                    <strong>
+                        ${escapeHtml(
+                            employee.name
+                        )}
+                    </strong>.
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Employee ID:
+                    </strong>
+
+                    ${escapeHtml(
+                        employee.empId
+                    )}
+
+                </p>
+
+
+                ${changeLines}
+
+            </div>
+
+        `,
+
+    });
+
+}
         const updatedEmployee = await Employee.findById(employee._id)
 
             .populate("reportingManager", "name")

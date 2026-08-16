@@ -46,7 +46,17 @@ const skillChangeRequestSchema = new mongoose.Schema(
             ],
             default: "PENDING",
         },
+        reason:{
+    type:String,
+    default:"",
+    trim:true,
+},
 
+reviewReason:{
+    type:String,
+    default:"",
+    trim:true,
+},
         reviewedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Employee",
@@ -56,11 +66,6 @@ const skillChangeRequestSchema = new mongoose.Schema(
         reviewedAt: {
             type: Date,
             default: null,
-        },
-
-        rejectionReason: {
-            type: String,
-            default: "",
         },
     },
     {

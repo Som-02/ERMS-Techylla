@@ -141,7 +141,67 @@ const getProject = async (req, res) => {
     }
 
 };
+const getMyProjects = async(req,res)=>{
 
+try{
+
+const employeeId = req.user.id;
+
+
+const employee = await Employee.findById(employeeId);
+
+
+if(!employee){
+
+return res.status(404).json({
+message:"Employee not found"
+});
+
+}
+
+
+// get project ids assigned to employee
+
+const projectIds =
+employee.assignments.map(
+assignment=>assignment.project
+);
+
+
+const projects = await Project.find({
+
+_id:{
+    $in:projectIds
+}
+
+})
+.populate("client")
+.sort({
+name:1
+});
+
+
+res.status(200).json({
+
+success:true,
+data:projects
+
+});
+
+
+}
+catch(error){
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
+};
 // ============================
 // Get Project Staffing Plan
 // ============================
@@ -1092,7 +1152,7 @@ const assignEmployee = async (req, res) => {
 module.exports = {
 
     getProjects,
-
+    getMyProjects,
     getProject,
     getProjectStaffingPlan,
     exportProjects,
