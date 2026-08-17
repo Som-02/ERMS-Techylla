@@ -41,7 +41,9 @@ Select Filter
 <option value="name">
 Project Name
 </option>
-
+<option value="client">
+Client
+</option>
 <option value="status">
 Status
 </option>
@@ -103,7 +105,16 @@ onChange={(e)=>setValue(e.target.value)}
 
 }
 
+{
+type==="client" &&
 
+<input
+placeholder="Enter client name"
+value={value}
+onChange={(e)=>setValue(e.target.value)}
+/>
+
+}
 
 {
 type==="date" &&
