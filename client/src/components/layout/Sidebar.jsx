@@ -93,7 +93,7 @@ Employee Master
             : ""
     }
 >
-Project Master
+Projects
 </NavLink>
 
 </>
