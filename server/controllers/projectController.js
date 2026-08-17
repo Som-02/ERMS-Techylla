@@ -13,11 +13,401 @@ const getProjects = async (req, res) => {
 
         const filter = {};
 
-        if (req.query.client) {
 
-            filter.client = req.query.client;
+if(req.query.status){
 
-        }
+    filter.status=req.query.status;
+
+}
+
+
+if(req.query.name){
+
+    filter.name={
+        $regex:req.query.name,
+        $options:"i"
+    };
+
+}
+if(req.query.date){
+
+const raw =
+req.query.date
+.toLowerCase()
+.trim()
+.replace(/,/g,"")
+.replace(
+ /(st|nd|rd|th)/g,
+ ""
+);
+
+
+// ---------------------
+// MONTH MAP
+// ---------------------
+
+const months = {
+
+jan:0,
+january:0,
+
+feb:1,
+february:1,
+
+mar:2,
+march:2,
+
+apr:3,
+april:3,
+
+may:4,
+
+jun:5,
+june:5,
+
+jul:6,
+july:6,
+
+aug:7,
+august:7,
+
+sep:8,
+sept:8,
+september:8,
+
+oct:9,
+october:9,
+
+nov:10,
+november:10,
+
+dec:11,
+december:11
+
+};
+
+
+// ---------------------
+// WEEK DAYS
+// ---------------------
+
+const weekdays = {
+
+sun:0,
+sunday:0,
+
+mon:1,
+monday:1,
+
+tue:2,
+tues:2,
+tuesday:2,
+
+wed:3,
+wednesday:3,
+
+thu:4,
+thur:4,
+thursday:4,
+
+fri:5,
+friday:5,
+
+sat:6,
+saturday:6
+
+};
+
+
+// ---------------------
+// EXTRACT YEAR
+// ---------------------
+
+const yearMatch =
+raw.match(/\b(20\d{2})\b/);
+
+
+const year =
+yearMatch
+?
+Number(yearMatch[0])
+:
+null;
+
+
+
+// ---------------------
+// EXTRACT MONTH
+// ---------------------
+
+let month=null;
+
+
+for(const key in months){
+
+if(raw.includes(key)){
+
+month=months[key];
+
+break;
+
+}
+
+}
+
+
+
+// ---------------------
+// EXTRACT DAY NUMBER
+// ---------------------
+
+const numbers =
+raw.match(/\b\d{1,2}\b/g);
+
+
+let day=null;
+
+
+if(numbers){
+
+for(const num of numbers){
+
+const n=Number(num);
+
+if(n>=1 && n<=31 && n!==year){
+
+day=n;
+
+break;
+
+}
+
+}
+
+}
+
+
+
+// ---------------------
+// EXTRACT WEEKDAY
+// ---------------------
+
+let weekday=null;
+
+
+for(const key in weekdays){
+
+if(raw.includes(key)){
+
+weekday=weekdays[key];
+
+break;
+
+}
+
+}
+
+
+
+const conditions=[];
+
+
+
+// ---------------------
+// EXACT DATE
+// ---------------------
+
+if(day && month!==null && year){
+
+
+const start =
+new Date(year,month,day);
+
+
+const end =
+new Date(year,month,day);
+
+
+end.setHours(
+23,59,59,999
+);
+
+
+
+conditions.push({
+
+startDate:{
+$gte:start,
+$lte:end
+}
+
+});
+
+
+conditions.push({
+
+endDate:{
+$gte:start,
+$lte:end
+}
+
+});
+
+
+}
+
+
+
+// ---------------------
+// YEAR + MONTH
+// ---------------------
+
+else if(month!==null && year){
+
+
+conditions.push({
+
+startDate:{
+$gte:new Date(year,month,1),
+$lt:new Date(year,month+1,1)
+}
+
+});
+
+
+}
+
+
+
+// ---------------------
+// MONTH ONLY
+// ---------------------
+
+else if(month!==null){
+
+
+const currentYear =
+new Date().getFullYear();
+
+
+conditions.push({
+
+$expr:{
+$eq:[
+{
+$month:"$startDate"
+},
+month+1
+]
+}
+
+});
+
+
+conditions.push({
+
+$expr:{
+$eq:[
+{
+$month:"$endDate"
+},
+month+1
+]
+}
+
+});
+
+
+}
+
+
+
+// ---------------------
+// DAY ONLY
+// ---------------------
+
+else if(day){
+
+
+conditions.push({
+
+$expr:{
+$eq:[
+{
+$dayOfMonth:"$startDate"
+},
+day
+]
+}
+
+});
+
+
+conditions.push({
+
+$expr:{
+$eq:[
+{
+$dayOfMonth:"$endDate"
+},
+day
+]
+}
+
+});
+
+
+}
+
+
+
+// ---------------------
+// WEEKDAY
+// ---------------------
+
+else if(weekday!==null){
+
+
+conditions.push({
+
+$expr:{
+$eq:[
+{
+$dayOfWeek:"$startDate"
+},
+weekday+1
+]
+}
+
+});
+
+
+conditions.push({
+
+$expr:{
+$eq:[
+{
+$dayOfWeek:"$endDate"
+},
+weekday+1
+]
+}
+
+});
+
+
+}
+
+
+
+if(conditions.length){
+
+filter.$or=conditions;
+
+}
+
+
+}
 
         const projects = await Project.find(filter)
             .populate("client")
