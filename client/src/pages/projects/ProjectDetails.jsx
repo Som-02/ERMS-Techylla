@@ -358,7 +358,9 @@ setStaffingPlan(res.data.staffingPlan);
 {slot.location}
 
 </td>
-<td>
+<td style={{
+        textAlign: "left",
+    }}>
 
 {
     (() => {
