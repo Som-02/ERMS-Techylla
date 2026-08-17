@@ -1,5 +1,6 @@
 const Project = require("../models/Project");
 const Employee = require("../models/Employee");
+const Client = require("../models/Client");
 const {
     assignEmployeeToProject,
 } = require("../services/assignmentService");
@@ -26,6 +27,25 @@ if(req.query.name){
     filter.name={
         $regex:req.query.name,
         $options:"i"
+    };
+
+}
+if(req.query.client){
+
+    const clients = await Client.find({
+
+        name:{
+            $regex:req.query.client,
+            $options:"i"
+        }
+
+    });
+
+
+    filter.client = {
+        $in: clients.map(
+            client => client._id
+        )
     };
 
 }
