@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Loader from "../../components/common/Loader";
-import SearchBar from "../../components/common/SearchBar";
 import PageHeader from "../../components/common/PageHeader";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import ProjectTable from "../../components/project/ProjectTable";
@@ -9,9 +8,9 @@ import {previewProjectImport,importProjectsExcel,} from "../../services/projectI
 import exportProjects from "../../utils/exportProjects";
 import { getProjectsForExport } from "../../services/projectService";
 import ProjectImportPreviewModal from "../../components/common/ProjectImportPreviewModal";
+import ProjectFilter from "../../components/project/ProjectFilter";
 import {
     getProjects,
-    searchProjects,
     deleteProject,
 } from "../../services/projectService";
 import EditAssignmentModal from "../../components/project/AssignmentModal";
@@ -26,14 +25,50 @@ const [selectedFile, setSelectedFile] = useState(null);
     const [showEditModal,setShowEditModal]=useState(false);
     const [selectedAssignment,setSelectedAssignment]=useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
-    const [search, setSearch] = useState("");
     const [showDialog, setShowDialog] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [importing, setImporting] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
+
+    const [filter, setFilter] = useState({type:"",value:""});
+    
     useEffect(() => {
         loadProjects();
     }, []);
+    const applyFilter = async (data) => {
 
+    try {
+
+        const query = {
+            [data.type]: data.value
+        };
+
+        const res = await getProjects(query);
+
+        setProjects(res.data);
+
+        setFilter(data);
+
+        setShowFilter(false);
+
+    }
+    catch(error){
+
+        toast.error("Failed to apply filter");
+
+    }
+
+};
+const clearFilter = () => {
+
+    setFilter({
+        type:"",
+        value:""
+    });
+
+    loadProjects();
+
+};
     const loadProjects = async () => {
 
         try {
@@ -54,21 +89,6 @@ const [selectedFile, setSelectedFile] = useState(null);
 
     };
 
-    const handleSearch = async (query) => {
-
-        if (!query.trim()) {
-
-            loadProjects();
-
-            return;
-
-        }
-
-        const res = await searchProjects(query);
-
-        setProjects(res.data);
-
-    };
 
     const openDeleteDialog = (project) => {
 
@@ -270,24 +290,54 @@ const confirmImport = async () => {
 
 />
 
-            <div style={{ marginBottom: "24px" }}>
+           <div 
+style={{
+    marginBottom:"24px",
+    display:"flex",
+    justifyContent:"flex-end",
+    gap:"12px"
+}}
+>
 
-                <SearchBar
-                    value={search}
-                    placeholder="Search projects..."
-                    onChange={(e) => {
 
-                        const value = e.target.value;
+<button
+className="filter-btn"
+onClick={()=>setShowFilter(true)}
+>
+Filter
+</button>
 
-                        setSearch(value);
 
-                        handleSearch(value);
+{
+(filter.type && filter.value) && (
 
-                    }}
-                />
+<button
+className="clear-filter-btn"
+onClick={clearFilter}
+>
+Clear Filter
+</button>
 
-            </div>
+)
+}
 
+
+</div>
+<ProjectFilter
+
+open={showFilter}
+
+onClose={()=>setShowFilter(false)}
+
+onApply={(data)=>{
+
+setFilter(data);
+
+applyFilter(data);
+
+}}
+
+/>
             <ProjectTable
                 projects={projects}
                 onDelete={openDeleteDialog}

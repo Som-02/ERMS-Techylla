@@ -1,8 +1,16 @@
 import api from "./api";
 
-export const getProjects = async () => {
-    const response = await api.get("/projects");
+export const getProjects = async (filter={}) => {
+
+    const response = await api.get(
+        "/projects",
+        {
+            params: filter
+        }
+    );
+
     return response.data;
+
 };
 export const getMyProjects = async()=>{
 
@@ -33,13 +41,6 @@ export const deleteProject = async (id) => {
     return response.data;
 };
 
-export const searchProjects = async (query) => {
-    const response = await api.get(
-        `/projects/search?q=${query}`
-    );
-
-    return response.data;
-};
 export const getProjectsForExport = async () => {
 
     const response = await api.get(
