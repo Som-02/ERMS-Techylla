@@ -133,6 +133,7 @@ const availableSkillOptions = skillOptions.filter(
             onshore: item.resources?.onshore || 0,
             offshore: item.resources?.offshore || 0,
         },
+        roleCreatedAt:item.roleCreatedAt || ""
     })) || [],
     assignedEmployees:
         project.assignedEmployees?.map(
@@ -293,6 +294,7 @@ return formData.requiredSkills.every(
         skill: role.skill,
 
         resources: role.resources,
+        roleCreatedAt:role.roleCreatedAt
 
     })),
 
@@ -313,7 +315,7 @@ await createProject(payload);
         skill: role.skill,
 
         resources: role.resources,
-
+        roleCreatedAt:role.roleCreatedAt
     })),
 
 };

@@ -287,11 +287,12 @@ to="/employee/projects"
 <colgroup>
         <col style={{ width: "20%" }} />
         <col style={{ width: "10%" }} />
-        <col style={{ width: "15%" }} />
+        <col style={{ width: "16%" }} />
         <col style={{ width: "10%" }} />
+        <col style={{ width: "7%" }} />
         <col style={{ width: "15%" }} />
         <col style={{ width: "15%" }} />
-        <col style={{ width: "10%" }} />
+        <col style={{ width: "5%" }} />
     </colgroup>
                         <thead>
 
@@ -300,7 +301,7 @@ to="/employee/projects"
 <th>Role</th>
 
 <th>Location</th>
-
+<th>Role Created Date</th>
 <th>ID</th>
 
 <th>Name</th>
@@ -340,7 +341,25 @@ to="/employee/projects"
 {slot.location}
 
 </td>
+<td>
 
+{
+    (() => {
+
+        const roleData =
+            project.requiredSkills?.find(
+                item =>
+                    item.skill.name === slot.role
+            );
+
+        return roleData?.roleCreatedAt
+            ? formatDate(roleData.roleCreatedAt)
+            : "-";
+
+    })()
+}
+
+</td>
 <td style={{
         textAlign: "left",
     }}>

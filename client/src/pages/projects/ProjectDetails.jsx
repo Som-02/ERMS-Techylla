@@ -301,13 +301,14 @@ setStaffingPlan(res.data.staffingPlan);
 
                     <table className="employee-table">
 <colgroup>
-        <col style={{ width: "25%" }} />
+        <col style={{ width: "20%" }} />
         <col style={{ width: "10%" }} />
-        <col style={{ width: "15%" }} />
+        <col style={{ width: "16%" }} />
         <col style={{ width: "10%" }} />
+        <col style={{ width: "7%" }} />
         <col style={{ width: "15%" }} />
         <col style={{ width: "15%" }} />
-        <col style={{ width: "10%" }} />
+        <col style={{ width: "5%" }} />
         <col style={{ width: "10%" }} />
     </colgroup>
                         <thead>
@@ -317,7 +318,7 @@ setStaffingPlan(res.data.staffingPlan);
 <th>Role</th>
 
 <th>Location</th>
-
+<th>Role Created Date</th>
 <th>ID</th>
 
 <th>Name</th>
@@ -326,13 +327,9 @@ setStaffingPlan(res.data.staffingPlan);
 
 <th>End Date</th>
 
-<th style={{
-        textAlign: "right",
-    }}>Allocation</th>
+<th style={{textAlign: "right",}}>Allocation</th>
 
-<th style={{
-        textAlign: "center",
-    }}>Actions</th>
+<th style={{textAlign: "center",}}>Actions</th>
 
 </tr>
 
@@ -361,7 +358,25 @@ setStaffingPlan(res.data.staffingPlan);
 {slot.location}
 
 </td>
+<td>
 
+{
+    (() => {
+
+        const roleData =
+            project.requiredSkills?.find(
+                item =>
+                    item.skill.name === slot.role
+            );
+
+        return roleData?.roleCreatedAt
+            ? formatDate(roleData.roleCreatedAt)
+            : "-";
+
+    })()
+}
+
+</td>
 <td style={{
         textAlign: "left",
     }}>

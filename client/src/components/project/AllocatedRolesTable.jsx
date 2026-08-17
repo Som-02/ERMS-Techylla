@@ -25,24 +25,49 @@ const AllocatedRolesTable = ({
             </h3>
 
             <table
-                className="employee-table"
+                className="employee-table" style={{
+        tableLayout:"fixed",
+        width:"100%",border:"none",
+    }}
             >
+        <colgroup>
 
+    <col style={{ width: "23%" }} />
+
+    <col style={{ width: "10%" }} />
+
+    <col style={{ width: "10%" }} />
+
+    <col style={{ width: "20%" }} />
+
+    <col style={{ width: "21%" }} />
+
+</colgroup>
                 <thead>
+<tr>
 
-                    <tr>
+<th className="role-header">
+    Role
+</th>
 
-                        <th>Role</th>
+<th className="resource-header">
+    Onshore / US
+</th>
 
-                        <th style={{textAlign: "center",}}>Onshore/US</th>
+<th className="resource-header">
+    Offshore / IND
+</th>
 
-                        <th style={{textAlign: "center",}}>Offshore/IND</th>
+<th className="date-header">
+    Role Created Date
+</th>
 
-                        <th style={{textAlign: "center",}}>Actions</th>
+<th>
+    Actions
+</th>
 
-                    </tr>
-
-                </thead>
+</tr>
+</thead>
 
                 <tbody>
 
@@ -60,19 +85,36 @@ const AllocatedRolesTable = ({
 
                                 </td>
 
-                                <td style={{textAlign: "center",}}>
+                                <td style={{textAlign: "left",}}>
 
                                     {role.resources.onshore}
 
                                 </td>
 
-                                <td style={{textAlign: "center",}}>
+                                <td style={{textAlign: "left",}}>
 
                                     {role.resources.offshore}
 
                                 </td>
+                                <td style={{textAlign:"left"}}>
 
-                                <td style={{textAlign: "center",}}>
+{
+role.roleCreatedAt
+
+?
+
+new Date(role.roleCreatedAt)
+.toISOString()
+.split("T")[0]
+
+:
+
+"-"
+
+}
+
+</td>
+                                <td>
 
                                     <div
                                         className="project-actions"

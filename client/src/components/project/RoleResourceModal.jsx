@@ -11,7 +11,7 @@ const RoleResourceModal = ({
     const [onshore, setOnshore] = useState("");
 
     const [offshore, setOffshore] = useState("");
-
+    const [roleCreatedAt,setRoleCreatedAt]=useState("");
     useEffect(() => {
 
         if (!open) return;
@@ -23,7 +23,13 @@ const RoleResourceModal = ({
         setOffshore(
             existingData?.resources?.offshore ?? ""
         );
-
+        setRoleCreatedAt(
+    existingData?.roleCreatedAt
+    ?
+    existingData.roleCreatedAt.split("T")[0]
+    :
+    new Date().toISOString().split("T")[0]
+);
     }, [open, existingData]);
 
     if (!open) return null;
@@ -109,14 +115,39 @@ const RoleResourceModal = ({
                     </tbody>
 
                 </table>
+                <div
+ style={{
+    marginTop:20
+ }}
+>
 
+<label>
+    Role Created Date
+</label>
+
+
+<input
+
+className="form-control"
+
+type="date"
+
+value={roleCreatedAt}
+
+onChange={(e)=>
+    setRoleCreatedAt(e.target.value)
+}
+
+/>
+
+</div>                    
                 <div
                     className="preview-actions"
                     style={{
                         marginTop: 25,
                     }}
                 >
-
+                
                     <button
                         className="cancel-btn"
                         onClick={onClose}
@@ -135,7 +166,7 @@ const RoleResourceModal = ({
 
                                 skillName:
                                     role.label,
-
+                                roleCreatedAt: roleCreatedAt,
                                 resources: {
 
                                     onshore:
