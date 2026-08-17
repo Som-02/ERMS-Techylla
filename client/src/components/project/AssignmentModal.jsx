@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./assignmentModal.css";
 import Select from "react-select";
 import { formatDate } from "../../utils/formatDate";
+import toast from "react-hot-toast";
 const AssignmentModal = ({
     open,
     mode = "edit",
@@ -19,7 +20,64 @@ const AssignmentModal = ({
         endDate: "",
         allocation: "",
     });
-    
+    const validateAssignmentDates = () => {
+
+    if (!project?.startDate || !project?.endDate) {
+        return true;
+    }
+
+
+    const assignmentStart =
+        new Date(form.startDate);
+
+    const assignmentEnd =
+        new Date(form.endDate);
+
+
+    const projectStart =
+        new Date(project.startDate);
+
+    const projectEnd =
+        new Date(project.endDate);
+
+
+
+    if (assignmentStart < projectStart) {
+
+        toast.error(
+            "Employee start date cannot be before project start date"
+        );
+
+        return false;
+
+    }
+
+
+    if (assignmentEnd > projectEnd) {
+
+        toast.error(
+            "Employee end date cannot be after project end date"
+        );
+
+        return false;
+
+    }
+
+
+    if (assignmentStart > assignmentEnd) {
+
+        toast.error(
+            "Assignment start date cannot be after end date"
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+};
     const employeeOptions = employees.map(employee => {
 
     const projectRoles = project.requiredSkills.map(
@@ -33,7 +91,7 @@ const AssignmentModal = ({
     return {
 
         value: employee._id,
-
+        label: `${employee.empId} - ${employee.name}`,
         empId: employee.empId,
 
         name: employee.name,
@@ -138,7 +196,15 @@ const AssignmentModal = ({
     value={selectedEmployee}
     onChange={setSelectedEmployee}
     placeholder="Select Employee..."
-
+    isSearchable={true}
+    filterOption={(option, inputValue) =>
+        option.data.name
+            .toLowerCase()
+            .includes(inputValue.toLowerCase()) ||
+        option.data.empId
+            .toLowerCase()
+            .includes(inputValue.toLowerCase())
+    }
     formatOptionLabel={(option) => (
 
         <div>
@@ -326,7 +392,16 @@ value={slot?.location || ""}
 
                     <button
                         className="save-btn"
-                       onClick={() =>
+                       onClick={() => {
+
+
+    if(!validateAssignmentDates()){
+
+        return;
+
+    }
+
+
     onSave({
 
         employeeId:
@@ -334,15 +409,18 @@ value={slot?.location || ""}
                 ? assignment.employeeId
                 : selectedEmployee?.value,
 
+
         role:
             mode === "edit"
                 ? assignment.role
                 : slot?.role,
 
+
         location:
             mode === "edit"
                 ? assignment.location
                 : slot?.location,
+
 
         startDate: form.startDate,
 
@@ -350,8 +428,10 @@ value={slot?.location || ""}
 
         allocation: Number(form.allocation),
 
-    })
-}
+    });
+
+
+}}
                     >
                         {mode === "edit"
     ? "Save"
