@@ -419,7 +419,22 @@ const createProject = async (req, res) => {
 
 } = req.body;
 
-const project = await Project.create({...projectData,statusChangedAt: new Date(),});
+const project = await Project.create({
+
+    ...projectData,
+
+    requiredSkills:
+        projectData.requiredSkills.map(role=>({
+
+            ...role,
+
+            roleCreatedAt:new Date()
+
+        })),
+
+    statusChangedAt:new Date()
+
+});
 
         if (
 
@@ -547,6 +562,43 @@ if (
     projectData.statusChangedAt = new Date();
 
 }
+const oldRoles =
+    existingProject.requiredSkills;
+
+
+projectData.requiredSkills =
+projectData.requiredSkills.map(newRole=>{
+
+
+    const oldRole =
+        oldRoles.find(
+            old =>
+            old.skill.toString() ===
+            newRole.skill.toString()
+        );
+
+
+    return {
+
+        ...newRole,
+
+        roleCreatedAt:
+    newRole.roleCreatedAt
+    ?
+    new Date(newRole.roleCreatedAt)
+    :
+    (
+        oldRole?.roleCreatedAt
+        ?
+        oldRole.roleCreatedAt
+        :
+        new Date()
+    )
+
+    };
+
+
+});
         // projectData.assignedEmployees = assignedEmployees;
 
         const project = await Project.findByIdAndUpdate(
