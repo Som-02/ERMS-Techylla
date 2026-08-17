@@ -19,7 +19,56 @@ const assignEmployeeToProject = async ({
             throw new Error("Project not found");
 
         }
+        // ==========================================
+// PROJECT DATE VALIDATION
+// ==========================================
 
+const assignmentStart =
+    new Date(startDate);
+
+const assignmentEnd =
+    new Date(endDate);
+
+
+const projectStart =
+    new Date(project.startDate);
+
+const projectEnd =
+    new Date(project.endDate);
+
+
+
+if (
+    assignmentStart < projectStart
+) {
+
+    throw new Error(
+        "Employee assignment start date cannot be before project start date."
+    );
+
+}
+
+
+if (
+    assignmentEnd > projectEnd
+) {
+
+    throw new Error(
+        "Employee assignment end date cannot be after project end date."
+    );
+
+}
+
+
+if (
+    assignmentStart > assignmentEnd
+) {
+
+    throw new Error(
+        "Employee assignment start date cannot be after end date."
+    );
+
+}
         const employee = await Employee.findById(employeeId);
 
         if (!employee) {

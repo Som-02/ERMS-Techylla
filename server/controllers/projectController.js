@@ -941,7 +941,81 @@ const updateAssignment = async (req, res) => {
             allocation,
 
         } = req.body;
+        const project =
+    await Project.findById(projectId);
 
+
+if(!project){
+
+    return res.status(404).json({
+
+        success:false,
+
+        message:"Project not found"
+
+    });
+
+}
+
+
+
+const assignmentStart =
+    new Date(startDate);
+
+const assignmentEnd =
+    new Date(endDate);
+
+
+const projectStart =
+    new Date(project.startDate);
+
+const projectEnd =
+    new Date(project.endDate);
+
+
+
+if(assignmentStart < projectStart){
+
+    return res.status(400).json({
+
+        success:false,
+
+        message:
+        "Assignment start date cannot be before project start date."
+
+    });
+
+}
+
+
+
+if(assignmentEnd > projectEnd){
+
+    return res.status(400).json({
+
+        success:false,
+
+        message:
+        "Assignment end date cannot be after project end date."
+
+    });
+
+}
+
+
+
+if(assignmentStart > assignmentEnd){
+
+    return res.status(400).json({
+
+        success:false,
+
+        message:
+        "Assignment start date cannot be after end date."
+
+    });
+
+}
         const employee = await Employee.findById(employeeId);
 
         if (!employee) {

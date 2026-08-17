@@ -38,7 +38,7 @@ const getGraphAccessToken = async () => {
             ],
 
         });
-
+    
 
     if (!result?.accessToken) {
 
