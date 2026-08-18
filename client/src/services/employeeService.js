@@ -39,8 +39,13 @@ export const searchEmployees = async (query) => {
 };
 
 export const getManagers = async () => {
-    const response = await api.get("/employees");
+
+    const response = await api.get(
+        "/employees/reporting-managers"
+    );
+
     return response.data;
+
 };
 export const getEmployeesBySkills = async (skills = []) => {
 

@@ -30,6 +30,7 @@ const EmployeeForm = ({
         position: "",
         experience: "",
         reportingManager: "",
+        isReportingManager: false,
     });
 
     const [skills, setSkills] = useState([]);
@@ -52,6 +53,8 @@ const EmployeeForm = ({
                     employee.reportingManager?._id ||
                     employee.reportingManager ||
                     "",
+                isReportingManager:
+        employee.isReportingManager ?? false,
             });
 
             setSkills(employee.skills || []);
@@ -269,6 +272,42 @@ const EmployeeForm = ({
         </option>
     </select>
 </div>
+<div className="form-group">
+
+    <label>Is Reporting Manager?</label>
+
+    <select
+        name="isReportingManager"
+        value={
+            formData.isReportingManager
+                ? "Yes"
+                : "No"
+        }
+        onChange={(e) => {
+
+            setFormData(prev => ({
+
+                ...prev,
+
+                isReportingManager:
+                    e.target.value === "Yes"
+
+            }));
+
+        }}
+    >
+
+        <option value="No">
+            No
+        </option>
+
+        <option value="Yes">
+            Yes
+        </option>
+
+    </select>
+
+</div>
         {/* <div className="form-group full">
 
             <label>WWID</label>
@@ -320,7 +359,7 @@ const EmployeeForm = ({
 
         <div className="form-group full">
 
-            <label>Reporting Manager</label>
+            <label>Reports To</label>
 
             <select
                 name="reportingManager"
@@ -330,7 +369,7 @@ const EmployeeForm = ({
                 <option value="">
                     {managers.length === 0
                         ? "No Reporting Manager"
-                        : "Select Reporting Manager"}
+                        : "Select a Reporting Manager"}
                 </option>
 
                 {managers
