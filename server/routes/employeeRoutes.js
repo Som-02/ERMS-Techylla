@@ -6,6 +6,7 @@ const validateEmployee = require("../middleware/validateEmployee");
 const {
   createEmployee,
   getEmployees,
+  getReportingManagers,
   getEmployeeById,
   getMyEmployee,
   updateEmployee,
@@ -28,6 +29,11 @@ router.get(
     "/me",
     protect,
     getMyEmployee
+);
+router.get(
+    "/reporting-managers",
+    protect,
+    getReportingManagers
 );
 router.get("/:id", protect, getEmployeeById);
 router.get("/", protect, getEmployees);

@@ -131,6 +131,10 @@ const employeeSchema = new mongoose.Schema({
     ref: "Employee",
     default: null,
 },
+    isReportingManager: {
+    type: Boolean,
+    default: false,
+},
 
     skills: [skillSchema],
 

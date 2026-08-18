@@ -127,6 +127,106 @@ const getEmployees = async (req, res) => {
     }
 
 };
+// ==========================================
+// Get Reporting Managers
+// ==========================================
+
+const getReportingManagers = async (req, res) => {
+
+    try {
+
+        // Explicitly marked Reporting Managers
+        const explicitManagers =
+            await Employee.find({
+
+                isReportingManager: true
+
+            })
+            .select("name empId position");
+
+
+        // Existing managers already being used
+        // by other employees.
+        //
+        // This keeps old database relationships
+        // working after introducing the new field.
+
+        const existingManagerIds =
+            await Employee.distinct(
+                "reportingManager"
+            );
+
+
+        const existingManagers =
+            await Employee.find({
+
+                _id: {
+                    $in: existingManagerIds
+                }
+
+            })
+            .select("name empId position");
+
+
+        // Combine both lists
+
+        const managerMap = new Map();
+
+
+        explicitManagers.forEach(manager => {
+
+            managerMap.set(
+                manager._id.toString(),
+                manager
+            );
+
+        });
+
+
+        existingManagers.forEach(manager => {
+
+            managerMap.set(
+                manager._id.toString(),
+                manager
+            );
+
+        });
+
+
+        const managers =
+            Array.from(
+                managerMap.values()
+            ).sort(
+                (a, b) =>
+                    a.name.localeCompare(b.name)
+            );
+
+
+        res.status(200).json({
+
+            success: true,
+
+            count: managers.length,
+
+            data: managers
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
+
+};
 
 /*
 ==========================================
@@ -268,11 +368,15 @@ const createEmployee = async (req, res) => {
 
         // } = req.body;
         const employeeData = req.body;
-        if (!employeeData.reportingManager) {
 
-            employeeData.reportingManager = null;
+if (!employeeData.reportingManager) {
 
-        }
+    employeeData.reportingManager = null;
+
+}
+
+employeeData.isReportingManager =
+    employeeData.isReportingManager === true;
 
         // -----------------------------
         // Create employee WITHOUT assignments
@@ -387,6 +491,118 @@ const updateEmployee = async (req, res) => {
                 Number(skill.rating),
         })
     );
+    // ==========================================
+// Reporting Manager Role Validation
+// ==========================================
+
+const newIsReportingManager =
+    employeeData.isReportingManager === true;
+
+
+// ------------------------------------------
+// Prevent removing manager role if employees
+// are still reporting to this employee
+// ------------------------------------------
+
+if (
+    employee.isReportingManager === true &&
+    newIsReportingManager === false
+) {
+
+    const reportingEmployees =
+        await Employee.countDocuments({
+            reportingManager: employee._id
+        });
+
+    if (reportingEmployees > 0) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Cannot remove Reporting Manager role. Reassign the employees reporting to this manager first."
+
+        });
+
+    }
+
+}
+
+
+// ------------------------------------------
+// Validate selected Reporting Manager
+// ------------------------------------------
+
+if (employeeData.reportingManager) {
+
+    // Employee cannot report to themselves
+
+    if (
+        employeeData.reportingManager.toString() ===
+        employee._id.toString()
+    ) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "An employee cannot be their own Reporting Manager."
+
+        });
+
+    }
+
+
+    const selectedManager =
+        await Employee.findById(
+            employeeData.reportingManager
+        );
+
+
+    if (!selectedManager) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Selected Reporting Manager does not exist."
+
+        });
+
+    }
+
+
+    // A selected manager must either be explicitly
+    // marked as a Reporting Manager OR already be
+    // an existing manager in the database.
+
+    const existingManagerCount =
+        await Employee.countDocuments({
+            reportingManager:
+                selectedManager._id
+        });
+
+
+    if (
+        !selectedManager.isReportingManager &&
+        existingManagerCount === 0
+    ) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Selected employee is not registered as a Reporting Manager."
+
+        });
+
+    }
+
+}
         // -----------------------------
         // Update employee basic details
         // -----------------------------
@@ -399,6 +615,7 @@ const updateEmployee = async (req, res) => {
         employee.position = employeeData.position;
         employee.experience = employeeData.experience;
         employee.reportingManager = employeeData.reportingManager || null;
+        employee.isReportingManager = newIsReportingManager;
         employee.skills = employeeData.skills || [];
 
         // -----------------------------
@@ -454,7 +671,6 @@ const updateEmployee = async (req, res) => {
         //     });
 
         // }
-        employee.skills = employeeData.skills || [];
         await employee.save();
         /*
 ==================================================
@@ -975,7 +1191,7 @@ const getEmployeesBySkills = async (req, res) => {
 module.exports = {
 
     getEmployees,
-    
+    getReportingManagers,
     getEmployeeById,
     getMyEmployee,
     createEmployee,
