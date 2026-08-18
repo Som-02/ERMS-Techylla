@@ -1,11 +1,50 @@
 import api from "./api";
 
-export const getProjects = async (filter={}) => {
+export const getProjects = async (filter = {}) => {
+
+    const params = new URLSearchParams();
+
+    Object.entries(filter).forEach(([key, value]) => {
+
+        if (
+            value === undefined ||
+            value === null ||
+            value === ""
+        ) {
+            return;
+        }
+
+        // Status is an array
+        if (key === "status" && Array.isArray(value)) {
+
+            value.forEach(status => {
+
+                if (status) {
+
+                    params.append(
+                        "status",
+                        status
+                    );
+
+                }
+
+            });
+
+            return;
+
+        }
+
+        params.append(
+            key,
+            value
+        );
+
+    });
 
     const response = await api.get(
         "/projects",
         {
-            params: filter
+            params
         }
     );
 

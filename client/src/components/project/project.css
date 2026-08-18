@@ -1,10 +1,16 @@
-.project-table-wrapper{
-    background:#ffffff;
+.project-table-wrapper {
+
+    background: #ffffff;
+
     border: 1px solid #e5e7eb;
-    border-radius:14px;
-    overflow-x:auto;
-    overflow-y:hidden;
-    box-shadow:0 3px 12px rgba(0,0,0,.05);
+
+    border-radius: 14px;
+
+    overflow: visible;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.05);
+
 }
 .project-info{
     display:flex;
@@ -669,5 +675,259 @@ height:36px;
 .clear-filter-btn:hover{
 
     background:#fecaca;
+
+}
+/* ==========================================
+   EXCEL STYLE COLUMN FILTER
+========================================== */
+
+.filterable-header {
+    position: relative;
+    text-align: left;
+    padding: 12px 16px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.header-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: auto;
+}
+
+.column-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 5px;
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    flex-shrink: 0;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.column-filter-btn:hover {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.column-filter-btn.filter-active {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+
+/* ==========================================
+   FILTER OVERLAY
+========================================== */
+
+.column-filter-overlay {
+
+    position: absolute;
+
+    top: calc(100% + 2px);
+
+    left: 8px;
+
+    min-width: 230px;
+
+    padding: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, .15);
+
+    z-index: 1000;
+
+}
+
+
+/* ==========================================
+   FILTER INPUT
+========================================== */
+
+.column-filter-input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    font-size: 14px;
+
+}
+
+.column-filter-input:focus {
+
+    
+
+    box-shadow:
+        0 0 0 2px rgba(
+            37,
+            99,
+            235,
+            .12
+        );
+
+}
+
+
+/* ==========================================
+   FILTER ACTIONS
+========================================== */
+
+.column-filter-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 12px;
+
+}
+
+.filter-apply-btn {
+
+    padding: 7px 14px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color: #ffffff;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+.filter-apply-btn:hover {
+
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+}
+
+.filter-clear-btn {
+
+    padding: 7px 14px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+.filter-clear-btn:hover {
+
+    background: #e5e7eb;
+
+}
+
+
+/* ==========================================
+   STATUS FILTER
+========================================== */
+
+.status-filter-overlay {
+
+    min-width: 190px;
+
+}
+
+.status-filter-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+.status-filter-option {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 5px 4px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    border-radius: 5px;
+
+}
+
+.status-filter-option:hover {
+
+    background: #f8fafc;
+
+}
+
+.status-filter-option input {
+
+    width: 15px;
+
+    height: 15px;
+
+    cursor: pointer;
 
 }

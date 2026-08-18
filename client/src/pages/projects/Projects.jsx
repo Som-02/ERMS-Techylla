@@ -8,7 +8,6 @@ import {previewProjectImport,importProjectsExcel,} from "../../services/projectI
 import exportProjects from "../../utils/exportProjects";
 import { getProjectsForExport } from "../../services/projectService";
 import ProjectImportPreviewModal from "../../components/common/ProjectImportPreviewModal";
-import ProjectFilter from "../../components/project/ProjectFilter";
 import {
     getProjects,
     deleteProject,
@@ -28,45 +27,61 @@ const [selectedFile, setSelectedFile] = useState(null);
     const [showDialog, setShowDialog] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [importing, setImporting] = useState(false);
-    const [showFilter, setShowFilter] = useState(false);
-
-    const [filter, setFilter] = useState({type:"",value:""});
-    
+    const [filters, setFilters] = useState({
+    name: "",
+    client: "",
+    startDate: "",
+    endDate: "",
+    status: [],
+});
     useEffect(() => {
         loadProjects();
     }, []);
-    const applyFilter = async (data) => {
+const applyColumnFilter = async (column, value) => {
+
+    const updatedFilters = {
+        ...filters,
+        [column]: value,
+    };
+
+    setFilters(updatedFilters);
 
     try {
 
-        const query = {
-            [data.type]: data.value
-        };
-
-        const res = await getProjects(query);
+        const res = await getProjects(updatedFilters);
 
         setProjects(res.data);
 
-        setFilter(data);
-
-        setShowFilter(false);
-
-    }
-    catch(error){
+    } catch (error) {
 
         toast.error("Failed to apply filter");
 
     }
 
 };
-const clearFilter = () => {
+const clearColumnFilter = async (column) => {
 
-    setFilter({
-        type:"",
-        value:""
-    });
+    const updatedFilters = {
+        ...filters,
+        [column]:
+            column === "status"
+                ? []
+                : "",
+    };
 
-    loadProjects();
+    setFilters(updatedFilters);
+
+    try {
+
+        const res = await getProjects(updatedFilters);
+
+        setProjects(res.data);
+
+    } catch (error) {
+
+        toast.error("Failed to clear filter");
+
+    }
 
 };
     const loadProjects = async () => {
@@ -290,58 +305,13 @@ const confirmImport = async () => {
 
 />
 
-           <div 
-style={{
-    marginBottom:"24px",
-    display:"flex",
-    justifyContent:"flex-end",
-    gap:"12px"
-}}
->
-
-
-<button
-className="filter-btn"
-onClick={()=>setShowFilter(true)}
->
-Filter
-</button>
-
-
-{
-(filter.type && filter.value) && (
-
-<button
-className="clear-filter-btn"
-onClick={clearFilter}
->
-Clear Filter
-</button>
-
-)
-}
-
-
-</div>
-<ProjectFilter
-
-open={showFilter}
-
-onClose={()=>setShowFilter(false)}
-
-onApply={(data)=>{
-
-setFilter(data);
-
-applyFilter(data);
-
-}}
-
-/>
             <ProjectTable
-                projects={projects}
-                onDelete={openDeleteDialog}
-            />
+    projects={projects}
+    onDelete={openDeleteDialog}
+    filters={filters}
+    onApplyFilter={applyColumnFilter}
+    onClearFilter={clearColumnFilter}
+/>
 
             <ConfirmDialog
                 open={showDialog}
