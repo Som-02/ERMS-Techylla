@@ -7,7 +7,506 @@ const {
 // ============================
 // Get All Projects
 // ============================
+const MONTHS = {
+    january: 0,
+    february: 1,
+    march: 2,
+    april: 3,
+    may: 4,
+    june: 5,
+    july: 6,
+    august: 7,
+    september: 8,
+    october: 9,
+    november: 10,
+    december: 11,
+};
 
+const MONTH_ALIASES = {
+    jan: "january",
+    feb: "february",
+    mar: "march",
+    apr: "april",
+    jun: "june",
+    jul: "july",
+    aug: "august",
+    sep: "september",
+    sept: "september",
+    oct: "october",
+    nov: "november",
+    dec: "december",
+};
+
+const DAYS = {
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+};
+
+const DAY_ALIASES = {
+    sun: "sunday",
+    mon: "monday",
+    tue: "tuesday",
+    tues: "tuesday",
+    wed: "wednesday",
+    thu: "thursday",
+    thur: "thursday",
+    thurs: "thursday",
+    fri: "friday",
+    sat: "saturday",
+};
+const buildDateFilter = (value, field) => {
+
+    if (!value || typeof value !== "string") {
+        return null;
+    }
+
+    let text = value
+        .trim()
+        .toLowerCase()
+        .replace(/,/g, " ")
+        .replace(/\s+/g, " ");
+
+    if (!text) {
+        return null;
+    }
+
+    // Remove ordinal suffixes
+    // 12th -> 12
+    // 1st -> 1
+    // 2nd -> 2
+    // 3rd -> 3
+    text = text.replace(
+        /\b(\d{1,2})(st|nd|rd|th)\b/g,
+        "$1"
+    );
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    // =====================================================
+    // 1. NORMAL NUMERIC DATE
+    // 12/08/2026
+    // 12-08-2026
+    // 12/08
+    // =====================================================
+
+    const numericDate = text.match(
+        /^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/
+    );
+
+    if (numericDate) {
+
+        let first = Number(numericDate[1]);
+        let second = Number(numericDate[2]);
+        let third = Number(numericDate[3]);
+
+        let day;
+        let month;
+        let year;
+
+        // YYYY-MM-DD
+        if (String(numericDate[1]).length === 4) {
+
+            year = first;
+            month = second - 1;
+            day = third;
+
+        }
+
+        // DD-MM-YYYY
+        else {
+
+            day = first;
+            month = second - 1;
+            year = third;
+
+        }
+
+        const start = new Date(
+            year,
+            month,
+            day,
+            0,
+            0,
+            0,
+            0
+        );
+
+        const end = new Date(
+            year,
+            month,
+            day,
+            23,
+            59,
+            59,
+            999
+        );
+
+        return {
+            [field]: {
+                $gte: start,
+                $lte: end
+            }
+        };
+
+    }
+
+
+    // =====================================================
+    // 2. MONTHS
+    // =====================================================
+
+    const months = {
+        january: 0,
+        february: 1,
+        march: 2,
+        april: 3,
+        may: 4,
+        june: 5,
+        july: 6,
+        august: 7,
+        september: 8,
+        october: 9,
+        november: 10,
+        december: 11
+    };
+
+    const monthAliases = {
+        jan: "january",
+        feb: "february",
+        mar: "march",
+        apr: "april",
+        jun: "june",
+        jul: "july",
+        aug: "august",
+        sep: "september",
+        sept: "september",
+        oct: "october",
+        nov: "november",
+        dec: "december"
+    };
+
+    let normalizedText = text;
+
+    Object.keys(monthAliases).forEach(alias => {
+
+        const fullName = monthAliases[alias];
+
+        const regex = new RegExp(
+            `\\b${alias}\\b`,
+            "i"
+        );
+
+        normalizedText =
+            normalizedText.replace(
+                regex,
+                fullName
+            );
+
+    });
+
+    let monthIndex = null;
+
+    for (const monthName in months) {
+
+        if (
+            new RegExp(
+                `\\b${monthName}\\b`,
+                "i"
+            ).test(normalizedText)
+        ) {
+
+            monthIndex = months[monthName];
+
+            break;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // 3. YEAR
+    // =====================================================
+
+    const yearMatch = text.match(
+        /\b(19|20)\d{2}\b/
+    );
+
+    const year = yearMatch
+        ? Number(yearMatch[0])
+        : null;
+
+
+    // =====================================================
+    // 4. DAY NUMBER
+    // =====================================================
+
+    const dayMatch = text.match(
+        /\b([1-9]|[12]\d|3[01])\b/
+    );
+
+    const dayNumber = dayMatch
+        ? Number(dayMatch[1])
+        : null;
+
+
+    // =====================================================
+    // 5. DAY + MONTH
+    //
+    // 12 August
+    // August 12
+    // 12 Aug
+    // Aug 12
+    // =====================================================
+
+    if (
+        dayNumber &&
+        monthIndex !== null
+    ) {
+
+        const targetYear =
+            year || currentYear;
+
+        const start = new Date(
+            targetYear,
+            monthIndex,
+            dayNumber,
+            0,
+            0,
+            0,
+            0
+        );
+
+        const end = new Date(
+            targetYear,
+            monthIndex,
+            dayNumber,
+            23,
+            59,
+            59,
+            999
+        );
+
+        return {
+            [field]: {
+                $gte: start,
+                $lte: end
+            }
+        };
+
+    }
+
+
+    // =====================================================
+    // 6. MONTH + YEAR
+    //
+    // August 2026
+    // Aug 2026
+    // =====================================================
+
+    if (
+        monthIndex !== null &&
+        year
+    ) {
+
+        const start = new Date(
+            year,
+            monthIndex,
+            1,
+            0,
+            0,
+            0,
+            0
+        );
+
+        const end = new Date(
+            year,
+            monthIndex + 1,
+            0,
+            23,
+            59,
+            59,
+            999
+        );
+
+        return {
+            [field]: {
+                $gte: start,
+                $lte: end
+            }
+        };
+
+    }
+
+
+    // =====================================================
+    // 7. MONTH ONLY
+    //
+    // August
+    // august
+    // Aug
+    // =====================================================
+
+    if (monthIndex !== null) {
+
+        return {
+            $expr: {
+                $eq: [
+                    {
+                        $month: `$${field}`
+                    },
+                    monthIndex + 1
+                ]
+            }
+        };
+
+    }
+
+
+    // =====================================================
+    // 8. YEAR ONLY
+    //
+    // 2026
+    // =====================================================
+
+    if (year) {
+
+        return {
+            $expr: {
+                $eq: [
+                    {
+                        $year: `$${field}`
+                    },
+                    year
+                ]
+            }
+        };
+
+    }
+
+
+    // =====================================================
+    // 9. DAY OF MONTH ONLY
+    //
+    // 12
+    // 12th
+    // =====================================================
+
+    if (
+        dayNumber &&
+        !monthIndex &&
+        !year
+    ) {
+
+        return {
+            $expr: {
+                $eq: [
+                    {
+                        $dayOfMonth: `$${field}`
+                    },
+                    dayNumber
+                ]
+            }
+        };
+
+    }
+
+
+    // =====================================================
+    // 10. DAY OF WEEK
+    //
+    // Monday
+    // monday
+    // Mon
+    // =====================================================
+
+    const days = {
+        sunday: 1,
+        monday: 2,
+        tuesday: 3,
+        wednesday: 4,
+        thursday: 5,
+        friday: 6,
+        saturday: 7
+    };
+
+    const dayAliases = {
+        sun: "sunday",
+        mon: "monday",
+        tue: "tuesday",
+        tues: "tuesday",
+        wed: "wednesday",
+        thu: "thursday",
+        thur: "thursday",
+        thurs: "thursday",
+        fri: "friday",
+        sat: "saturday"
+    };
+
+    let dayName = null;
+
+    for (const day in days) {
+
+        if (
+            new RegExp(
+                `\\b${day}\\b`,
+                "i"
+            ).test(text)
+        ) {
+
+            dayName = day;
+            break;
+
+        }
+
+    }
+
+    if (!dayName) {
+
+        for (const alias in dayAliases) {
+
+            if (
+                new RegExp(
+                    `\\b${alias}\\b`,
+                    "i"
+                ).test(text)
+            ) {
+
+                dayName =
+                    dayAliases[alias];
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    if (dayName) {
+
+        return {
+            $expr: {
+                $eq: [
+                    {
+                        $dayOfWeek: `$${field}`
+                    },
+                    days[dayName]
+                ]
+            }
+        };
+
+    }
+
+    return null;
+
+};
 const getProjects = async (req, res) => {
 
     try {
@@ -15,419 +514,169 @@ const getProjects = async (req, res) => {
         const filter = {};
 
 
-if(req.query.status){
+// ============================
+// Project Name Filter
+// ============================
 
-    filter.status=req.query.status;
+if (req.query.name) {
 
-}
-
-
-if(req.query.name){
-
-    filter.name={
-        $regex:req.query.name,
-        $options:"i"
+    filter.name = {
+        $regex: req.query.name,
+        $options: "i"
     };
 
 }
-if(req.query.client){
+
+
+// ============================
+// Client Filter
+// ============================
+
+if (req.query.client) {
 
     const clients = await Client.find({
 
-        name:{
-            $regex:req.query.client,
-            $options:"i"
+        name: {
+            $regex: req.query.client,
+            $options: "i"
         }
 
-    });
-
+    }).select("_id");
 
     filter.client = {
-        $in: clients.map(
-            client => client._id
-        )
+        $in: clients.map(client => client._id)
     };
 
 }
-if(req.query.date){
-
-const raw =
-req.query.date
-.toLowerCase()
-.trim()
-.replace(/,/g,"")
-.replace(
- /(st|nd|rd|th)/g,
- ""
-);
 
 
-// ---------------------
-// MONTH MAP
-// ---------------------
+// ============================
+// Status Filter
+// ============================
 
-const months = {
+let statuses = [];
 
-jan:0,
-january:0,
+// ------------------------------------
+// Normal query:
+// ?status=Active
+// ?status=Active&status=Pipeline
+// ------------------------------------
 
-feb:1,
-february:1,
+if (req.query.status) {
 
-mar:2,
-march:2,
+    if (Array.isArray(req.query.status)) {
 
-apr:3,
-april:3,
+        statuses.push(...req.query.status);
 
-may:4,
+    } else {
 
-jun:5,
-june:5,
+        statuses.push(req.query.status);
 
-jul:6,
-july:6,
-
-aug:7,
-august:7,
-
-sep:8,
-sept:8,
-september:8,
-
-oct:9,
-october:9,
-
-nov:10,
-november:10,
-
-dec:11,
-december:11
-
-};
-
-
-// ---------------------
-// WEEK DAYS
-// ---------------------
-
-const weekdays = {
-
-sun:0,
-sunday:0,
-
-mon:1,
-monday:1,
-
-tue:2,
-tues:2,
-tuesday:2,
-
-wed:3,
-wednesday:3,
-
-thu:4,
-thur:4,
-thursday:4,
-
-fri:5,
-friday:5,
-
-sat:6,
-saturday:6
-
-};
-
-
-// ---------------------
-// EXTRACT YEAR
-// ---------------------
-
-const yearMatch =
-raw.match(/\b(20\d{2})\b/);
-
-
-const year =
-yearMatch
-?
-Number(yearMatch[0])
-:
-null;
-
-
-
-// ---------------------
-// EXTRACT MONTH
-// ---------------------
-
-let month=null;
-
-
-for(const key in months){
-
-if(raw.includes(key)){
-
-month=months[key];
-
-break;
-
-}
+    }
 
 }
 
 
+// ------------------------------------
+// Axios may send:
+// ?status[]=Active&status[]=Pipeline
+// ------------------------------------
 
-// ---------------------
-// EXTRACT DAY NUMBER
-// ---------------------
+if (req.query["status[]"]) {
 
-const numbers =
-raw.match(/\b\d{1,2}\b/g);
+    if (Array.isArray(req.query["status[]"])) {
 
+        statuses.push(...req.query["status[]"]);
 
-let day=null;
+    } else {
 
+        statuses.push(req.query["status[]"]);
 
-if(numbers){
-
-for(const num of numbers){
-
-const n=Number(num);
-
-if(n>=1 && n<=31 && n!==year){
-
-day=n;
-
-break;
-
-}
-
-}
+    }
 
 }
 
 
+// ------------------------------------
+// Clean values
+// ------------------------------------
 
-// ---------------------
-// EXTRACT WEEKDAY
-// ---------------------
-
-let weekday=null;
-
-
-for(const key in weekdays){
-
-if(raw.includes(key)){
-
-weekday=weekdays[key];
-
-break;
-
-}
-
-}
+statuses = statuses
+    .flat()
+    .filter(Boolean)
+    .map(status => String(status).trim())
+    .filter(Boolean);
 
 
+// ------------------------------------
+// Remove duplicates
+// ------------------------------------
 
-const conditions=[];
-
-
-
-// ---------------------
-// EXACT DATE
-// ---------------------
-
-if(day && month!==null && year){
+statuses = [...new Set(statuses)];
 
 
-const start =
-new Date(year,month,day);
+// ------------------------------------
+// Apply filter
+// ------------------------------------
 
+if (statuses.length > 0) {
 
-const end =
-new Date(year,month,day);
+    filter.status = {
 
+        $in: statuses
 
-end.setHours(
-23,59,59,999
-);
-
-
-
-conditions.push({
-
-startDate:{
-$gte:start,
-$lte:end
-}
-
-});
-
-
-conditions.push({
-
-endDate:{
-$gte:start,
-$lte:end
-}
-
-});
-
+    };
 
 }
 
 
+// ============================
+// Start Date Filter
+// ============================
 
-// ---------------------
-// YEAR + MONTH
-// ---------------------
+if (req.query.startDate) {
 
-else if(month!==null && year){
+    const dateFilter =
+        buildDateFilter(
+            req.query.startDate,
+            "startDate"
+        );
 
+    if (dateFilter) {
 
-conditions.push({
+        Object.assign(
+            filter,
+            dateFilter
+        );
 
-startDate:{
-$gte:new Date(year,month,1),
-$lt:new Date(year,month+1,1)
-}
-
-});
-
-
-}
-
-
-
-// ---------------------
-// MONTH ONLY
-// ---------------------
-
-else if(month!==null){
-
-
-const currentYear =
-new Date().getFullYear();
-
-
-conditions.push({
-
-$expr:{
-$eq:[
-{
-$month:"$startDate"
-},
-month+1
-]
-}
-
-});
-
-
-conditions.push({
-
-$expr:{
-$eq:[
-{
-$month:"$endDate"
-},
-month+1
-]
-}
-
-});
-
+    }
 
 }
 
 
+// ============================
+// End Date Filter
+// ============================
 
-// ---------------------
-// DAY ONLY
-// ---------------------
+if (req.query.endDate) {
 
-else if(day){
+    const dateFilter =
+        buildDateFilter(
+            req.query.endDate,
+            "endDate"
+        );
 
+    if (dateFilter) {
 
-conditions.push({
+        Object.assign(
+            filter,
+            dateFilter
+        );
 
-$expr:{
-$eq:[
-{
-$dayOfMonth:"$startDate"
-},
-day
-]
-}
-
-});
-
-
-conditions.push({
-
-$expr:{
-$eq:[
-{
-$dayOfMonth:"$endDate"
-},
-day
-]
-}
-
-});
-
+    }
 
 }
 
-
-
-// ---------------------
-// WEEKDAY
-// ---------------------
-
-else if(weekday!==null){
-
-
-conditions.push({
-
-$expr:{
-$eq:[
-{
-$dayOfWeek:"$startDate"
-},
-weekday+1
-]
-}
-
-});
-
-
-conditions.push({
-
-$expr:{
-$eq:[
-{
-$dayOfWeek:"$endDate"
-},
-weekday+1
-]
-}
-
-});
-
-
-}
-
-
-
-if(conditions.length){
-
-filter.$or=conditions;
-
-}
-
-
-}
 
         const projects = await Project.find(filter)
             .populate("client")
