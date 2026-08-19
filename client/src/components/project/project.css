@@ -931,3 +931,437 @@ height:36px;
     cursor: pointer;
 
 }
+/* =========================================
+   Project Category
+========================================= */
+
+.project-category-group {
+    width: 100%;
+}
+
+.project-category-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.project-category-label-row label {
+    margin-bottom: 0;
+}
+
+.project-category-add-btn {
+    border: none;
+    border-radius: 12px;
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 10px 14px;
+}
+
+.project-category-add-btn:hover {
+    text-decoration: none;
+    background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+}
+
+.project-category-add-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.project-category-group input,
+.project-category-group select {
+    width: 100%;
+}
+
+/* =========================================
+   Add Mode Buttons
+========================================= */
+
+.project-category-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+
+.project-category-cancel-btn{
+
+    background:#f3f4f6;
+
+    color:#374151;
+
+    border:none;
+
+    padding:10px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    font-size:14px;
+
+}
+.project-category-submit-btn {
+
+    background:linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color:#ffffff;
+
+    border:none;
+
+    padding:10px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    font-size:14px;
+
+}
+.project-category-submit-btn:hover{
+background:linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+}
+.project-category-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   Custom Dropdown
+========================================= */
+
+.project-category-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.project-category-dropdown-trigger {
+    width: 100%;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 14px;
+
+    background: #fff;
+
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+
+    font-size: 16px;
+    color: #111;
+
+    cursor: pointer;
+
+    text-align: left;
+}
+
+.project-category-dropdown-trigger:hover {
+    border-color: #adb5bd;
+}
+
+.category-dropdown-arrow {
+    font-size: 18px;
+    line-height: 1;
+}
+
+
+/* =========================================
+   Dropdown Menu
+========================================= */
+
+.project-category-dropdown-menu {
+    position: absolute;
+
+    top: calc(100% + 3px);
+    left: 0;
+    right: 0;
+
+    background: #fff;
+
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+
+    max-height: 260px;
+
+    overflow-y: auto;
+
+    z-index: 1000;
+}
+
+
+/* =========================================
+   Category Row
+========================================= */
+
+.project-category-option {
+    min-height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 8px 0 12px;
+
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.project-category-option:last-child {
+    border-bottom: none;
+}
+
+.project-category-option:hover {
+    background: #f7f8fa;
+}
+
+
+/* =========================================
+   Category Name
+========================================= */
+
+.project-category-name {
+    flex: 1;
+
+    border: none;
+    background: transparent;
+
+    padding: 9px 4px;
+
+    text-align: left;
+
+    font-size: 15px;
+    color: #111;
+
+    cursor: pointer;
+}
+
+.project-category-name:hover {
+    color: #0b5ed7;
+}
+
+
+/* =========================================
+   Edit / Delete Icons
+========================================= */
+
+.project-category-icons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.category-edit-icon,
+.category-delete-icon,
+.category-save-icon,
+.category-cancel-icon {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+}
+
+.category-edit-icon:hover,
+.category-save-icon:hover {
+    background: #e8f1ff;
+}
+
+.category-delete-icon:hover {
+    background: #ffeaea;
+}
+
+.category-cancel-icon:hover {
+    background: #f1f1f1;
+}
+
+
+/* =========================================
+   Inline Edit
+========================================= */
+
+.project-category-edit-row {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+}
+
+.project-category-edit-row input {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 32px;
+
+    padding: 4px 8px;
+
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+
+    font-size: 14px;
+}
+
+.category-save-icon {
+    color: #198754;
+}
+
+.category-cancel-icon {
+    color: #6c757d;
+}
+
+
+/* =========================================
+   Empty State
+========================================= */
+
+.project-category-empty {
+    padding: 12px;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   Delete Confirmation Modal
+========================================= */
+
+.category-delete-modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 5000;
+}
+
+.category-delete-modal {
+    width: 420px;
+    max-width: calc(100vw - 32px);
+
+    background: #fff;
+
+    border-radius: 10px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.category-delete-modal h3 {
+    margin: 0 0 12px;
+
+    font-size: 20px;
+}
+
+.category-delete-modal p {
+    margin: 8px 0;
+
+    color: #444;
+
+    line-height: 1.5;
+}
+
+.category-delete-warning {
+    font-size: 13px;
+
+    color: #777 !important;
+}
+
+.category-delete-modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.category-modal-cancel-btn,
+.category-modal-delete-btn {
+    padding: 8px 16px;
+
+    border-radius: 5px;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.category-modal-cancel-btn {
+    background: #fff;
+
+    border: 1px solid #ced4da;
+
+    color: #333;
+}
+
+.category-modal-delete-btn {
+    background: #dc3545;
+
+    border: 1px solid #dc3545;
+
+    color: #fff;
+}
+
+.category-modal-delete-btn:hover {
+    background: #bb2d3b;
+
+    border-color: #bb2d3b;
+}

@@ -4,6 +4,10 @@ import toast from "react-hot-toast";
 import {
     createProject,
     updateProject,
+    getProjectCategories,
+    createProjectCategory,
+    updateProjectCategory,
+    deleteProjectCategory,
 } from "../../services/projectService";
 import Select, { components } from "react-select";
 import { getClients } from "../../services/clientService";
@@ -76,6 +80,31 @@ const ProjectForm = ({
     const [saving, setSaving] = useState(false);
     const [skills, setSkills] = useState([]);
     const [employees, setEmployees] = useState([]);
+    const [projectCategories, setProjectCategories] =
+    useState([]);
+
+const [addingCategory, setAddingCategory] =
+    useState(false);
+
+const [newCategory, setNewCategory] =
+    useState("");
+
+const [savingCategory, setSavingCategory] =
+    useState(false);
+const [categoryDropdownOpen, setCategoryDropdownOpen] =
+    useState(false);
+
+const [editingCategoryId, setEditingCategoryId] =
+    useState(null);
+
+const [editingCategoryName, setEditingCategoryName] =
+    useState("");
+
+const [categoryDeleteModal, setCategoryDeleteModal] =
+    useState(null);
+
+const [savingEditedCategory, setSavingEditedCategory] =
+    useState(false);
 const [roleModalOpen, setRoleModalOpen] = useState(false);
 const [selectedRole, setSelectedRole] = useState(null);
 const [editingRoleIndex, setEditingRoleIndex] = useState(null);
@@ -104,6 +133,7 @@ const availableSkillOptions = skillOptions.filter(
     useEffect(() => {
         loadClients();
         loadSkills();
+        loadProjectCategories();
         loadEmployees([]);
     }, []);
 
@@ -193,7 +223,275 @@ if (project.requiredSkills?.length > 0) {
     }
 
 };
+const loadProjectCategories = async () => {
 
+    try {
+
+        const res =
+            await getProjectCategories();
+
+        setProjectCategories(
+            res.data || []
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+        toast.error(
+            "Failed to load project categories"
+        );
+
+    }
+
+};
+const handleAddCategory = async () => {
+
+    const category =
+        newCategory.trim();
+
+    if (!category) {
+
+        toast.error(
+            "Please enter a project category"
+        );
+
+        return;
+
+    }
+
+    try {
+
+        setSavingCategory(true);
+
+        const res =
+            await createProjectCategory(
+                category
+            );
+
+        /*
+         * Backend returns:
+         *
+         * {
+         *   _id: "...",
+         *   name: "New Category",
+         *   isActive: true
+         * }
+         *
+         * Keep the complete object in state.
+         */
+
+        const createdCategory =
+            res.data;
+
+        setProjectCategories(prev => {
+
+            const exists =
+                prev.some(
+                    item =>
+                        item.name.toLowerCase() ===
+                        createdCategory.name.toLowerCase()
+                );
+
+            if (exists) {
+
+                return prev;
+
+            }
+
+            return [
+                ...prev,
+                createdCategory,
+            ].sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+
+        });
+
+        // Automatically select the new category
+        setFormData(prev => ({
+
+            ...prev,
+
+            type: createdCategory.name,
+
+        }));
+
+        setNewCategory("");
+
+        setAddingCategory(false);
+
+        setCategoryDropdownOpen(false);
+
+        toast.success(
+            "Project category added successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+            "Failed to add project category"
+
+        );
+
+    } finally {
+
+        setSavingCategory(false);
+
+    }
+
+};
+const handleEditCategory = async () => {
+
+    const name =
+        editingCategoryName.trim();
+
+    if (!name) {
+
+        toast.error(
+            "Category name cannot be empty"
+        );
+
+        return;
+
+    }
+
+    try {
+
+        setSavingEditedCategory(true);
+
+        const res =
+            await updateProjectCategory(
+                editingCategoryId,
+                name
+            );
+
+        const updatedCategory =
+            res.data;
+
+        setProjectCategories(prev =>
+            prev
+                .map(category => {
+
+                    if (
+                        category._id ===
+                        editingCategoryId
+                    ) {
+
+                        return updatedCategory;
+
+                    }
+
+                    return category;
+
+                })
+                .sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                )
+        );
+
+        // If the edited category was selected,
+        // keep the new name selected.
+        if (
+            formData.type ===
+            projectCategories.find(
+                category =>
+                    category._id ===
+                    editingCategoryId
+            )?.name
+        ) {
+
+            setFormData(prev => ({
+
+                ...prev,
+
+                type: updatedCategory.name,
+
+            }));
+
+        }
+
+        setEditingCategoryId(null);
+
+        setEditingCategoryName("");
+
+        toast.success(
+            "Project category updated successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+            "Failed to update project category"
+
+        );
+
+    } finally {
+
+        setSavingEditedCategory(false);
+
+    }
+
+};
+const handleDeleteCategory = async () => {
+
+    if (!categoryDeleteModal) {
+        return;
+    }
+
+    try {
+
+        await deleteProjectCategory(
+            categoryDeleteModal._id
+        );
+
+        setProjectCategories(prev =>
+            prev.filter(
+                category =>
+                    category._id !==
+                    categoryDeleteModal._id
+            )
+        );
+
+        // If deleted category was selected,
+        // clear the selection.
+        if (
+            formData.type ===
+            categoryDeleteModal.name
+        ) {
+
+            setFormData(prev => ({
+
+                ...prev,
+
+                type: "",
+
+            }));
+
+        }
+
+        setCategoryDeleteModal(null);
+
+        toast.success(
+            "Project category removed successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+            "Failed to remove project category"
+
+        );
+
+    }
+
+};
     const loadEmployees = async (selectedSkills) => {
 
     try {
@@ -429,41 +727,281 @@ await updateProject(project._id, payload);
     />
 
 </div>
-<div className="form-group">
+<div className="form-group project-category-group">
 
-    <label>Project Category</label>
+    <div className="project-category-label-row">
 
-    <select
-        name="type"
-        value={formData.type}
-        onChange={handleChange}
-    >
+        <label>
+            Project Category
+        </label>
 
-        <option value="">
-            Select Category
-        </option>
+        {!addingCategory ? (
 
-        <option value="AI">
-            AI
-        </option>
+            <button
+                type="button"
+                className="project-category-add-btn"
+                onClick={() => {
 
-        <option value="BI & Analytics">
-            BI & Analytics
-        </option>
+                    setAddingCategory(true);
 
-        <option value="Consulting (SAP)">
-            Consulting (SAP)
-        </option>
+                    setCategoryDropdownOpen(false);
 
-        <option value="Consulting (Data & Analytics)">
-            Consulting (Data & Analytics)
-        </option>
+                }}
+            >
+                Add
+            </button>
 
-        <option value="Integration">
-            Integration
-        </option>
+        ) : (
 
-    </select>
+            <div className="project-category-action-buttons">
+
+                <button
+                    type="button"
+                    className="project-category-cancel-btn"
+                    onClick={() => {
+
+                        setAddingCategory(false);
+
+                        setNewCategory("");
+
+                    }}
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    className="project-category-submit-btn"
+                    onClick={handleAddCategory}
+                    disabled={savingCategory}
+                >
+                    {savingCategory
+                        ? "Saving..."
+                        : "Submit"}
+                </button>
+
+            </div>
+
+        )}
+
+    </div>
+
+
+    {addingCategory ? (
+
+        <input
+            type="text"
+            value={newCategory}
+            onChange={(e) =>
+                setNewCategory(e.target.value)
+            }
+            placeholder="Enter new project category"
+            autoFocus
+        />
+
+    ) : (
+
+        <div className="project-category-dropdown">
+
+            <button
+                type="button"
+                className="project-category-dropdown-trigger"
+                onClick={() =>
+                    setCategoryDropdownOpen(
+                        prev => !prev
+                    )
+                }
+            >
+
+                <span>
+
+                    {formData.type ||
+                        "Select Category"}
+
+                </span>
+
+                <span className="category-dropdown-arrow">
+                    ▾
+                </span>
+
+            </button>
+
+
+            {categoryDropdownOpen && (
+
+                <div className="project-category-dropdown-menu">
+
+                    {projectCategories.length === 0 ? (
+
+                        <div className="project-category-empty">
+                            No categories available
+                        </div>
+
+                    ) : (
+
+                        projectCategories.map(
+                            category => (
+
+                                <div
+                                    className="project-category-option"
+                                    key={category._id}
+                                >
+
+                                    {editingCategoryId ===
+                                    category._id ? (
+
+                                        <div className="project-category-edit-row">
+
+                                            <input
+                                                type="text"
+                                                value={
+                                                    editingCategoryName
+                                                }
+                                                onChange={(e) =>
+                                                    setEditingCategoryName(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                autoFocus
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            />
+
+                                            <button
+                                                type="button"
+                                                className="category-save-icon"
+                                                title="Save"
+                                                disabled={
+                                                    savingEditedCategory
+                                                }
+                                                onClick={(e) => {
+
+                                                    e.stopPropagation();
+
+                                                    handleEditCategory();
+
+                                                }}
+                                            >
+                                                ✓
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="category-cancel-icon"
+                                                title="Cancel"
+                                                onClick={(e) => {
+
+                                                    e.stopPropagation();
+
+                                                    setEditingCategoryId(
+                                                        null
+                                                    );
+
+                                                    setEditingCategoryName(
+                                                        ""
+                                                    );
+
+                                                }}
+                                            >
+                                                ×
+                                            </button>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <>
+
+                                            <button
+                                                type="button"
+                                                className="project-category-name"
+                                                onClick={() => {
+
+                                                    setFormData(
+                                                        prev => ({
+
+                                                            ...prev,
+
+                                                            type:
+                                                                category.name,
+
+                                                        })
+                                                    );
+
+                                                    setCategoryDropdownOpen(
+                                                        false
+                                                    );
+
+                                                }}
+                                            >
+
+                                                {category.name}
+
+                                            </button>
+
+
+                                            <div className="project-category-icons">
+
+                                                <button
+                                                    type="button"
+                                                    className="category-edit-icon"
+                                                    title="Edit category"
+                                                    onClick={(e) => {
+
+                                                        e.stopPropagation();
+
+                                                        setEditingCategoryId(
+                                                            category._id
+                                                        );
+
+                                                        setEditingCategoryName(
+                                                            category.name
+                                                        );
+
+                                                    }}
+                                                >
+                                                    ✎
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    className="category-delete-icon"
+                                                    title="Delete category"
+                                                    onClick={(e) => {
+
+                                                        e.stopPropagation();
+
+                                                        setCategoryDeleteModal(
+                                                            category
+                                                        );
+
+                                                    }}
+                                                >
+                                                    🗑
+                                                </button>
+
+                                            </div>
+
+                                        </>
+
+                                    )}
+
+                                </div>
+
+                            )
+                        )
+
+                    )}
+
+                </div>
+
+            )}
+
+        </div>
+
+    )}
 
 </div>
                 <div className="form-group">
@@ -686,7 +1224,74 @@ await updateProject(project._id, payload);
                     </button>
 
                 </div>
+{categoryDeleteModal && (
 
+    <div
+        className="category-delete-modal-overlay"
+        onClick={() =>
+            setCategoryDeleteModal(null)
+        }
+    >
+
+        <div
+            className="category-delete-modal"
+            onClick={(e) =>
+                e.stopPropagation()
+            }
+        >
+
+            <h3>
+                Delete Project Category?
+            </h3>
+
+            <p>
+
+                Are you sure you want to remove
+
+                <strong>
+                    {" "}
+                    {categoryDeleteModal.name}
+                </strong>
+
+                {" "}from the project category dropdown?
+
+            </p>
+
+            <p className="category-delete-warning">
+
+                Existing projects using this category
+                will not be affected.
+
+            </p>
+
+
+            <div className="category-delete-modal-actions">
+
+                <button
+                    type="button"
+                    className="category-modal-cancel-btn"
+                    onClick={() =>
+                        setCategoryDeleteModal(null)
+                    }
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    className="category-modal-delete-btn"
+                    onClick={handleDeleteCategory}
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+)}
             </form>
 
         </div>

@@ -160,3 +160,54 @@ export const getProjectStaffingPlan = async (id) => {
     return response.data;
 
 };
+export const getProjectCategories = async () => {
+
+    const response = await api.get(
+        "/projects/categories"
+    );
+
+    return response.data;
+
+};
+
+
+export const createProjectCategory = async (name) => {
+
+    const response = await api.post(
+        "/projects/categories",
+        {
+            name,
+        }
+    );
+
+    return response.data;
+
+};
+export const updateProjectCategory = async (
+    id,
+    name
+) => {
+
+    const response = await api.put(
+        `/projects/categories/${id}`,
+        {
+            name,
+        }
+    );
+
+    return response.data;
+
+};
+
+
+export const deleteProjectCategory = async (
+    id
+) => {
+
+    const response = await api.delete(
+        `/projects/categories/${id}`
+    );
+
+    return response.data;
+
+};
