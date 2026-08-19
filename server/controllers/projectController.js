@@ -1,6 +1,7 @@
 const Project = require("../models/Project");
 const Employee = require("../models/Employee");
 const Client = require("../models/Client");
+const ProjectCategory = require("../models/ProjectCategory");
 const {
     assignEmployeeToProject,
 } = require("../services/assignmentService");
@@ -1531,6 +1532,417 @@ const searchProjects = async (req, res) => {
 
 };
 // ============================
+// Get Project Categories
+// ============================
+
+const getProjectCategories = async (req, res) => {
+
+    try {
+
+        // -------------------------------------------------
+        // Make sure old project categories exist in the
+        // ProjectCategory collection.
+        //
+        // This does NOT modify existing projects.
+        // It only creates category-management records.
+        // -------------------------------------------------
+
+        const existingProjectTypes =
+            await Project.distinct("type");
+
+        for (const type of existingProjectTypes) {
+
+            if (!type || !type.trim()) {
+                continue;
+            }
+
+            const existingCategory =
+                await ProjectCategory.findOne({
+                    name: {
+                        $regex:
+                            `^${type.trim().replace(
+                                /[.*+?^${}()|[\]\\]/g,
+                                "\\$&"
+                            )}$`,
+                        $options: "i",
+                    },
+                });
+
+            if (!existingCategory) {
+
+                await ProjectCategory.create({
+                    name: type.trim(),
+                    isActive: true,
+                });
+
+            }
+
+        }
+
+        // -------------------------------------------------
+        // Return ONLY active categories
+        // -------------------------------------------------
+
+        const categories =
+            await ProjectCategory.find({
+                isActive: true,
+            })
+            .sort({ name: 1 });
+
+        res.status(200).json({
+
+            success: true,
+
+            data: categories,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+
+// ============================
+// Create Project Category
+// ============================
+
+const createProjectCategory = async (req, res) => {
+
+    try {
+
+        const name =
+            req.body.name?.trim();
+
+        if (!name) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project category name is required",
+
+            });
+
+        }
+
+        const escapedName =
+            name.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+            );
+
+        // Check whether category already exists
+        const existingCategory =
+            await ProjectCategory.findOne({
+
+                name: {
+                    $regex: `^${escapedName}$`,
+                    $options: "i",
+                },
+
+            });
+
+        if (existingCategory) {
+
+            // If it was previously deleted,
+            // restore it instead of creating duplicate.
+
+            if (!existingCategory.isActive) {
+
+                existingCategory.isActive = true;
+
+                await existingCategory.save();
+
+                return res.status(200).json({
+
+                    success: true,
+
+                    message:
+                        "Project category restored successfully",
+
+                    data: existingCategory,
+
+                });
+
+            }
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project category already exists",
+
+            });
+
+        }
+
+        // Also check existing project records
+        const existingProject =
+            await Project.findOne({
+
+                type: {
+                    $regex: `^${escapedName}$`,
+                    $options: "i",
+                },
+
+            });
+
+        if (existingProject) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project category already exists",
+
+            });
+
+        }
+
+        const category =
+            await ProjectCategory.create({
+
+                name,
+
+                isActive: true,
+
+            });
+
+        res.status(201).json({
+
+            success: true,
+
+            message:
+                "Project category added successfully",
+
+            data: category,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Update Project Category
+// ============================
+
+const updateProjectCategory = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const name =
+            req.body.name?.trim();
+
+        if (!name) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project category name is required",
+
+            });
+
+        }
+
+        const category =
+            await ProjectCategory.findById(id);
+
+        if (!category) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Project category not found",
+
+            });
+
+        }
+
+        const escapedName =
+            name.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+            );
+
+        const duplicate =
+            await ProjectCategory.findOne({
+
+                _id: {
+                    $ne: id,
+                },
+
+                name: {
+                    $regex: `^${escapedName}$`,
+                    $options: "i",
+                },
+
+            });
+
+        if (duplicate) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Another project category with this name already exists",
+
+            });
+
+        }
+
+        const oldName =
+            category.name;
+
+        // Update category itself
+        category.name = name;
+
+        await category.save();
+
+        // -------------------------------------------------
+        // Rename existing projects using this category.
+        //
+        // This keeps existing projects associated with the
+        // renamed category instead of leaving them with a
+        // category that no longer exists in the dropdown.
+        // -------------------------------------------------
+
+        await Project.updateMany(
+
+            {
+                type: {
+                    $regex:
+                        `^${oldName.replace(
+                            /[.*+?^${}()|[\]\\]/g,
+                            "\\$&"
+                        )}$`,
+                    $options: "i",
+                },
+            },
+
+            {
+                $set: {
+                    type: name,
+                },
+            }
+
+        );
+
+        res.status(200).json({
+
+            success: true,
+
+            message:
+                "Project category updated successfully",
+
+            data: category,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Delete Project Category
+// ============================
+
+const deleteProjectCategory = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const category =
+            await ProjectCategory.findById(id);
+
+        if (!category) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Project category not found",
+
+            });
+
+        }
+
+        // Soft delete
+        category.isActive = false;
+
+        await category.save();
+
+        // IMPORTANT:
+        // Do NOT modify existing projects.
+        //
+        // Projects that already use this category
+        // will continue to keep their old type value.
+
+        res.status(200).json({
+
+            success: true,
+
+            message:
+                "Project category removed from dropdown",
+
+            data: category,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
 // Export Projects
 // ============================
 
@@ -1944,7 +2356,10 @@ module.exports = {
     searchProjects,
 
     createProject,
-
+    createProjectCategory,
+    getProjectCategories,
+    updateProjectCategory,
+    deleteProjectCategory,
     updateProject,
     updateAssignment,
     deleteAssignment,

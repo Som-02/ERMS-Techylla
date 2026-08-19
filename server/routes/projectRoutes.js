@@ -14,6 +14,10 @@ const {
     getProject,
     getProjectStaffingPlan,
     createProject,
+    createProjectCategory,
+    getProjectCategories,
+    updateProjectCategory,
+    deleteProjectCategory,
     updateProject,
     updateAssignment,
     deleteAssignment,
@@ -25,6 +29,29 @@ const {
 
 router.get("/", protect, getProjects);
 router.get(
+    "/categories",
+    protect,
+    getProjectCategories
+);
+router.post(
+    "/categories",
+    protect,
+    createProjectCategory
+);
+
+router.put(
+    "/categories/:id",
+    protect,
+    updateProjectCategory
+);
+
+router.delete(
+    "/categories/:id",
+    protect,
+    deleteProjectCategory
+);
+
+router.get(
     "/my-projects",
     protect,
     getMyProjects
@@ -32,6 +59,11 @@ router.get(
 router.get("/search", protect, searchProjects);
 
 router.post("/", protect, createProject);
+router.post(
+    "/categories",
+    protect,
+    createProjectCategory
+);
 router.get(
     "/export",
     protect,

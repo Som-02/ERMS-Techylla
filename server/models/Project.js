@@ -35,13 +35,7 @@ description: {
 
 type: {
     type: String,
-    enum: [
-        "AI",
-        "BI & Analytics",
-        "Consulting (SAP)",
-        "Consulting (Data & Analytics)",
-        "Integration",
-    ],
+    trim:true,
 },
     startDate: {
     type: Date,
