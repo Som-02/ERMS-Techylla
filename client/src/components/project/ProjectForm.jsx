@@ -15,7 +15,7 @@ import {
 } from "../../services/projectService";
 import Select, { components } from "react-select";
 import { getClients } from "../../services/clientService";
-import { getSkills } from "../../services/skillService";
+import { getSkills, addSkill, } from "../../services/skillService";
 import { getEmployeesBySkills } from "../../services/employeeService";
 import { getSkillMatrix } from "../../services/skillService";
 import "./project.css";
@@ -139,6 +139,12 @@ const [savingEditedStatus, setSavingEditedStatus] =
 const [roleModalOpen, setRoleModalOpen] = useState(false);
 const [selectedRole, setSelectedRole] = useState(null);
 const [editingRoleIndex, setEditingRoleIndex] = useState(null);
+const [addingRole, setAddingRole] = useState(false);
+
+const [newRole, setNewRole] = useState("");
+
+const [savingRole, setSavingRole] = useState(false);
+
 const clientOptions = clients.map((client) => ({
     value: client._id,
     label: client.name,
@@ -792,6 +798,86 @@ const handleDeleteStatus = async () => {
             error.response?.data?.message ||
             "Failed to remove project status"
         );
+
+    }
+
+};
+const handleAddRole = async () => {
+
+    const roleName = newRole.trim();
+
+    if (!roleName) {
+
+        toast.error("Please enter a role");
+
+        return;
+
+    }
+
+    try {
+
+        setSavingRole(true);
+
+        const res = await addSkill({
+            name: roleName,
+        });
+
+        const createdRole = res.data;
+
+        // Add the newly created role to local dropdown
+        setSkills(prev => {
+
+            const exists = prev.some(
+                skill =>
+                    skill.name.toLowerCase() ===
+                    createdRole.name.toLowerCase()
+            );
+
+            if (exists) {
+
+                return prev;
+
+            }
+
+            return [
+                ...prev,
+                createdRole,
+            ].sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+
+        });
+
+        // Clear Add mode
+        setNewRole("");
+
+        setAddingRole(false);
+
+        // Automatically select the newly added role
+        setSelectedRole({
+
+            value: createdRole._id,
+
+            label: createdRole.name,
+
+        });
+
+        toast.success(
+            "Role added successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+
+            error.response?.data?.message ||
+            "Failed to add role"
+
+        );
+
+    } finally {
+
+        setSavingRole(false);
 
     }
 
@@ -1612,106 +1698,189 @@ await updateProject(project._id, payload);
 </div>
 <div className="form-group">
 
-    <label>Role</label>
+    <div className="role-label-row">
 
-    <Select
-    options={availableSkillOptions}
-    placeholder="Select Role..."
-    value={null}
-    onChange={(role) => {
+        <label>
+            Role
+        </label>
 
-        if (!role) return;
+        {!addingRole ? (
 
-        setSelectedRole(role);
+            <button
+                type="button"
+                className="role-add-btn"
+                onClick={() => {
 
-        setEditingRoleIndex(null);
+                    setAddingRole(true);
 
-        setRoleModalOpen(true);
+                }}
+            >
+                Add
+            </button>
 
-    }}
-/>
-<RoleResourceModal
+        ) : (
 
-    open={roleModalOpen}
+            <div className="role-action-buttons">
 
-    role={selectedRole}
+                <button
+                    type="button"
+                    className="role-cancel-btn"
+                    onClick={() => {
 
-    existingData={
-        editingRoleIndex !== null
-            ? formData.requiredSkills[editingRoleIndex]
-            : null
-    }
+                        setAddingRole(false);
 
-    onClose={() => {
+                        setNewRole("");
 
-        setRoleModalOpen(false);
+                    }}
+                >
+                    Cancel
+                </button>
 
-    }}
+                <button
+                    type="button"
+                    className="role-submit-btn"
+                    onClick={handleAddRole}
+                    disabled={savingRole}
+                >
+                    {savingRole
+                        ? "Saving..."
+                        : "Submit"}
+                </button>
 
-    onSave={(roleData) => {
+            </div>
 
-        const updated = [...formData.requiredSkills];
+        )}
 
-        if (editingRoleIndex !== null) {
+    </div>
 
-            updated[editingRoleIndex] = roleData;
 
-        } else {
+    {addingRole ? (
 
-            updated.push(roleData);
+        <input
+            type="text"
+            value={newRole}
+            onChange={(e) =>
+                setNewRole(e.target.value)
+            }
+            placeholder="Enter new role"
+            autoFocus
+        />
 
+    ) : (
+
+        <Select
+            options={availableSkillOptions}
+            placeholder="Select Role..."
+            value={null}
+            onChange={(role) => {
+
+                if (!role) return;
+
+                setSelectedRole(role);
+
+                setEditingRoleIndex(null);
+
+                setRoleModalOpen(true);
+
+            }}
+        />
+
+    )}
+
+    <RoleResourceModal
+
+        open={roleModalOpen}
+
+        role={selectedRole}
+
+        existingData={
+            editingRoleIndex !== null
+                ? formData.requiredSkills[
+                    editingRoleIndex
+                ]
+                : null
         }
 
-        setFormData((prev) => ({
+        onClose={() => {
 
-            ...prev,
+            setRoleModalOpen(false);
 
-            requiredSkills: updated,
+        }}
 
-        }));
+        onSave={(roleData) => {
 
-        setRoleModalOpen(false);
+            const updated =
+                [...formData.requiredSkills];
 
-    }}
+            if (editingRoleIndex !== null) {
 
-/>
-<AllocatedRolesTable
+                updated[editingRoleIndex] =
+                    roleData;
 
-    roles={formData.requiredSkills}
+            } else {
 
-    onEdit={(role) => {
+                updated.push(roleData);
 
-        const index = formData.requiredSkills.findIndex(
-            (item) => item.skill === role.skill
-        );
+            }
 
-        setEditingRoleIndex(index);
+            setFormData(prev => ({
 
-        setSelectedRole({
-            value: role.skill,
-            label: role.skillName,
-        });
+                ...prev,
 
-        setRoleModalOpen(true);
+                requiredSkills: updated,
 
-    }}
+            }));
 
-    onDelete={(skillId) => {
+            setRoleModalOpen(false);
 
-        setFormData((prev) => ({
+        }}
 
-            ...prev,
+    />
 
-            requiredSkills:
-                prev.requiredSkills.filter(
-                    (item) => item.skill !== skillId
-                ),
+    <AllocatedRolesTable
 
-        }));
+        roles={formData.requiredSkills}
 
-    }}
+        onEdit={(role) => {
 
-/>
+            const index =
+                formData.requiredSkills.findIndex(
+                    item =>
+                        item.skill === role.skill
+                );
+
+            setEditingRoleIndex(index);
+
+            setSelectedRole({
+
+                value: role.skill,
+
+                label: role.skillName,
+
+            });
+
+            setRoleModalOpen(true);
+
+        }}
+
+        onDelete={(skillId) => {
+
+            setFormData(prev => ({
+
+                ...prev,
+
+                requiredSkills:
+                    prev.requiredSkills.filter(
+                        item =>
+                            item.skill !== skillId
+                    ),
+
+            }));
+
+        }}
+
+    />
+
 </div>
 
 {/* <div className="form-group">

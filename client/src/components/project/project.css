@@ -1373,3 +1373,148 @@ background:linear-gradient(
     background: #e0f2fe;
     color: #0369a1;
 }
+/* =========================================
+   ROLE MANAGEMENT
+========================================= */
+
+.role-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.role-label-row label {
+    margin-bottom: 0;
+}
+
+
+/* Add button */
+
+.role-add-btn {
+
+    border: none;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    padding: 10px 14px;
+
+}
+
+.role-add-btn:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+}
+
+
+/* Cancel + Submit */
+
+.role-action-buttons {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+
+.role-cancel-btn {
+
+    background: #f3f4f6;
+
+    color: #374151;
+
+    border: none;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    font-size: 14px;
+
+}
+
+
+.role-cancel-btn:hover {
+
+    background: #e5e7eb;
+
+}
+
+
+.role-submit-btn {
+
+    background:
+        linear-gradient(
+            135deg,
+            #b2c7de 0%,
+            #6f96cb 42%,
+            #111c3d 100%
+        );
+
+    color: #ffffff;
+
+    border: none;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    font-size: 14px;
+
+}
+
+
+.role-submit-btn:hover:not(:disabled) {
+
+    background:
+        linear-gradient(
+            135deg,
+            #cbd2da 0%,
+            #859ec1 42%,
+            #0b0f1b 100%
+        );
+
+}
+
+
+.role-submit-btn:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+}
