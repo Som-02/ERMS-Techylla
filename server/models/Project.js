@@ -14,11 +14,11 @@ const projectSchema=new mongoose.Schema({
         required:true
     },
 
-    status:{
-        type:String,
-        enum:["Lead","Pipeline","Active","Completed","On Hold"],
-        default:"Lead"
-    },
+    status: {
+    type: String,
+    trim: true,
+    default: "Lead",
+},
     statusChangedAt: {
     type: Date,
     default: null

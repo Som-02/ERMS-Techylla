@@ -18,6 +18,10 @@ const {
     getProjectCategories,
     updateProjectCategory,
     deleteProjectCategory,
+    createProjectStatus,
+    getProjectStatuses,
+    updateProjectStatus,
+    deleteProjectStatus,
     updateProject,
     updateAssignment,
     deleteAssignment,
@@ -52,6 +56,30 @@ router.delete(
 );
 
 router.get(
+    "/statuses",
+    protect,
+    getProjectStatuses
+);
+
+router.post(
+    "/statuses",
+    protect,
+    createProjectStatus
+);
+
+router.put(
+    "/statuses/:id",
+    protect,
+    updateProjectStatus
+);
+
+router.delete(
+    "/statuses/:id",
+    protect,
+    deleteProjectStatus
+);
+
+router.get(
     "/my-projects",
     protect,
     getMyProjects
@@ -59,11 +87,7 @@ router.get(
 router.get("/search", protect, searchProjects);
 
 router.post("/", protect, createProject);
-router.post(
-    "/categories",
-    protect,
-    createProjectCategory
-);
+
 router.get(
     "/export",
     protect,

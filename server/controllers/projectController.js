@@ -2,6 +2,8 @@ const Project = require("../models/Project");
 const Employee = require("../models/Employee");
 const Client = require("../models/Client");
 const ProjectCategory = require("../models/ProjectCategory");
+const ProjectStatus = require("../models/ProjectStatus");
+
 const {
     assignEmployeeToProject,
 } = require("../services/assignmentService");
@@ -1943,6 +1945,406 @@ const deleteProjectCategory = async (req, res) => {
 
 };
 // ============================
+// Get Project Statuses
+// ============================
+
+const getProjectStatuses = async (req, res) => {
+
+    try {
+
+        // -------------------------------------------------
+        // Make sure all existing project statuses exist
+        // in the ProjectStatus collection.
+        //
+        // This does NOT modify existing projects.
+        // -------------------------------------------------
+
+        const existingProjectStatuses =
+            await Project.distinct("status");
+
+        for (const status of existingProjectStatuses) {
+
+            if (!status || !status.trim()) {
+                continue;
+            }
+
+            const existingStatus =
+                await ProjectStatus.findOne({
+                    name: {
+                        $regex:
+                            `^${status.trim().replace(
+                                /[.*+?^${}()|[\]\\]/g,
+                                "\\$&"
+                            )}$`,
+                        $options: "i",
+                    },
+                });
+
+            if (!existingStatus) {
+
+                await ProjectStatus.create({
+                    name: status.trim(),
+                    isActive: true,
+                });
+
+            }
+        }
+
+        // -------------------------------------------------
+        // Return ONLY active statuses
+        // -------------------------------------------------
+
+        const statuses =
+            await ProjectStatus.find({
+                isActive: true,
+            })
+            .sort({ name: 1 });
+
+        res.status(200).json({
+
+            success: true,
+
+            data: statuses,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Create Project Status
+// ============================
+
+const createProjectStatus = async (req, res) => {
+
+    try {
+
+        const name =
+            req.body.name?.trim();
+
+        if (!name) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project status name is required",
+
+            });
+
+        }
+
+        const escapedName =
+            name.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+            );
+
+        // Check status collection
+        const existingStatus =
+            await ProjectStatus.findOne({
+
+                name: {
+                    $regex: `^${escapedName}$`,
+                    $options: "i",
+                },
+
+            });
+
+        if (existingStatus) {
+
+            // Restore soft-deleted status
+            if (!existingStatus.isActive) {
+
+                existingStatus.isActive = true;
+
+                await existingStatus.save();
+
+                return res.status(200).json({
+
+                    success: true,
+
+                    message:
+                        "Project status restored successfully",
+
+                    data: existingStatus,
+
+                });
+
+            }
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project status already exists",
+
+            });
+
+        }
+
+        // Check existing project records too
+        const existingProject =
+            await Project.findOne({
+
+                status: {
+                    $regex: `^${escapedName}$`,
+                    $options: "i",
+                },
+
+            });
+
+        if (existingProject) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project status already exists",
+
+            });
+
+        }
+
+        const status =
+            await ProjectStatus.create({
+
+                name,
+
+                isActive: true,
+
+            });
+
+        res.status(201).json({
+
+            success: true,
+
+            message:
+                "Project status added successfully",
+
+            data: status,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Update Project Status
+// ============================
+
+const updateProjectStatus = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const name =
+            req.body.name?.trim();
+
+        if (!name) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Project status name is required",
+
+            });
+
+        }
+
+        const status =
+            await ProjectStatus.findById(id);
+
+        if (!status) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Project status not found",
+
+            });
+
+        }
+
+        const escapedName =
+            name.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+            );
+
+        const duplicate =
+            await ProjectStatus.findOne({
+
+                _id: {
+                    $ne: id,
+                },
+
+                name: {
+                    $regex: `^${escapedName}$`,
+                    $options: "i",
+                },
+
+            });
+
+        if (duplicate) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Another project status with this name already exists",
+
+            });
+
+        }
+
+        const oldName =
+            status.name;
+
+        // Update status itself
+        status.name = name;
+
+        await status.save();
+
+        // Rename existing projects using this status
+        await Project.updateMany(
+
+            {
+                status: {
+                    $regex:
+                        `^${oldName.replace(
+                            /[.*+?^${}()|[\]\\]/g,
+                            "\\$&"
+                        )}$`,
+                    $options: "i",
+                },
+            },
+
+            {
+                $set: {
+                    status: name,
+                    statusChangedAt: new Date(),
+                },
+            }
+
+        );
+
+        res.status(200).json({
+
+            success: true,
+
+            message:
+                "Project status updated successfully",
+
+            data: status,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
+// Delete Project Status
+// ============================
+
+const deleteProjectStatus = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const status =
+            await ProjectStatus.findById(id);
+
+        if (!status) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Project status not found",
+
+            });
+
+        }
+
+        // Soft delete
+        status.isActive = false;
+
+        await status.save();
+
+        // IMPORTANT:
+        // Existing projects are NOT modified.
+        //
+        // They will continue to display their old status.
+        // The deleted status simply disappears from the
+        // status dropdown.
+
+        res.status(200).json({
+
+            success: true,
+
+            message:
+                "Project status removed from dropdown",
+
+            data: status,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// ============================
 // Export Projects
 // ============================
 
@@ -2354,12 +2756,18 @@ module.exports = {
     getProjectStaffingPlan,
     exportProjects,
     searchProjects,
-
     createProject,
+    
     createProjectCategory,
     getProjectCategories,
     updateProjectCategory,
     deleteProjectCategory,
+
+    createProjectStatus,
+    getProjectStatuses,
+    updateProjectStatus,
+    deleteProjectStatus,
+
     updateProject,
     updateAssignment,
     deleteAssignment,
