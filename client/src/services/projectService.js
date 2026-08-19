@@ -211,3 +211,53 @@ export const deleteProjectCategory = async (
     return response.data;
 
 };
+export const getProjectStatuses = async () => {
+
+    const response = await api.get(
+        "/projects/statuses"
+    );
+
+    return response.data;
+
+};
+
+export const createProjectStatus = async (name) => {
+
+    const response = await api.post(
+        "/projects/statuses",
+        {
+            name,
+        }
+    );
+
+    return response.data;
+
+};
+
+export const updateProjectStatus = async (
+    id,
+    name
+) => {
+
+    const response = await api.put(
+        `/projects/statuses/${id}`,
+        {
+            name,
+        }
+    );
+
+    return response.data;
+
+};
+
+export const deleteProjectStatus = async (
+    id
+) => {
+
+    const response = await api.delete(
+        `/projects/statuses/${id}`
+    );
+
+    return response.data;
+
+};

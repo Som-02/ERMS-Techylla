@@ -32,7 +32,7 @@ const ProjectRow = ({
                 return "hold";
 
             default:
-                return "";
+                return "custom";
 
         }
 

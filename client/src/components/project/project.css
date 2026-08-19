@@ -1365,3 +1365,11 @@ background:linear-gradient(
 
     border-color: #bb2d3b;
 }
+/* ==========================================
+   CUSTOM PROJECT STATUS
+========================================== */
+
+.status.custom {
+    background: #e0f2fe;
+    color: #0369a1;
+}

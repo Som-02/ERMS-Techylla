@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getProjectStatuses } from "../../services/projectService";
 import ProjectRow from "./ProjectRow";
 import "./project.css";
 
@@ -18,14 +19,36 @@ const ProjectTable = ({
 
     const filterRef = useRef(null);
 
-    const statuses = [
-        "Lead",
-        "Pipeline",
-        "Active",
-        "On Hold",
-        "Completed",
-    ];
+    const [statuses, setStatuses] = useState([]);
+    useEffect(() => {
 
+    const loadStatuses = async () => {
+
+        try {
+
+            const res =
+                await getProjectStatuses();
+
+            setStatuses(
+                (res.data || []).map(
+                    status => status.name
+                )
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Failed to load project statuses",
+                error
+            );
+
+        }
+
+    };
+
+    loadStatuses();
+
+}, []);
     useEffect(() => {
 
         const handleClickOutside = (event) => {

@@ -8,6 +8,10 @@ import {
     createProjectCategory,
     updateProjectCategory,
     deleteProjectCategory,
+    getProjectStatuses,
+    createProjectStatus,
+    updateProjectStatus,
+    deleteProjectStatus,
 } from "../../services/projectService";
 import Select, { components } from "react-select";
 import { getClients } from "../../services/clientService";
@@ -105,6 +109,33 @@ const [categoryDeleteModal, setCategoryDeleteModal] =
 
 const [savingEditedCategory, setSavingEditedCategory] =
     useState(false);
+
+const [projectStatuses, setProjectStatuses] =
+    useState([]);
+
+const [addingStatus, setAddingStatus] =
+    useState(false);
+
+const [newStatus, setNewStatus] =
+    useState("");
+
+const [savingStatus, setSavingStatus] =
+    useState(false);
+
+const [statusDropdownOpen, setStatusDropdownOpen] =
+    useState(false);
+
+const [editingStatusId, setEditingStatusId] =
+    useState(null);
+
+const [editingStatusName, setEditingStatusName] =
+    useState("");
+
+const [statusDeleteModal, setStatusDeleteModal] =
+    useState(null);
+
+const [savingEditedStatus, setSavingEditedStatus] =
+    useState(false);
 const [roleModalOpen, setRoleModalOpen] = useState(false);
 const [selectedRole, setSelectedRole] = useState(null);
 const [editingRoleIndex, setEditingRoleIndex] = useState(null);
@@ -134,60 +165,86 @@ const availableSkillOptions = skillOptions.filter(
         loadClients();
         loadSkills();
         loadProjectCategories();
+        loadProjectStatuses();
         loadEmployees([]);
     }, []);
 
     useEffect(() => {
 
-        if (mode === "edit" && project) {
+    if (mode === "edit" && project) {
 
-            setFormData({
+        const requiredSkills =
+            project.requiredSkills?.map((item) => ({
+                skill: item.skill._id,
+                skillName: item.skill.name,
+                resources: {
+                    onshore: item.resources?.onshore || 0,
+                    offshore: item.resources?.offshore || 0,
+                },
+                roleCreatedAt:
+                    item.roleCreatedAt || ""
+            })) || [];
 
-    name: project.name || "",
-    client: project.client?._id || project.client || "",
-    reference: project.reference || "",
-    description: project.description || "",
-    type: project.type || "",
-    startDate: project.startDate
-        ? project.startDate.split("T")[0]
-        : "",
-    endDate: project.endDate
-        ? project.endDate.split("T")[0]
-        : "",
-    status: project.status || "Lead",
-    requiredSkills:
-    project.requiredSkills?.map((item) => ({
-        skill: item.skill._id,
-        skillName: item.skill.name,
-        resources: {
-            onshore: item.resources?.onshore || 0,
-            offshore: item.resources?.offshore || 0,
-        },
-        roleCreatedAt:item.roleCreatedAt || ""
-    })) || [],
-    assignedEmployees:
-        project.assignedEmployees?.map(
-            (employee) =>
-                employee._id || employee
-        ) || [],
-});
-if (project.requiredSkills?.length > 0) {
 
-    loadEmployees(
+        setFormData({
 
-    formData.requiredSkills.map(
+            name: project.name || "",
 
-        role => role.skill
+            client:
+                project.client?._id ||
+                project.client ||
+                "",
 
-    )
+            reference:
+                project.reference || "",
 
-);
+            description:
+                project.description || "",
 
-}
+            type:
+                project.type || "",
+
+            startDate:
+                project.startDate
+                    ? project.startDate.split("T")[0]
+                    : "",
+
+            endDate:
+                project.endDate
+                    ? project.endDate.split("T")[0]
+                    : "",
+
+            status:
+                project.status || "Lead",
+
+            requiredSkills,
+
+            assignedEmployees:
+                project.assignedEmployees?.map(
+                    (employee) =>
+                        employee._id || employee
+                ) || [],
+
+        });
+
+
+        // Load employees using the freshly
+        // calculated requiredSkills instead of
+        // the old React state.
+
+        if (requiredSkills.length > 0) {
+
+            loadEmployees(
+                requiredSkills.map(
+                    role => role.skill
+                )
+            );
 
         }
 
-    }, [mode, project]);
+    }
+
+}, [mode, project]);
 
     const loadClients = async () => {
 
@@ -240,6 +297,28 @@ const loadProjectCategories = async () => {
 
         toast.error(
             "Failed to load project categories"
+        );
+
+    }
+
+};
+const loadProjectStatuses = async () => {
+
+    try {
+
+        const res =
+            await getProjectStatuses();
+
+        setProjectStatuses(
+            res.data || []
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+        toast.error(
+            "Failed to load project statuses"
         );
 
     }
@@ -487,6 +566,231 @@ const handleDeleteCategory = async () => {
             error.response?.data?.message ||
             "Failed to remove project category"
 
+        );
+
+    }
+
+};
+const handleAddStatus = async () => {
+
+    const status =
+        newStatus.trim();
+
+    if (!status) {
+
+        toast.error(
+            "Please enter a project status"
+        );
+
+        return;
+
+    }
+
+    try {
+
+        setSavingStatus(true);
+
+        const res =
+            await createProjectStatus(
+                status
+            );
+
+        const createdStatus =
+            res.data;
+
+        setProjectStatuses(prev => {
+
+            const exists =
+                prev.some(
+                    item =>
+                        item.name.toLowerCase() ===
+                        createdStatus.name.toLowerCase()
+                );
+
+            if (exists) {
+                return prev;
+            }
+
+            return [
+                ...prev,
+                createdStatus,
+            ].sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+
+        });
+
+        setFormData(prev => ({
+
+            ...prev,
+
+            status: createdStatus.name,
+
+        }));
+
+        setNewStatus("");
+
+        setAddingStatus(false);
+
+        setStatusDropdownOpen(false);
+
+        toast.success(
+            "Project status added successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+            error.response?.data?.message ||
+            "Failed to add project status"
+        );
+
+    } finally {
+
+        setSavingStatus(false);
+
+    }
+
+};
+const handleEditStatus = async () => {
+
+    const name =
+        editingStatusName.trim();
+
+    if (!name) {
+
+        toast.error(
+            "Status name cannot be empty"
+        );
+
+        return;
+
+    }
+
+    try {
+
+        setSavingEditedStatus(true);
+
+        const res =
+            await updateProjectStatus(
+                editingStatusId,
+                name
+            );
+
+        const updatedStatus =
+            res.data;
+
+        setProjectStatuses(prev =>
+            prev
+                .map(status => {
+
+                    if (
+                        status._id ===
+                        editingStatusId
+                    ) {
+
+                        return updatedStatus;
+
+                    }
+
+                    return status;
+
+                })
+                .sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                )
+        );
+
+        const oldStatus =
+            projectStatuses.find(
+                status =>
+                    status._id ===
+                    editingStatusId
+            );
+
+        if (
+            formData.status ===
+            oldStatus?.name
+        ) {
+
+            setFormData(prev => ({
+
+                ...prev,
+
+                status: updatedStatus.name,
+
+            }));
+
+        }
+
+        setEditingStatusId(null);
+
+        setEditingStatusName("");
+
+        toast.success(
+            "Project status updated successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+            error.response?.data?.message ||
+            "Failed to update project status"
+        );
+
+    } finally {
+
+        setSavingEditedStatus(false);
+
+    }
+
+};
+const handleDeleteStatus = async () => {
+
+    if (!statusDeleteModal) {
+        return;
+    }
+
+    try {
+
+        await deleteProjectStatus(
+            statusDeleteModal._id
+        );
+
+        setProjectStatuses(prev =>
+            prev.filter(
+                status =>
+                    status._id !==
+                    statusDeleteModal._id
+            )
+        );
+
+        if (
+            formData.status ===
+            statusDeleteModal.name
+        ) {
+
+            setFormData(prev => ({
+
+                ...prev,
+
+                status: "",
+
+            }));
+
+        }
+
+        setStatusDeleteModal(null);
+
+        toast.success(
+            "Project status removed successfully"
+        );
+
+    } catch (error) {
+
+        toast.error(
+            error.response?.data?.message ||
+            "Failed to remove project status"
         );
 
     }
@@ -1029,35 +1333,283 @@ await updateProject(project._id, payload);
     />
 
 </div>
-                <div className="form-group">
+                <div className="form-group project-category-group">
 
-                    <label>Status</label>
+    <div className="project-category-label-row">
 
-                    <select
-                        className="form-control"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                    >
-                        <option value="Lead">
-                            Lead</option>
-                        <option value="Pipeline">
-                            Pipeline</option>
-                        <option value="Active">
-                            Active
-                        </option>
+        <label>
+            Status
+        </label>
 
-                        <option value="Completed">
-                            Completed
-                        </option>
+        {!addingStatus ? (
 
-                        <option value="On Hold">
-                            On Hold
-                        </option>
+            <button
+                type="button"
+                className="project-category-add-btn"
+                onClick={() => {
 
-                    </select>
+                    setAddingStatus(true);
+
+                    setStatusDropdownOpen(false);
+
+                }}
+            >
+                Add
+            </button>
+
+        ) : (
+
+            <div className="project-category-action-buttons">
+
+                <button
+                    type="button"
+                    className="project-category-cancel-btn"
+                    onClick={() => {
+
+                        setAddingStatus(false);
+
+                        setNewStatus("");
+
+                    }}
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    className="project-category-submit-btn"
+                    onClick={handleAddStatus}
+                    disabled={savingStatus}
+                >
+                    {savingStatus
+                        ? "Saving..."
+                        : "Submit"}
+                </button>
+
+            </div>
+
+        )}
+
+    </div>
+
+
+    {addingStatus ? (
+
+        <input
+            type="text"
+            value={newStatus}
+            onChange={(e) =>
+                setNewStatus(e.target.value)
+            }
+            placeholder="Enter new project status"
+            autoFocus
+        />
+
+    ) : (
+
+        <div className="project-category-dropdown">
+
+            <button
+                type="button"
+                className="project-category-dropdown-trigger"
+                onClick={() =>
+                    setStatusDropdownOpen(
+                        prev => !prev
+                    )
+                }
+            >
+
+                <span>
+
+                    {formData.status ||
+                        "Select Status"}
+
+                </span>
+
+                <span className="category-dropdown-arrow">
+                    ▾
+                </span>
+
+            </button>
+
+
+            {statusDropdownOpen && (
+
+                <div className="project-category-dropdown-menu">
+
+                    {projectStatuses.length === 0 ? (
+
+                        <div className="project-category-empty">
+                            No statuses available
+                        </div>
+
+                    ) : (
+
+                        projectStatuses.map(
+                            status => (
+
+                                <div
+                                    className="project-category-option"
+                                    key={status._id}
+                                >
+
+                                    {editingStatusId ===
+                                    status._id ? (
+
+                                        <div className="project-category-edit-row">
+
+                                            <input
+                                                type="text"
+                                                value={
+                                                    editingStatusName
+                                                }
+                                                onChange={(e) =>
+                                                    setEditingStatusName(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                autoFocus
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            />
+
+                                            <button
+                                                type="button"
+                                                className="category-save-icon"
+                                                title="Save"
+                                                disabled={
+                                                    savingEditedStatus
+                                                }
+                                                onClick={(e) => {
+
+                                                    e.stopPropagation();
+
+                                                    handleEditStatus();
+
+                                                }}
+                                            >
+                                                ✓
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="category-cancel-icon"
+                                                title="Cancel"
+                                                onClick={(e) => {
+
+                                                    e.stopPropagation();
+
+                                                    setEditingStatusId(
+                                                        null
+                                                    );
+
+                                                    setEditingStatusName(
+                                                        ""
+                                                    );
+
+                                                }}
+                                            >
+                                                ×
+                                            </button>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <>
+
+                                            <button
+                                                type="button"
+                                                className="project-category-name"
+                                                onClick={() => {
+
+                                                    setFormData(
+                                                        prev => ({
+
+                                                            ...prev,
+
+                                                            status:
+                                                                status.name,
+
+                                                        })
+                                                    );
+
+                                                    setStatusDropdownOpen(
+                                                        false
+                                                    );
+
+                                                }}
+                                            >
+
+                                                {status.name}
+
+                                            </button>
+
+
+                                            <div className="project-category-icons">
+
+                                                <button
+                                                    type="button"
+                                                    className="category-edit-icon"
+                                                    title="Edit status"
+                                                    onClick={(e) => {
+
+                                                        e.stopPropagation();
+
+                                                        setEditingStatusId(
+                                                            status._id
+                                                        );
+
+                                                        setEditingStatusName(
+                                                            status.name
+                                                        );
+
+                                                    }}
+                                                >
+                                                    ✎
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    className="category-delete-icon"
+                                                    title="Delete status"
+                                                    onClick={(e) => {
+
+                                                        e.stopPropagation();
+
+                                                        setStatusDeleteModal(
+                                                            status
+                                                        );
+
+                                                    }}
+                                                >
+                                                    🗑
+                                                </button>
+
+                                            </div>
+
+                                        </>
+
+                                    )}
+
+                                </div>
+
+                            )
+                        )
+
+                    )}
 
                 </div>
+
+            )}
+
+        </div>
+
+    )}
+
+</div>
 <div className="form-group">
 
     <label>Role</label>
@@ -1281,6 +1833,74 @@ await updateProject(project._id, payload);
                     type="button"
                     className="category-modal-delete-btn"
                     onClick={handleDeleteCategory}
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+)}
+{statusDeleteModal && (
+
+    <div
+        className="category-delete-modal-overlay"
+        onClick={() =>
+            setStatusDeleteModal(null)
+        }
+    >
+
+        <div
+            className="category-delete-modal"
+            onClick={(e) =>
+                e.stopPropagation()
+            }
+        >
+
+            <h3>
+                Delete Project Status?
+            </h3>
+
+            <p>
+
+                Are you sure you want to remove
+
+                <strong>
+                    {" "}
+                    {statusDeleteModal.name}
+                </strong>
+
+                {" "}from the project status dropdown?
+
+            </p>
+
+            <p className="category-delete-warning">
+
+                Existing projects using this status
+                will not be affected.
+
+            </p>
+
+
+            <div className="category-delete-modal-actions">
+
+                <button
+                    type="button"
+                    className="category-modal-cancel-btn"
+                    onClick={() =>
+                        setStatusDeleteModal(null)
+                    }
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    className="category-modal-delete-btn"
+                    onClick={handleDeleteStatus}
                 >
                     Delete
                 </button>
