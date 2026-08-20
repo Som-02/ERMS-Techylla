@@ -138,8 +138,11 @@ const employeeSchema = new mongoose.Schema({
 
     skills: [skillSchema],
 
-    assignments: [assignmentSchema]
-
+    assignments: [assignmentSchema],
+    lastLogoutAt: {
+    type: Date,
+    default: null,
+},
 }, {
 
     timestamps: true

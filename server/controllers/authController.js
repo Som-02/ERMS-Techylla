@@ -634,7 +634,8 @@ console.log(
 
                     email: employee.email,
 
-                    role: "Administrator"
+                    role: "Administrator",
+                    lastLogoutAt: employee.lastLogoutAt
 
                 }
 
@@ -684,7 +685,8 @@ console.log(
 
                     email: employee.email,
 
-                    role: "Employee"
+                    role: "Employee",
+                    lastLogoutAt: employee.lastLogoutAt,
 
                 }
 
@@ -727,7 +729,45 @@ console.log(
 }
 
 };
+const logout = async (req, res) => {
 
+    try {
+
+        const employee = await Employee.findById(req.user.id);
+
+        if (!employee) {
+
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+
+        }
+
+        employee.lastLogoutAt = new Date();
+
+        await employee.save();
+
+        return res.json({
+            success: true,
+            lastLogoutAt: employee.lastLogoutAt
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to record logout"
+        });
+
+    }
+
+};
 
 // =========================
 // EXPORTS
@@ -743,6 +783,7 @@ module.exports = {
 
     getProfile,
 
-    updateProfile
+    updateProfile,
+    logout
 
 };

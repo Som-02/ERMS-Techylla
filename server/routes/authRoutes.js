@@ -9,8 +9,8 @@ const {
     changePassword,
 
     getProfile,
-    updateProfile
-
+    updateProfile,
+    logout
 } = require("../controllers/authController");
 
 const {
@@ -23,6 +23,11 @@ router.post("/login", login);
 router.post(
     "/microsoft-login",
     microsoftLogin
+);
+router.post(
+    "/logout",
+    protect,
+    logout
 );
 router.get("/me", protect, getProfile);
 router.put(
