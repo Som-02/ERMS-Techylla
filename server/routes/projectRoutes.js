@@ -141,6 +141,7 @@ router.put(
 );
 router.delete(
     "/:projectId/assign/:employeeId/:role",
+    protect,
     deleteAssignment
 );
 router.delete("/:id", protect, deleteProject);

@@ -7,6 +7,21 @@ const ProjectStatus = require("../models/ProjectStatus");
 const {
     assignEmployeeToProject,
 } = require("../services/assignmentService");
+
+const isProjectLead = async (employeeId, projectId) => {
+
+    const employee = await Employee.findById(employeeId);
+
+    if (!employee) {
+        return false;
+    }
+
+    return employee.assignments.some(
+        assignment =>
+            assignment.project.toString() === projectId.toString() &&
+            assignment.role?.name === "Project Lead"
+    );
+};
 // ============================
 // Get All Projects
 // ============================
@@ -1012,19 +1027,29 @@ for (const employee of assignedEmployees) {
 
 }
 
-        res.status(200).json({
+       const canManageAssignments =
+    req.user.role === "Administrator"
+        ? true
+        : await isProjectLead(
+            req.user.id,
+            project._id
+        );
 
-            success: true,
+res.status(200).json({
 
-            data: {
+    success: true,
 
-                project,
+    data: {
 
-                staffingPlan,
+        project,
 
-            },
+        staffingPlan,
 
-        });
+        canManageAssignments,
+
+    },
+
+});
 
     }
 
@@ -2454,6 +2479,27 @@ const exportProjects = async (req, res) => {
 const updateAssignment = async (req, res) => {
 
     try {
+        if (req.user.role !== "Administrator") {
+
+    const allowed = await isProjectLead(
+        req.user.id,
+        req.params.projectId
+    );
+
+    if (!allowed) {
+
+        return res.status(403).json({
+
+            success: false,
+
+            message:
+                "You are not authorized to manage this project."
+
+        });
+
+    }
+
+}
 
         const { projectId, employeeId } = req.params;
 
@@ -2615,7 +2661,27 @@ if(assignmentStart > assignmentEnd){
 const deleteAssignment = async (req, res) => {
 
     try {
+        if (req.user.role !== "Administrator") {
 
+    const allowed = await isProjectLead(
+        req.user.id,
+        req.params.projectId
+    );
+
+    if (!allowed) {
+
+        return res.status(403).json({
+
+            success: false,
+
+            message:
+                "You are not authorized to manage this project."
+
+        });
+
+    }
+
+}
         const { projectId, employeeId, role } = req.params;
 
         const employee = await Employee.findById(employeeId);
@@ -2706,6 +2772,28 @@ if (!stillAssigned) {
 const assignEmployee = async (req, res) => {
 
     try {
+
+        if (req.user.role !== "Administrator") {
+
+            const allowed = await isProjectLead(
+                req.user.id,
+                req.params.projectId
+            );
+
+            if (!allowed) {
+
+                return res.status(403).json({
+
+                    success: false,
+
+                    message:
+                        "You are not authorized to manage this project."
+
+                });
+
+            }
+
+        }
 
         await assignEmployeeToProject({
 
