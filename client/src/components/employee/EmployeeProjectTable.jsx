@@ -3,8 +3,8 @@ import {Link} from "react-router-dom";
 import {
 Eye
 } from "lucide-react";
-
-
+import { getStatusClass } from "../../utils/getStatusClass";
+import "../project/project.css";
 const EmployeeProjectTable = ({
 projects
 })=>{
@@ -169,11 +169,9 @@ project.endDate.split("T")[0]
 
 <td>
 
-    <span 
-        className={`status ${project.status
-            .toLowerCase()
-            .replace(/\s/g,"-")}`}
-    >
+    <span
+    className={`status ${getStatusClass(project.status)}`}
+>
 
         <span className="status-dot"></span>
 

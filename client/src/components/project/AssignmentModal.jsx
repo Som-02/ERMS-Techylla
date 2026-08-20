@@ -87,7 +87,20 @@ const AssignmentModal = ({
     const matchedSkills = employee.skills.filter(skill =>
         projectRoles.includes(skill.skill)
     );
+    const currentAllocation = (employee.assignments || []).reduce(
+        (total, assignment) => {
 
+            const allocation =
+                Number(assignment.allocation) || 0;
+
+            return total + allocation;
+
+        },
+        0
+    );
+
+    const availableAllocation =
+        Math.max(0, 100 - currentAllocation);
     return {
 
         value: employee._id,
@@ -99,6 +112,9 @@ const AssignmentModal = ({
         location: employee.location,
 
         matchedSkills,
+        currentAllocation,
+
+        availableAllocation,
 
     };
 
@@ -238,7 +254,29 @@ const AssignmentModal = ({
                 {option.location}
 
             </div>
+            <div
+            style={{
+                fontSize: "13px",
+                marginTop: "4px",
+                fontWeight: "600",
+            }}
+        >
 
+            Current Allocation:{" "}
+
+            <span>
+                {option.currentAllocation}%
+            </span>
+
+            {" • "}
+
+            Available:{" "}
+
+            <span>
+                {option.availableAllocation}%
+            </span>
+
+        </div>
         </div>
 
     )}

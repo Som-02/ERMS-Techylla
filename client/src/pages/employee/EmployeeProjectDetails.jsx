@@ -1,17 +1,57 @@
 import { useRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Loader from "../../components/common/Loader";
-import { getProject, getProjectStaffingPlan,} from "../../services/projectService";
-import "../../pages/projects/projectDetails.css";
+import {
+    getProjectStaffingPlan,
+    assignEmployee,
+    updateAssignment,
+    deleteAssignment,
+} from "../../services/projectService";import "../../pages/projects/projectDetails.css";
 import { formatDate } from "../../utils/formatDate";
-
+import { getEmployeesBySkills } from "../../services/employeeService";
+import AssignmentModal from "../../components/project/AssignmentModal";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+import toast from "react-hot-toast";
+import {
+    Pencil,
+    Trash2,
+} from "lucide-react";
 const ProjectDetails = () => {
 
     const { id } = useParams();
 
     const [project, setProject] = useState(null);
-    const [staffingPlan, setStaffingPlan] = useState([]);
-    const [loading, setLoading] = useState(true);
+
+const [staffingPlan, setStaffingPlan] = useState([]);
+
+const [loading, setLoading] = useState(true);
+
+const [canManageAssignments, setCanManageAssignments] =
+    useState(false);
+
+const [showAssignmentModal, setShowAssignmentModal] =
+    useState(false);
+
+const [assignmentMode, setAssignmentMode] =
+    useState("edit");
+
+const [selectedAssignment, setSelectedAssignment] =
+    useState(null);
+
+const [selectedSlot, setSelectedSlot] =
+    useState(null);
+
+const [availableEmployees, setAvailableEmployees] =
+    useState([]);
+
+const [assignmentError, setAssignmentError] =
+    useState("");
+
+const [showDeleteDialog, setShowDeleteDialog] =
+    useState(false);
+
+const [employeeToDelete, setEmployeeToDelete] =
+    useState(null);
 
 
 const roleListRef = useRef(null);
@@ -106,7 +146,9 @@ useEffect(() => {
 setProject(res.data.project);
 
 setStaffingPlan(res.data.staffingPlan);
-
+setCanManageAssignments(
+    res.data.canManageAssignments === true
+);
         } catch (error) {
 
             console.log(error);
@@ -293,6 +335,9 @@ to="/employee/projects"
         <col style={{ width: "15%" }} />
         <col style={{ width: "15%" }} />
         <col style={{ width: "5%" }} />
+        {canManageAssignments && (
+        <col style={{ width: "10%" }} />
+    )}
     </colgroup>
                         <thead>
 
@@ -313,7 +358,11 @@ to="/employee/projects"
 <th style={{
         textAlign: "right",
     }}>Allocation</th>
-
+{canManageAssignments && (
+    <th style={{ textAlign: "center" }}>
+        Actions
+    </th>
+)}
 </tr>
 
 </thead>
@@ -409,7 +458,171 @@ to="/employee/projects"
             : `${slot.employee.allocation}%`
         : "-"}
 </td>
+{canManageAssignments && (
 
+    <td style={{ textAlign: "center" }}>
+
+        {slot.employee ? (
+
+            <div className="table-actions">
+
+                <button
+                    className="edit-btn"
+                    onClick={() => {
+
+                        setSelectedAssignment({
+
+                            employeeId:
+                                slot.employee._id,
+
+                            name:
+                                slot.employee.name,
+
+                            role:
+                                slot.role,
+
+                            location:
+                                slot.location,
+
+                            projectName:
+                                project.name,
+
+                            clientName:
+                                project.client?.name,
+
+                            startDate:
+                                slot.employee.startDate,
+
+                            endDate:
+                                slot.employee.endDate,
+
+                            allocation:
+                                slot.employee.allocation,
+
+                        });
+
+                        setAssignmentMode("edit");
+
+                        setShowAssignmentModal(true);
+
+                    }}
+                >
+
+                    <Pencil size={18} />
+
+                </button>
+
+
+                <button
+                    className="delete-btn"
+                    onClick={() => {
+
+                        setEmployeeToDelete({
+
+                            ...slot.employee,
+
+                            role: slot.role,
+
+                        });
+
+                        setShowDeleteDialog(true);
+
+                    }}
+                >
+
+                    <Trash2 size={18} />
+
+                </button>
+
+            </div>
+
+        ) : (
+
+            <button
+                className="assign-btn"
+                onClick={async () => {
+
+                    try {
+
+                        setSelectedSlot(slot);
+
+                        const skill =
+                            project.requiredSkills.find(
+                                item =>
+                                    item.skill.name ===
+                                    slot.role
+                            );
+
+                        if (!skill) {
+
+                            toast.error(
+                                "Role not found."
+                            );
+
+                            return;
+
+                        }
+
+                        const res =
+                            await getEmployeesBySkills([
+                                skill.skill._id
+                            ]);
+
+                        const filtered =
+                            res.data.filter(
+                                employee =>
+                                    employee.location ===
+                                    slot.location
+                            );
+
+                        const available =
+                            filtered.filter(
+                                employee =>
+                                    !staffingPlan.some(
+                                        s =>
+                                            s.employee?._id ===
+                                                employee._id &&
+                                            s.role ===
+                                                slot.role
+                                    )
+                            );
+
+                        setAvailableEmployees(
+                            available
+                        );
+
+                        setAssignmentMode("add");
+
+                        setSelectedAssignment(null);
+
+                        setAssignmentError("");
+
+                        setShowAssignmentModal(true);
+
+                    }
+
+                    catch (error) {
+
+                        console.log(error);
+
+                        toast.error(
+                            "Unable to load employees."
+                        );
+
+                    }
+
+                }}
+            >
+
+                Assign
+
+            </button>
+
+        )}
+
+    </td>
+
+)}
 </tr>
 
                                 ))
@@ -423,8 +636,150 @@ to="/employee/projects"
                 )
 
             }
+{canManageAssignments && (
 
+    <AssignmentModal
 
+        open={showAssignmentModal}
+
+        mode={assignmentMode}
+
+        assignment={selectedAssignment}
+
+        slot={selectedSlot}
+
+        project={project}
+
+        employees={availableEmployees}
+
+        errorMessage={assignmentError}
+
+        onClose={() => {
+
+            setAssignmentError("");
+
+            setShowAssignmentModal(false);
+
+        }}
+
+        onSave={async (data) => {
+
+            try {
+
+                setAssignmentError("");
+
+                if (assignmentMode === "edit") {
+
+                    await updateAssignment(
+                        project._id,
+                        selectedAssignment.employeeId,
+                        data
+                    );
+
+                }
+
+                else {
+
+                    await assignEmployee(
+                        project._id,
+                        data
+                    );
+
+                }
+
+                setShowAssignmentModal(false);
+
+                await loadProject();
+
+                toast.success(
+                    assignmentMode === "edit"
+                        ? "Assignment updated successfully"
+                        : "Employee assigned successfully"
+                );
+
+            }
+
+            catch (error) {
+
+                setAssignmentError(
+
+                    error.response?.data?.message ||
+
+                    "Unable to update assignment."
+
+                );
+
+            }
+
+        }}
+
+    />
+
+)}
+{canManageAssignments && (
+
+    <ConfirmDialog
+
+        open={showDeleteDialog}
+
+        title="Remove Employee"
+
+        message={
+            `Remove ${employeeToDelete?.name} from this project?`
+        }
+
+        confirmText="Remove"
+
+        cancelText="Cancel"
+
+        onCancel={() => {
+
+            setShowDeleteDialog(false);
+
+            setEmployeeToDelete(null);
+
+        }}
+
+        onConfirm={async () => {
+
+            try {
+
+                await deleteAssignment(
+
+                    project._id,
+
+                    employeeToDelete._id,
+
+                    employeeToDelete.role
+
+                );
+
+                setShowDeleteDialog(false);
+
+                setEmployeeToDelete(null);
+
+                await loadProject();
+
+                toast.success(
+                    "Employee removed from project."
+                );
+
+            }
+
+            catch (error) {
+
+                toast.error(
+                    error.response?.data?.message ||
+                    "Unable to remove employee."
+                );
+
+            }
+
+        }}
+
+    />
+
+)}
 
 
         </div>
