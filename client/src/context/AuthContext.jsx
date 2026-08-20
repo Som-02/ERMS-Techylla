@@ -4,6 +4,7 @@ import {
     useState
 } from "react";
 import { useMsal } from "@azure/msal-react";
+import { logoutUser } from "../services/authService";
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -112,15 +113,30 @@ const AuthProvider = ({ children }) => {
 
     const logout = async () => {
 
-    // Clear our application session
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("admin");
+    try {
 
-    setUser(null);
+        await logoutUser();
 
-    // Logout from Microsoft / Entra ID
-    await instance.logoutRedirect();
+    } catch (error) {
+
+        console.error(
+            "Failed to record logout:",
+            error
+        );
+
+    } finally {
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("admin");
+        sessionStorage.removeItem(
+    "ehrms_login_session"
+);
+        setUser(null);
+
+        await instance.logoutRedirect();
+
+    }
 
 };
 
