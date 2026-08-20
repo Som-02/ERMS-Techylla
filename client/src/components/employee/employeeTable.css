@@ -1,15 +1,17 @@
-.employee-table-card{
+.employee-table-card {
     background:#ffffff;
     border-radius:12px;
-    border: none;
-    overflow:hidden;
+    border:none;
+    overflow-x:auto;
+    overflow-y:hidden;
+    width:100%;
+    max-width:100%;
     box-shadow:0 3px 12px rgba(0,0,0,.05);
 }
 
-.employee-table{
+.employee-table {
     width:100%;
     border-collapse:collapse;
-    border: none;
 }
 
 .employee-table thead{
@@ -144,5 +146,46 @@
 .employee-overloaded:hover td{
 
     background:#e7a6a6;
+
+}
+/* ==========================================
+   RESPONSIVE EMPLOYEE TABLE
+========================================== */
+@media (max-width: 1100px) {
+
+    .employee-table {
+        min-width: 950px;
+    }
+
+}
+@media (max-width: 768px) {
+
+    .employee-table-card {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .employee-table {
+        min-width: 950px;
+    }
+
+    .employee-table th,
+    .employee-table td {
+        padding: 13px 12px;
+        white-space: nowrap;
+    }
+
+    .actions {
+        flex-wrap: nowrap;
+    }
+
+    .action-btn {
+        min-width: 42px;
+        width: 42px;
+        height: 38px;
+        padding: 0;
+    }
 
 }

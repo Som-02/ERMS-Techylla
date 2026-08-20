@@ -336,7 +336,7 @@ const ProjectTable = ({
     return (
 
         <div className="project-table-wrapper">
-
+            <div className="project-table-scroll">
             <table className="project-table">
 
                 <colgroup>
@@ -488,7 +488,7 @@ const ProjectTable = ({
                 </tbody>
 
             </table>
-
+            </div>
         </div>
 
     );

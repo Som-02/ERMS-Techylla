@@ -150,15 +150,15 @@
 =========================== */
 
 .content {
-
     flex: 1;
-
+    min-width: 0;
+    width: calc(100% - 260px);
     margin-left: 260px;
 
     display: flex;
-
     flex-direction: column;
 
+    overflow-x: hidden;
 }
 
 .navbar {
@@ -184,7 +184,51 @@
 }
 
 .page {
-
     padding: 35px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+/* ==========================================
+   RESPONSIVE LAYOUT
+========================================== */
+
+@media (max-width: 1200px) {
+
+    .page {
+        padding: 28px;
+    }
+
+    .navbar {
+        padding: 0 28px;
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    .page {
+        padding: 22px;
+    }
+
+    .navbar {
+        padding: 0 22px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .page {
+        padding: 16px;
+    }
+
+    .navbar {
+        height: auto;
+        min-height: 65px;
+        padding: 14px 16px;
+        gap: 10px;
+    }
 
 }
