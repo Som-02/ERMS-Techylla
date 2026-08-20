@@ -66,9 +66,9 @@ const RoleResourceModal = ({
 
                         <tr>
 
-                            <th>Onshore / US</th>
+                            <th>Onshore</th>
 
-                            <th>Offshore / INDIA</th>
+                            <th>Offshore</th>
 
                         </tr>
 

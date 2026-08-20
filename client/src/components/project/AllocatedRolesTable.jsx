@@ -51,11 +51,11 @@ const AllocatedRolesTable = ({
 </th>
 
 <th className="resource-header">
-    Onshore / US
+    Onshore
 </th>
 
 <th className="resource-header">
-    Offshore / IND
+    Offshore
 </th>
 
 <th className="date-header">
@@ -85,13 +85,13 @@ const AllocatedRolesTable = ({
 
                                 </td>
 
-                                <td style={{textAlign: "left",}}>
+                                <td style={{textAlign: "right",}}>
 
                                     {role.resources.onshore}
 
                                 </td>
 
-                                <td style={{textAlign: "left",}}>
+                                <td style={{textAlign: "right",}}>
 
                                     {role.resources.offshore}
 
