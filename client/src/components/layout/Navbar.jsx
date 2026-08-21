@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import { Sun, Moon } from "lucide-react";
 
 const Navbar = () => {
 
@@ -7,6 +8,19 @@ const Navbar = () => {
 
     const [activeNow, setActiveNow] = useState(false);
     const [elapsed, setElapsed] = useState("");
+
+    const [theme, setTheme] = useState(() => {
+        return localStorage.getItem("ehrms_theme") || "light";
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("ehrms_theme", theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    };
 
     useEffect(() => {
 
@@ -154,9 +168,9 @@ const Navbar = () => {
                 Human Resource Management System
             </h2>
 
-            <div>
+            <div className="navbar-user-container">
 
-                <div>
+                <div className="user-greeting">
                     Welcome,&nbsp;
 
                     <strong>
@@ -164,20 +178,38 @@ const Navbar = () => {
                     </strong>
                 </div>
 
-                <div className="login-status">
+                <div className="login-status-row">
 
-                    {activeNow ? (
+                    <div className="login-status">
 
-                        <>
-                            <span className="active-dot"></span>
-                            Active Now
-                        </>
+                        {activeNow ? (
 
-                    ) : (
+                            <>
+                                <span className="active-dot"></span>
+                                Active Now
+                            </>
 
-                        `Active ${elapsed}`
+                        ) : (
 
-                    )}
+                            `Active ${elapsed}`
+
+                        )}
+
+                    </div>
+
+                    <button
+                        type="button"
+                        className="theme-toggle-btn"
+                        onClick={toggleTheme}
+                        title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+                        aria-label="Toggle theme"
+                    >
+                        {theme === "light" ? (
+                            <Sun className="theme-icon sun" size={15} />
+                        ) : (
+                            <Moon className="theme-icon moon" size={15} />
+                        )}
+                    </button>
 
                 </div>
 

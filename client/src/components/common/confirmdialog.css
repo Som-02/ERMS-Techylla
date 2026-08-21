@@ -125,3 +125,33 @@ outline:none;
     overflow-wrap:break-word;
 
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - CONFIRM DIALOG
+========================================== */
+
+[data-theme="dark"] .confirm-dialog p {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: #334155;
+}
+
+[data-theme="dark"] .admin-reason-input,
+[data-theme="dark"] .reason-textarea {
+    background: #0b101d;
+    color: #ffffff;
+    border-color: #1e293b;
+}
+
+[data-theme="dark"] .reason-view-box {
+    background: #0b101d;
+    color: #f1f5f9;
+    border-color: #1e293b;
+}

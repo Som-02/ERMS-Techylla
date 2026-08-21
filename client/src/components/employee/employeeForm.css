@@ -163,3 +163,39 @@
 .remove-btn:hover {
     background: #fee2e2;
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - EMPLOYEE FORM
+========================================== */
+
+[data-theme="dark"] .form-card {
+    background: #0e1526;
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .form-card h3,
+[data-theme="dark"] .form-header h1,
+[data-theme="dark"] .form-group label {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .form-header p {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select {
+    background: #0b101d;
+    color: #ffffff;
+    border-color: #1e293b;
+}
+
+[data-theme="dark"] .cancel-btn {
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .cancel-btn:hover {
+    background: #334155;
+}

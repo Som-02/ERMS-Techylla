@@ -135,3 +135,30 @@
     }
 
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - PAGE HEADER
+========================================== */
+
+[data-theme="dark"] .page-title h1 {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .page-title p {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .page-btn,
+[data-theme="dark"] .secondary-btn {
+    background: linear-gradient(135deg, #1e293b 0%, #1e3a8a 50%, #2563eb 100%);
+    color: #e2e8f0;
+    border: none;
+    box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);
+}
+
+[data-theme="dark"] .page-btn:hover,
+[data-theme="dark"] .secondary-btn:hover {
+    background: linear-gradient(135deg, #334155 0%, #1d4ed8 50%, #3b82f6 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+}

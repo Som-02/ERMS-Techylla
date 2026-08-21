@@ -332,3 +332,47 @@
         );
 
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - EMPLOYEE SECTION
+========================================== */
+
+[data-theme="dark"] .data-table,
+[data-theme="dark"] .pending-skill-card {
+    background: #0e1526;
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .data-table th,
+[data-theme="dark"] .pending-skill-table th {
+    background: #0b101d;
+    color: #94a3b8;
+    border-bottom-color: #1e293b;
+}
+
+[data-theme="dark"] .data-table td,
+[data-theme="dark"] .pending-skill-table td {
+    color: #f1f5f9;
+    border-bottom-color: #1e293b;
+}
+
+[data-theme="dark"] .pending-skill-header {
+    background: #141c2e;
+    border-bottom-color: #1e293b;
+}
+
+[data-theme="dark"] .pending-skill-header h3 {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .field label {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .field input,
+[data-theme="dark"] .field select {
+    background: #0b101d;
+    color: #ffffff;
+    border-color: #1e293b;
+}

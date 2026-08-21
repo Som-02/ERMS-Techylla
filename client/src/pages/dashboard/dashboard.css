@@ -237,3 +237,126 @@ font-size:.85rem;
 }
 
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - DASHBOARD
+========================================== */
+
+[data-theme="dark"] .dashboard-title,
+[data-theme="dark"] .section-title {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .dashboard-subtitle {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .dashboard-card {
+    background: linear-gradient(
+        145deg,
+        #0b111e,
+        #0e172a 55%,
+        #14285e
+    );
+    border: 1px solid #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .dashboard-card-title {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .dashboard-card-value {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .dashboard-card-subtitle {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .dashboard-icon {
+    background: #1e293b;
+    color: #3b82f6;
+}
+
+[data-theme="dark"] .table-wrapper {
+    background: #0e1526;
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .dashboard-table thead {
+    background: #0b101d;
+}
+
+[data-theme="dark"] .dashboard-table th {
+    color: #94a3b8;
+    border-bottom: 1px solid #1e293b;
+}
+
+[data-theme="dark"] .dashboard-table td {
+    color: #cbd5e1;
+    border-top: 1px solid #1e293b;
+}
+
+[data-theme="dark"] .dashboard-table tbody tr:hover {
+    background: #131c30;
+}
+
+[data-theme="dark"] .emp-id {
+    background: #162544;
+    color: #60a5fa;
+    border: none;
+}
+
+[data-theme="dark"] .empty-state {
+    background: #0e1526;
+    border-color: #1e293b;
+    color: #94a3b8;
+}
+
+/* ==========================================
+   DARK MODE STATUS BADGES (TRANSLUCENT & SOFT)
+========================================== */
+
+[data-theme="dark"] .status.lead {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: none;
+}
+
+[data-theme="dark"] .status.pipeline {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: none;
+}
+
+[data-theme="dark"] .status.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: none;
+}
+
+[data-theme="dark"] .status.completed {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: none;
+}
+
+[data-theme="dark"] .status.hold {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: none;
+}
+
+[data-theme="dark"] .status.inactive {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: none;
+}
+
+[data-theme="dark"] .status.custom {
+    background: rgba(3, 105, 161, 0.22);
+    color: #38bdf8;
+    border: none;
+}

@@ -170,3 +170,37 @@
     font-size: 13px;
     font-weight: 600;
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - SETTINGS
+========================================== */
+
+[data-theme="dark"] .settings-title,
+[data-theme="dark"] .settings-card h3,
+[data-theme="dark"] .profile-name,
+[data-theme="dark"] .info-value,
+[data-theme="dark"] .settings-form label {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .settings-subtitle,
+[data-theme="dark"] .profile-email,
+[data-theme="dark"] .info-label {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .settings-card {
+    background: #0e1526;
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .info-row {
+    border-bottom-color: #1e293b;
+}
+
+[data-theme="dark"] .settings-form input {
+    background: #0b101d;
+    color: #ffffff;
+    border-color: #1e293b;
+}

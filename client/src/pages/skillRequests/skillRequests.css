@@ -432,3 +432,56 @@
 .view-reason-btn:hover {
     background: #dcfce7;
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - SKILL REQUESTS
+========================================== */
+
+[data-theme="dark"] .request-summary-card,
+[data-theme="dark"] .skill-request-table-card {
+    background: #0e1526;
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .skill-request-table thead {
+    background: #0b101d;
+}
+
+[data-theme="dark"] .skill-request-table th {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .skill-request-table td {
+    color: #f1f5f9;
+    border-top-color: #1e293b;
+}
+
+[data-theme="dark"] .skill-request-table tbody tr:hover {
+    background: #131c30;
+}
+
+[data-theme="dark"] .employee-request-name strong {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .skill-name,
+[data-theme="dark"] .skill-rating {
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .refresh-btn {
+    background: #0e1526;
+    color: #ffffff;
+    border-color: #1e293b;
+}
+
+[data-theme="dark"] .refresh-btn:hover {
+    background: #162036;
+}
+
+[data-theme="dark"] .reason-view-box {
+    background: #0b101d;
+    border-color: #1e293b;
+    color: #ffffff;
+}

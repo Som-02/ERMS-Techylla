@@ -67,3 +67,22 @@
     cursor:pointer;
 
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - MODAL
+========================================== */
+
+[data-theme="dark"] .modal-container {
+    background: #0e1526;
+    border: 1px solid #1e293b;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom-color: #1e293b;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .modal-close {
+    color: #94a3b8;
+}

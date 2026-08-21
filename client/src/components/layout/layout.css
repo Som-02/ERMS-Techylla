@@ -191,20 +191,31 @@
     box-sizing: border-box;
 }
 
-.login-status {
-
-    margin-top: 4px;
-
-    font-size: 12px;
-
-    color: #6b7280;
-
+.navbar-user-container {
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
 
+.user-greeting {
+    text-align: right;
+}
+
+.login-status-row {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin-top: 3px;
+}
 
+.login-status {
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
     gap: 5px;
-
 }
 
 .active-dot {
@@ -220,6 +231,87 @@
     display: inline-block;
 
 }
+
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.theme-icon.sun {
+    color: #d97706;
+}
+
+.theme-icon.moon {
+    color: #60a5fa;
+}
+
+/* ==========================================
+   DARK MODE OVERRIDES - LAYOUT & SIDEBAR
+========================================== */
+
+[data-theme="dark"] .sidebar {
+    background: #070a12;
+    border-right: 1px solid #1e293b;
+}
+
+[data-theme="dark"] .sidebar-logo {
+    border-bottom-color: #1e293b;
+}
+
+[data-theme="dark"] .sidebar-nav a {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .sidebar-nav a:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .sidebar-nav a.active {
+    background: linear-gradient(135deg, #1e293b 0%, #1e3a8a 100%);
+    color: #e2e8f0;
+    box-shadow: 0 4px 14px rgba(30, 58, 138, 0.5);
+    border-left: 3px solid #3b82f6;
+}
+
+[data-theme="dark"] .navbar {
+    background: #0b101d;
+    border-bottom: 1px solid #1e293b;
+}
+
+[data-theme="dark"] .navbar h2 {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .navbar strong {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .login-status {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background: #1e293b;
+    border: none;
+    color: #cbd5e1;
+}
+
 /* ==========================================
    RESPONSIVE LAYOUT
 ========================================== */

@@ -20,3 +20,19 @@
     border-radius:8px;
     font-size:15px;
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - SEARCH BAR
+========================================== */
+
+[data-theme="dark"] .search-wrapper {
+    background: linear-gradient(135deg, #0e1526 0%, #16223b 50%, #070b14 100%);
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .search-input {
+    background: #0b101d;
+    color: #ffffff;
+    border-color: #1e293b;
+}

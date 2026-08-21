@@ -12,13 +12,15 @@ html {
 
 body {
 
-    font-family: "Inter", sans-serif;
+    font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
     background: var(--background);
 
     color: var(--text);
 
     line-height: 1.5;
+
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 button,
@@ -28,6 +30,19 @@ textarea {
 
     font-family: inherit;
 
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: var(--input-bg);
+    color: var(--heading);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] option {
+    background-color: #0b101d;
+    color: #ffffff;
 }
 
 a {
