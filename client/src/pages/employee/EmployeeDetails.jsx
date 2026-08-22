@@ -12,7 +12,7 @@ import {
     formatDate
 } from "../../utils/formatDate";
 
-import "./employeeDetails.css";
+import "../employees/employeeDetails.css";
 
 const EmployeeDetails = () => {
 
@@ -273,9 +273,12 @@ const EmployeeDetails = () => {
                                             : "-"}
                                     </td>
 
-                                    <td>
-                                        {assignment.allocation ??
-                                            "-"}%
+                                    <td style={{ textAlign: "right" }}>
+                                        {assignment.allocation !== null &&
+                                        assignment.allocation !== undefined &&
+                                        assignment.allocation !== ""
+                                            ? `${assignment.allocation}%`
+                                            : "-"}
                                     </td>
 
                                 </tr>

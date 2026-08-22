@@ -1,0 +1,348 @@
+import { useRef, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import Loader from "../../components/common/Loader";
+import AssignmentModal from "../../components/project/AssignmentModal";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+import {
+    getProjectStaffingPlan,
+    updateAssignment,
+    deleteAssignment,
+    assignEmployee,
+} from "../../services/projectService";
+import { getEmployeesBySkills } from "../../services/employeeService";
+import { formatDate } from "../../utils/formatDate";
+import toast from "react-hot-toast";
+import { Pencil, Trash2, UserPlus, Users } from "lucide-react";
+import "./projectDetails.css";
+
+const ProjectAssignment = () => {
+    const { id } = useParams();
+
+    const [project, setProject] = useState(null);
+    const [staffingPlan, setStaffingPlan] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+    const [assignmentMode, setAssignmentMode] = useState("edit");
+    const [selectedAssignment, setSelectedAssignment] = useState(null);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [assignmentError, setAssignmentError] = useState("");
+    const [availableEmployees, setAvailableEmployees] = useState([]);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [employeeToDelete, setEmployeeToDelete] = useState(null);
+
+    useEffect(() => {
+        loadProject();
+    }, [id]);
+
+    const loadProject = async () => {
+        try {
+            const res = await getProjectStaffingPlan(id);
+            setProject(res.data.project);
+            setStaffingPlan(res.data.staffingPlan || []);
+        } catch (error) {
+            console.error("Failed to load staffing plan", error);
+            toast.error("Unable to load project staffing plan.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return <Loader />;
+    }
+
+    if (!project) {
+        return (
+            <div className="project-details">
+                <Link className="back-link" to="/projects">
+                    ← Back to Projects
+                </Link>
+                <h2>Project Not Found</h2>
+            </div>
+        );
+    }
+
+    const assignedCount = staffingPlan.filter((slot) => slot.employee).length;
+
+    return (
+        <div className="project-details">
+            <div className="details-top-nav">
+                <Link className="back-link" to="/projects">
+                    ← Back to Projects
+                </Link>
+                <Link to={`/projects/${project._id}`} className="project-btn project-edit-btn" style={{ height: "38px", padding: "0 18px" }}>
+                    <span>View Details</span>
+                </Link>
+            </div>
+
+            <div className="project-title-header">
+                <h1>Resource Allocation & Staffing - {project.name}</h1>
+            </div>
+
+            <div className="project-card">
+                <div className="detail">
+                    <span>Client</span>
+                    <strong>{project.client?.name || "-"}</strong>
+                </div>
+
+                <div className="detail">
+                    <span>Category</span>
+                    <strong>{project.type || "-"}</strong>
+                </div>
+
+                <div className="detail">
+                    <span>Duration</span>
+                    <strong>
+                        {project.startDate ? formatDate(project.startDate) : "-"}
+                        {"  --  "}
+                        {project.endDate ? formatDate(project.endDate) : "-"}
+                    </strong>
+                </div>
+
+                <div className="detail">
+                    <span>Assigned Employees</span>
+                    <strong>{assignedCount} / {staffingPlan.length} Roles Filled</strong>
+                </div>
+            </div>
+
+            <div className="table-header">
+                <h2>Project Resource Plan</h2>
+            </div>
+
+            {staffingPlan.length === 0 ? (
+                <div className="empty">
+                    No resource requirements defined for this project.
+                </div>
+            ) : (
+                <table className="employee-table">
+                    <colgroup>
+                        <col style={{ width: "20%" }} />
+                        <col style={{ width: "10%" }} />
+                        <col style={{ width: "16%" }} />
+                        <col style={{ width: "10%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "12%" }} />
+                        <col style={{ width: "8%" }} />
+                        <col style={{ width: "10%" }} />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Location</th>
+                            <th>Role Created Date</th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th style={{ textAlign: "right" }}>Allocation</th>
+                            <th style={{ textAlign: "center" }}>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {staffingPlan.map((slot, index) => (
+                            <tr key={index}>
+                                <td style={{ textAlign: "left" }}>{slot.role}</td>
+                                <td style={{ textAlign: "left" }}>{slot.location}</td>
+                                <td style={{ textAlign: "left" }}>
+                                    {(() => {
+                                        const roleData = project.requiredSkills?.find(
+                                            (item) => item.skill.name === slot.role
+                                        );
+                                        return roleData?.roleCreatedAt
+                                            ? formatDate(roleData.roleCreatedAt)
+                                            : "-";
+                                    })()}
+                                </td>
+                                <td style={{ textAlign: "left" }}>{slot.employee?.empId || "-"}</td>
+                                <td style={{ textAlign: "left" }}>{slot.employee?.name || "-"}</td>
+                                <td style={{ textAlign: "left" }}>
+                                    {slot.employee?.startDate
+                                        ? formatDate(slot.employee.startDate)
+                                        : "-"}
+                                </td>
+                                <td style={{ textAlign: "left" }}>
+                                    {slot.employee?.endDate
+                                        ? formatDate(slot.employee.endDate)
+                                        : "-"}
+                                </td>
+                                <td style={{ textAlign: "right" }}>
+                                    {slot.employee
+                                        ? slot.employee.allocation === null ||
+                                          slot.employee.allocation === undefined ||
+                                          slot.employee.allocation === ""
+                                            ? "-"
+                                            : `${slot.employee.allocation}%`
+                                        : "-"}
+                                </td>
+                                <td style={{ textAlign: "center" }}>
+                                    {slot.employee ? (
+                                        <div className="table-actions">
+                                            <button
+                                                className="edit-btn"
+                                                title="Edit Assignment"
+                                                onClick={() => {
+                                                    setSelectedAssignment({
+                                                        employeeId: slot.employee._id,
+                                                        name: slot.employee.name,
+                                                        role: slot.role,
+                                                        location: slot.location,
+                                                        projectName: project.name,
+                                                        clientName: project.client?.name,
+                                                        startDate: slot.employee.startDate,
+                                                        endDate: slot.employee.endDate,
+                                                        allocation: slot.employee.allocation,
+                                                    });
+                                                    setAssignmentMode("edit");
+                                                    setShowAssignmentModal(true);
+                                                }}
+                                            >
+                                                <Pencil size={18} />
+                                            </button>
+
+                                            <button
+                                                className="delete-btn"
+                                                title="Remove Assignment"
+                                                onClick={() => {
+                                                    setEmployeeToDelete({
+                                                        ...slot.employee,
+                                                        role: slot.role,
+                                                    });
+                                                    setShowDeleteDialog(true);
+                                                }}
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            className="assign-btn"
+                                            onClick={async () => {
+                                                try {
+                                                    setSelectedSlot(slot);
+
+                                                    const skill = project.requiredSkills?.find(
+                                                        (item) => item.skill.name === slot.role
+                                                    );
+
+                                                    if (!skill) {
+                                                        toast.error("Role not found.");
+                                                        return;
+                                                    }
+
+                                                    const res = await getEmployeesBySkills([
+                                                        skill.skill._id,
+                                                    ]);
+
+                                                    const filtered = (res.data || []).filter(
+                                                        (employee) =>
+                                                            employee.location === slot.location
+                                                    );
+
+                                                    const available = filtered.filter(
+                                                        (employee) =>
+                                                            !staffingPlan.some(
+                                                                (s) =>
+                                                                    s.employee?._id ===
+                                                                        employee._id &&
+                                                                    s.role === slot.role
+                                                            )
+                                                    );
+
+                                                    setAvailableEmployees(available);
+                                                    setAssignmentMode("add");
+                                                    setSelectedAssignment(null);
+                                                    setAssignmentError("");
+                                                    setShowAssignmentModal(true);
+                                                } catch (error) {
+                                                    console.error("Error loading available employees", error);
+                                                    toast.error("Unable to load employees for assignment.");
+                                                }
+                                            }}
+                                        >
+                                            Assign
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+
+            <AssignmentModal
+                open={showAssignmentModal}
+                mode={assignmentMode}
+                assignment={selectedAssignment}
+                slot={selectedSlot}
+                project={project}
+                employees={availableEmployees}
+                errorMessage={assignmentError}
+                onClose={() => {
+                    setAssignmentError("");
+                    setShowAssignmentModal(false);
+                }}
+                onSave={async (data) => {
+                    try {
+                        setAssignmentError("");
+
+                        if (assignmentMode === "edit") {
+                            await updateAssignment(
+                                project._id,
+                                selectedAssignment.employeeId,
+                                data
+                            );
+                        } else {
+                            await assignEmployee(project._id, data);
+                        }
+
+                        setShowAssignmentModal(false);
+                        await loadProject();
+                        toast.success(
+                            assignmentMode === "edit"
+                                ? "Assignment updated successfully"
+                                : "Employee assigned successfully"
+                        );
+                    } catch (error) {
+                        setAssignmentError(
+                            error.response?.data?.message || "Unable to update assignment."
+                        );
+                    }
+                }}
+            />
+
+            <ConfirmDialog
+                open={showDeleteDialog}
+                title="Remove Employee"
+                message={`Remove ${employeeToDelete?.name} from this project?`}
+                confirmText="Remove"
+                cancelText="Cancel"
+                onCancel={() => {
+                    setShowDeleteDialog(false);
+                    setEmployeeToDelete(null);
+                }}
+                onConfirm={async () => {
+                    try {
+                        await deleteAssignment(
+                            project._id,
+                            employeeToDelete._id,
+                            employeeToDelete.role
+                        );
+
+                        setShowDeleteDialog(false);
+                        setEmployeeToDelete(null);
+                        await loadProject();
+                        toast.success("Employee removed from project.");
+                    } catch (error) {
+                        toast.error(
+                            error.response?.data?.message || "Unable to remove employee."
+                        );
+                    }
+                }}
+            />
+        </div>
+    );
+};
+
+export default ProjectAssignment;

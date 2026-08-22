@@ -166,9 +166,13 @@ const EmployeeDetails = () => {
         ? formatDate(assignment.endDate)
         : "-"}
 </td>
-<td style={{
-        textAlign: "right",
-    }}>{assignment.allocation || "-"}</td>
+                                <td style={{ textAlign: "right" }}>
+                                    {assignment.allocation !== null &&
+                                    assignment.allocation !== undefined &&
+                                    assignment.allocation !== ""
+                                        ? `${assignment.allocation}%`
+                                        : "-"}
+                                </td>
             </tr>
 
         ))}

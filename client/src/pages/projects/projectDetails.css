@@ -3,22 +3,109 @@
     margin:0 auto;
 }
 
+.details-top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
 .back-link{
     display:inline-block;
-    margin-bottom:20px;
+    margin-bottom: 16px;
     color:#030406;
     text-decoration:none;
     font-weight:600;
+}
+
+[data-theme="dark"] .back-link {
+    color: #94a3b8;
 }
 
 .back-link:hover{
     text-decoration:underline;
 }
 
-.project-details h1{
-    font-size:2rem;
-    color:#111827;
-    margin-bottom:25px;
+.project-header-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 25px;
+}
+
+.project-header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.project-header-left h1 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.25;
+}
+
+[data-theme="dark"] .project-header-left h1 {
+    color: #f8fafc;
+}
+
+.status-below-container {
+    display: flex;
+    align-items: center;
+}
+
+.project-skills-summary {
+    margin-top: 30px;
+    padding: 24px;
+    background: #0e1526;
+    border: 1px solid #1e293b;
+    border-radius: 14px;
+}
+
+.project-skills-summary h2 {
+    font-size: 1.15rem;
+    color: #e2e8f0;
+    margin-bottom: 16px;
+}
+
+.skills-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.skill-badge-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+}
+
+.skill-role-name {
+    font-weight: 600;
+    color: #60a5fa;
+}
+
+.skill-role-count {
+    background: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+}
+
+.skill-role-loc {
+    color: #94a3b8;
+    font-size: 0.8rem;
 }
 
 .project-card{

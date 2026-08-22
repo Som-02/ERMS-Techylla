@@ -376,3 +376,23 @@
     color: #ffffff;
     border-color: #1e293b;
 }
+
+[data-theme="dark"] .skill-edit-btn {
+    background: #162544;
+    color: #60a5fa;
+}
+
+[data-theme="dark"] .skill-edit-btn:hover {
+    background: #1e3a8a;
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .cancel-btn {
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .cancel-btn:hover {
+    background: #334155;
+    color: #ffffff;
+}

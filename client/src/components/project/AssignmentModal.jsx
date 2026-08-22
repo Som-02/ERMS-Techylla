@@ -235,14 +235,7 @@ const AssignmentModal = ({
 
             </div>
 
-            <div
-                style={{
-                    fontSize: "13px",
-                    color: "#6b7280",
-                    marginTop: "2px",
-                }}
-            >
-
+            <div className="select-option-subtext">
                 {option.matchedSkills
                     .map(skill =>
                         `${skill.skill} (${skill.rating}/5)`
@@ -252,31 +245,21 @@ const AssignmentModal = ({
                 {" • "}
 
                 {option.location}
-
             </div>
-            <div
-            style={{
-                fontSize: "13px",
-                marginTop: "4px",
-                fontWeight: "600",
-            }}
-        >
 
-            Current Allocation:{" "}
+            <div className="select-option-allocation">
+                Current Allocation:{" "}
+                <span>
+                    {option.currentAllocation}%
+                </span>
 
-            <span>
-                {option.currentAllocation}%
-            </span>
+                {" • "}
 
-            {" • "}
-
-            Available:{" "}
-
-            <span>
-                {option.availableAllocation}%
-            </span>
-
-        </div>
+                Available:{" "}
+                <span>
+                    {option.availableAllocation}%
+                </span>
+            </div>
         </div>
 
     )}

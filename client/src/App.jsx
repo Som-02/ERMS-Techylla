@@ -29,11 +29,13 @@ import AddSkill from "./pages/skills/AddSkill";
 import EditSkill from "./pages/skills/EditSkill";
 import SkillMatrix from "./pages/skills/SkillMatrix";
 import ProjectDetails from "./pages/projects/ProjectDetails";
+import ProjectAssignment from "./pages/projects/ProjectAssignment";
 import EmployeePortal from "./pages/employee/EmployeePortal";
 import EmployeeEdit from "./pages/employee/EmployeeEdit";
 import SkillRequests from "./pages/skillRequests/SkillRequests";
 import EmployeeProjects from "./pages/employee/EmployeeProjects";
 import EmployeeProjectDetails from "./pages/employee/EmployeeProjectDetails";
+import EmployeeProjectAssignment from "./pages/employee/EmployeeProjectAssignment";
 function App() {
     return (
         <Routes>
@@ -128,6 +130,21 @@ element={
 <DashboardLayout>
 
 <EmployeeProjectDetails/>
+
+</DashboardLayout>
+
+</ProtectedRoute>
+}
+/>
+
+<Route
+path="/employee/projects/:id/assign"
+element={
+<ProtectedRoute allowedRoles={["Employee"]}>
+
+<DashboardLayout>
+
+<EmployeeProjectAssignment/>
 
 </DashboardLayout>
 
@@ -290,15 +307,26 @@ element={
             />
 
             <Route
-    path="/projects/:id"
-    element={
-        <ProtectedRoute  allowedRoles={["Administrator"]}>
-            <DashboardLayout>
-                <ProjectDetails />
-            </DashboardLayout>
-        </ProtectedRoute>
-    }
-/>
+                path="/projects/:id"
+                element={
+                    <ProtectedRoute allowedRoles={["Administrator"]}>
+                        <DashboardLayout>
+                            <ProjectDetails />
+                        </DashboardLayout>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/projects/:id/assign"
+                element={
+                    <ProtectedRoute allowedRoles={["Administrator"]}>
+                        <DashboardLayout>
+                            <ProjectAssignment />
+                        </DashboardLayout>
+                    </ProtectedRoute>
+                }
+            />
 
             <Route
                 path="/projects/edit/:id"

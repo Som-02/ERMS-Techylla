@@ -132,3 +132,66 @@
 }
 
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES - EMPLOYEE DETAILS
+========================================== */
+
+[data-theme="dark"] .employee-details a {
+    color: #60a5fa;
+}
+
+[data-theme="dark"] .employee-details h2 {
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .employee-details h3 {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .employee-details hr {
+    border-top-color: #1e293b;
+}
+
+[data-theme="dark"] .employee-details p {
+    background: #0e1526;
+    border-bottom-color: #1e293b;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .employee-details strong {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .employee-details ul {
+    background: #0e1526;
+    border-color: #1e293b;
+}
+
+[data-theme="dark"] .employee-details ul li {
+    border-bottom-color: #1e293b;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .employee-details table {
+    background: #0e1526;
+    border-color: #1e293b;
+}
+
+[data-theme="dark"] .employee-details thead {
+    background: #0b101d;
+}
+
+[data-theme="dark"] .employee-details th {
+    color: #94a3b8;
+    border-bottom-color: #1e293b;
+}
+
+[data-theme="dark"] .employee-details td {
+    color: #e2e8f0;
+    border-top-color: #1e293b;
+}
+
+[data-theme="dark"] .employee-details tbody tr:hover {
+    background: #131c30;
+}

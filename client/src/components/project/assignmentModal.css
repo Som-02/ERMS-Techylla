@@ -175,22 +175,123 @@
     margin-left: 2px;
 
 }
-.assignment-error{
+.select-option-subtext {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+}
 
-    background:#fee2e2;
+.select-option-allocation {
+    font-size: 13px;
+    margin-top: 4px;
+    font-weight: 600;
+}
 
-    color:#b91c1c;
+.assignment-error {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
 
-    border:1px solid #fecaca;
+/* ==========================================
+   DARK MODE OVERRIDES - ASSIGNMENT MODAL
+========================================== */
 
-    border-radius:8px;
+[data-theme="dark"] .assignment-modal-overlay {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+}
 
-    padding:12px;
+[data-theme="dark"] .assignment-modal {
+    background: #0e1526;
+    border: 1px solid #1e293b;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
 
-    margin-top:18px;
+[data-theme="dark"] .assignment-modal h2 {
+    color: #f8fafc;
+}
 
-    font-size:14px;
+[data-theme="dark"] .modal-group label {
+    color: #e2e8f0;
+}
 
-    font-weight:600;
+[data-theme="dark"] .modal-group input {
+    background: #0b101d;
+    color: #f8fafc;
+    border-color: #1e293b;
+}
 
+[data-theme="dark"] .modal-group input:disabled {
+    background: #141c2e;
+    color: #94a3b8;
+    border-color: #1e293b;
+}
+
+[data-theme="dark"] .select-option-subtext {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .select-option-allocation {
+    color: #cbd5e1;
+}
+
+/* React Select Dark Mode Overrides */
+[data-theme="dark"] .react-select__control {
+    background-color: #0b101d !important;
+    border-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .react-select__control--is-focused {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+[data-theme="dark"] .react-select__single-value {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .react-select__placeholder {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] .react-select__input-container {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .react-select__menu {
+    background-color: #0e1526 !important;
+    border: 1px solid #1e293b !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .react-select__option {
+    background-color: transparent !important;
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .react-select__option--is-focused {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .react-select__option--is-selected {
+    background-color: #1e3a8a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .react-select__option strong {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .assignment-error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
 }

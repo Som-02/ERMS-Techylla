@@ -1,729 +1,195 @@
 import { useRef, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getEmployeesBySkills } from "../../services/employeeService";
 import Loader from "../../components/common/Loader";
-import AssignmentModal from "../../components/project/AssignmentModal";
-import { getProject, getProjectStaffingPlan, updateAssignment, deleteAssignment, assignEmployee} from "../../services/projectService";
+import { getProjectStaffingPlan } from "../../services/projectService";
 import "./projectDetails.css";
 import { formatDate } from "../../utils/formatDate";
-import ConfirmDialog from "../../components/common/ConfirmDialog";
-import toast from "react-hot-toast";
-import {
-    Eye,
-    Pencil,
-    Trash2,
-} from "lucide-react";
-const ProjectDetails = () => {
+import { UserPlus, Calendar, Building, Tag, FileText, CheckCircle2 } from "lucide-react";
 
+const ProjectDetails = () => {
     const { id } = useParams();
 
     const [project, setProject] = useState(null);
     const [staffingPlan, setStaffingPlan] = useState([]);
     const [loading, setLoading] = useState(true);
-const [showAssignmentModal, setShowAssignmentModal] = useState(false);
 
-const [assignmentMode, setAssignmentMode] = useState("edit");
+    const descriptionRef = useRef(null);
+    const [showHint, setShowHint] = useState(false);
 
-const [selectedAssignment, setSelectedAssignment] = useState(null);
-const [selectedSlot, setSelectedSlot] = useState(null);
-const [assignmentError, setAssignmentError] = useState("");
-const [availableEmployees, setAvailableEmployees] = useState([]);
-const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-const [employeeToDelete, setEmployeeToDelete] = useState(null); 
-const roleListRef = useRef(null);
-const [showMore, setShowMore] = useState(false);
-const descriptionRef = useRef(null);
-const [showHint, setShowHint] = useState(false);
-
-const handleDescriptionScroll = () => {
-
-    const el = descriptionRef.current;
-
-    if (!el) return;
-
-    const isScrollable =
-        el.scrollHeight > el.clientHeight;
-
-    if (!isScrollable) {
-
-        setShowHint(false);
-
-        return;
-
-    }
-
-    const reachedBottom =
-        el.scrollTop + el.clientHeight >=
-        el.scrollHeight - 2;
-
-    setShowHint(!reachedBottom);
-
-};
-useEffect(() => {
-
-    const checkDescription = () => {
-
+    const handleDescriptionScroll = () => {
         const el = descriptionRef.current;
-
         if (!el) return;
 
-        const isScrollable =
-            el.scrollHeight > el.clientHeight;
-
-        setShowHint(isScrollable);
-
-    };
-
-    checkDescription();
-
-    window.addEventListener(
-        "resize",
-        checkDescription
-    );
-
-    return () =>
-        window.removeEventListener(
-            "resize",
-            checkDescription
-        );
-
-}, [project]);
-useEffect(() => {
-    const list = roleListRef.current;
-
-    if (!list) return;
-
-    const checkScroll = () => {
-        const atBottom =
-            list.scrollTop + list.clientHeight >= list.scrollHeight - 2;
-
-        setShowMore(!atBottom);
-    };
-
-    checkScroll();
-
-    list.addEventListener("scroll", checkScroll);
-
-    return () => list.removeEventListener("scroll", checkScroll);
-
-}, [project]);
-useEffect(() => {
-
-        loadProject();
-
-    }, []);
-
-    const loadProject = async () => {
-
-        try {
-
-            const res = await getProjectStaffingPlan(id);
-
-setProject(res.data.project);
-
-setStaffingPlan(res.data.staffingPlan);
-
-        } catch (error) {
-
-            console.log(error);
-
-        } finally {
-
-            setLoading(false);
-
+        const isScrollable = el.scrollHeight > el.clientHeight;
+        if (!isScrollable) {
+            setShowHint(false);
+            return;
         }
 
+        const reachedBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+        setShowHint(!reachedBottom);
+    };
+
+    useEffect(() => {
+        const checkDescription = () => {
+            const el = descriptionRef.current;
+            if (!el) return;
+            const isScrollable = el.scrollHeight > el.clientHeight;
+            setShowHint(isScrollable);
+        };
+
+        checkDescription();
+        window.addEventListener("resize", checkDescription);
+        return () => window.removeEventListener("resize", checkDescription);
+    }, [project]);
+
+    useEffect(() => {
+        loadProject();
+    }, [id]);
+
+    const loadProject = async () => {
+        try {
+            const res = await getProjectStaffingPlan(id);
+            setProject(res.data.project);
+            setStaffingPlan(res.data.staffingPlan || []);
+        } catch (error) {
+            console.error("Failed to load project details", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (loading) {
-
         return <Loader />;
-
     }
 
+    if (!project) {
+        return (
+            <div className="project-details">
+                <Link className="back-link" to="/projects">
+                    ← Back to Projects
+                </Link>
+                <h2>Project Not Found</h2>
+            </div>
+        );
+    }
+
+    const assignedCount = staffingPlan.filter((slot) => slot.employee).length;
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case "Lead":
+                return "lead";
+            case "Pipeline":
+                return "pipeline";
+            case "Active":
+                return "active";
+            case "Completed":
+                return "completed";
+            case "On Hold":
+                return "hold";
+            default:
+                return "custom";
+        }
+    };
+
     return (
-
         <div className="project-details">
-
-            <Link
-                className="back-link"
-                to="/projects"
-            >
+            <Link className="back-link" to="/projects">
                 ← Back to Projects
             </Link>
 
-            <h1>
+            <div className="project-header-container">
+                <div className="project-header-left">
+                    <h1>{project.name}</h1>
+                    <div className="status-below-container">
+                        <span className={`status ${getStatusClass(project.status)}`}>
+                            <span className="status-dot"></span>
+                            {project.status}
+                        </span>
+                    </div>
+                </div>
 
-                {project.name}
-
-            </h1>
+                <div className="project-header-right">
+                    <Link to={`/projects/${project._id}/assign`} className="project-btn project-assign-btn">
+                        <UserPlus size={16} />
+                        <span>Assign Employees</span>
+                    </Link>
+                </div>
+            </div>
 
             <div className="project-card">
+                <div className="detail">
+                    <span>Client</span>
+                    <strong>{project.client?.name || "-"}</strong>
+                </div>
 
-    {/* <div className="detail">
+                <div className="detail">
+                    <span>Reference</span>
+                    <strong>{project.reference || "-"}</strong>
+                </div>
 
-        <span>Client</span>
-
-        <strong>
-
-            {project.client?.name}
-
-        </strong>
-
-    </div>
-
-    <div className="detail">
-
-        <span>Status</span>
-
-        <strong>
-
-            {project.status}
-
-        </strong>
-
-    </div> */}
-    <div className="detail">
-
-    <span>
-
-        Reference
-
-    </span>
-
-    <strong>
-
-        {project.reference || "-"}
-
-    </strong>
-
-</div>
-<div className="detail description-card">
-
-    <span>Brief Description</span>
-
-    <div
-
-        ref={descriptionRef}
-
-        onScroll={handleDescriptionScroll}
-
-        className="description-content"
-
-    >
-        
-        {project.description || "-"}
-
-    </div>
-
-    {showHint && (
-
-        <div className="scroll-hin">
-
-            Scroll for more...
-
-        </div>
-
-    )}
-
-</div>
-<div className="detail">
-
-    <span>
-
-        Project Category
-
-    </span>
-
-    <strong>
-
-        {project.type || "-"}
-
-    </strong>
-
-</div>
-    <div className="detail">
-
-    <span>Duration</span>
-
-    <strong>
-
-        {project.startDate
-            ? formatDate(project.startDate)
-            : "-"}
-
-        {"  --  "}
-
-        {project.endDate
-            ? formatDate(project.endDate)
-            : "-"}
-
-    </strong>
-
-</div>
-
-    <div className="detail">
-
-        <span>Employees Assigned</span>
-
-        <strong>
-
-            {staffingPlan.filter(slot => slot.employee).length}
-
-        </strong>
-
-    </div>
-    
-</div>
-
-            <div className="table-header">
-
-    <h2>Project Resource Plan</h2>
-
-
-</div>
-
-            {
-
-                staffingPlan.length === 0 ?
-
-                (
-
-                    <div className="empty">
-
-                        No resource requirements defined for this project.
-
+                <div className="detail description-card">
+                    <span>Brief Description</span>
+                    <div
+                        ref={descriptionRef}
+                        onScroll={handleDescriptionScroll}
+                        className="description-content"
+                    >
+                        {project.description || "-"}
                     </div>
-
-                ) :
-
-                (
-
-                    <table className="employee-table">
-<colgroup>
-        <col style={{ width: "20%" }} />
-        <col style={{ width: "10%" }} />
-        <col style={{ width: "16%" }} />
-        <col style={{ width: "10%" }} />
-        <col style={{ width: "7%" }} />
-        <col style={{ width: "15%" }} />
-        <col style={{ width: "15%" }} />
-        <col style={{ width: "5%" }} />
-        <col style={{ width: "10%" }} />
-    </colgroup>
-                        <thead>
-
-<tr>
-
-<th>Role</th>
-
-<th>Location</th>
-<th>Role Created Date</th>
-<th>ID</th>
-
-<th>Name</th>
-
-<th>Start Date</th>
-
-<th>End Date</th>
-
-<th style={{textAlign: "right",}}>Allocation</th>
-
-<th style={{textAlign: "center",}}>Actions</th>
-
-</tr>
-
-</thead>
-
-                        <tbody>
-
-                            {
-
-                                staffingPlan.map((slot, index) => (
-
-                                    <tr key={index}>
-
-<td style={{
-        textAlign: "left",
-    }}>
-
-{slot.role}
-
-</td>
-
-<td style={{
-        textAlign: "left",
-    }}>
-
-{slot.location}
-
-</td>
-<td style={{
-        textAlign: "left",
-    }}>
-
-{
-    (() => {
-
-        const roleData =
-            project.requiredSkills?.find(
-                item =>
-                    item.skill.name === slot.role
-            );
-
-        return roleData?.roleCreatedAt
-            ? formatDate(roleData.roleCreatedAt)
-            : "-";
-
-    })()
-}
-
-</td>
-<td style={{
-        textAlign: "left",
-    }}>
-
-{slot.employee?.empId || "-"}
-
-</td>
-
-<td style={{
-        textAlign: "left",
-    }}>
-
-{slot.employee?.name || "-"}
-
-</td>
-
-<td style={{
-        textAlign: "left",
-    }}>
-
-{slot.employee?.startDate
-? formatDate(slot.employee.startDate)
-: "-"}
-
-</td>
-
-<td style={{
-        textAlign: "left",
-    }}>
-
-{slot.employee?.endDate
-? formatDate(slot.employee.endDate)
-: "-"}
-
-</td>
-
-<td style={{
-        textAlign: "right",
-    }}>
-    {slot.employee
-        ? (
-            slot.employee.allocation === null ||
-            slot.employee.allocation === undefined ||
-            slot.employee.allocation === ""
-        )
-            ? "-"
-            : `${slot.employee.allocation}%`
-        : "-"}
-</td>
-
-<td style={{
-        textAlign: "center",
-    }}>
-
-{slot.employee ? (
-
-<div className="table-actions">
-
-<button
-
-className="edit-btn"
-
-onClick={() => {
-
-setSelectedAssignment({
-
-employeeId: slot.employee._id,
-
-name: slot.employee.name,
-role: slot.role,
-
-location: slot.location,
-projectName: project.name,
-
-clientName: project.client?.name,
-
-startDate: slot.employee.startDate,
-
-endDate: slot.employee.endDate,
-
-allocation: slot.employee.allocation,
-
-});
-
-setAssignmentMode("edit");
-
-setShowAssignmentModal(true);
-
-}}
-
->
-
-<Pencil size={18} />
-
-</button>
-
-<button
-
-className="delete-btn"
-
-onClick={() => {
-setEmployeeToDelete({
-
-    ...slot.employee,
-
-    role: slot.role,
-
-});
-
-setShowDeleteDialog(true);
-
-}}
-
->
-
-<Trash2 size={18} />
-
-</button>
-
-</div>
-
-) : (
-
-<button
-
-className="assign-btn"
-
-onClick={async () => {
-
-try{
-
-// Remember which slot we clicked
-
-setSelectedSlot(slot);
-
-// Find the matching skill in the project
-
-const skill = project.requiredSkills.find(
-
-item =>
-
-item.skill.name === slot.role
-
-);
-
-if(!skill){
-
-toast.error("Role not found.");
-
-return;
-
-}
-
-// Load employees having that role
-
-const res = await getEmployeesBySkills([
-
-skill.skill._id
-
-]);
-
-// Filter by location
-
-const filtered = res.data.filter(
-
-employee =>
-
-employee.location === slot.location
-
-);
-
-// Remove already assigned employees
-
-const available = filtered.filter(employee =>
-
-    !staffingPlan.some(
-
-        s =>
-
-            s.employee?._id === employee._id &&
-
-            s.role === slot.role
-
-    )
-
-);
-
-setAvailableEmployees(available);
-
-setAssignmentMode("add");
-
-setSelectedAssignment(null);
-
-setAssignmentError("");
-
-setShowAssignmentModal(true);
-
-}
-
-catch(error){
-
-console.log(error);
-
-}
-
-}}
-
->
-
-Assign
-
-</button>
-
-)}
-
-</td>
-
-</tr>
-
-                                ))
-
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                )
-
-            }
-
-<AssignmentModal
-
-    open={showAssignmentModal}
-
-    mode={assignmentMode}
-
-    assignment={selectedAssignment}
-    slot={selectedSlot}
-    project={project}
-
-    employees={availableEmployees}
-
-    errorMessage={assignmentError}
-
-    onClose={() => {
-
-        setAssignmentError("");
-
-        setShowAssignmentModal(false);
-
-    }}
-
-    onSave={async (data) => {
-
-        try {
-
-    setAssignmentError("");
-
-    if (assignmentMode === "edit") {
-console.log(data);
-        await updateAssignment(
-            project._id,
-            selectedAssignment.employeeId,
-            data
-        );
-
-    }
-
-    else {
-
-        await assignEmployee(
-            project._id,
-            data
-        );
-
-    }
-
-    setShowAssignmentModal(false);
-
-    loadProject();
-
-}
-
-catch (error) {
-
-    setAssignmentError(
-
-        error.response?.data?.message ||
-
-        "Unable to assign employee."
-
-    );
-
-}
-
-    }}
-
-/>
-<ConfirmDialog
-    open={showDeleteDialog}
-    title="Remove Employee"
-    message={`Remove ${employeeToDelete?.name} from this project?`}
-    confirmText="Remove"
-    cancelText="Cancel"
-    onCancel={() => {
-
-        setShowDeleteDialog(false);
-
-        setEmployeeToDelete(null);
-
-    }}
-    onConfirm={async () => {
-
-        try {
-
-            await deleteAssignment(
-
-                project._id,
-
-                employeeToDelete._id,
-                employeeToDelete.role
-
-            );
-
-            setShowDeleteDialog(false);
-
-            setEmployeeToDelete(null);
-
-            loadProject();
-
-        }
-
-        catch (error) {
-
-            console.log(error);
-
-        }
-
-    }}
-/>
+                    {showHint && <div className="scroll-hin">Scroll for more...</div>}
+                </div>
+
+                <div className="detail">
+                    <span>Project Category</span>
+                    <strong>{project.type || "-"}</strong>
+                </div>
+
+                <div className="detail">
+                    <span>Duration</span>
+                    <strong>
+                        {project.startDate ? formatDate(project.startDate) : "-"}
+                        {"  --  "}
+                        {project.endDate ? formatDate(project.endDate) : "-"}
+                    </strong>
+                </div>
+
+                <div className="detail">
+                    <span>Employees Assigned</span>
+                    <strong>{assignedCount} / {staffingPlan.length} Roles Filled</strong>
+                </div>
+            </div>
+
+            {/* Required Skills & Roles Overview */}
+            {project.requiredSkills && project.requiredSkills.length > 0 && (
+                <div className="project-skills-summary">
+                    <h2>Required Roles & Skills</h2>
+                    <div className="skills-badge-list">
+                        {project.requiredSkills.map((req, idx) => {
+                            const totalQty =
+                                (Number(req.resources?.onshore) || 0) +
+                                (Number(req.resources?.offshore) || 0) ||
+                                req.quantity ||
+                                1;
+
+                            return (
+                                <div key={idx} className="skill-badge-item">
+                                    <span className="skill-role-name">{req.skill?.name || "Skill"}</span>
+                                    <span className="skill-role-count">Qty: {totalQty}</span>
+                                    {req.resources && (
+                                        <span className="skill-role-loc">
+                                            ({req.resources.onshore || 0} Onshore / {req.resources.offshore || 0} Offshore)
+                                        </span>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
-
     );
-
 };
 
 export default ProjectDetails;

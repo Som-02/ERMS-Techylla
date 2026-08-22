@@ -974,41 +974,36 @@ return formData.requiredSkills.every(
             if (mode === "add") {
 
                 const payload = {
+                    ...formData,
+                    requiredSkills: formData.requiredSkills.map((role) => ({
+                        skill: role.skill,
+                        resources: role.resources,
+                        quantity:
+                            (Number(role.resources?.onshore) || 0) +
+                            (Number(role.resources?.offshore) || 0),
+                        roleCreatedAt: role.roleCreatedAt,
+                    })),
+                };
 
-    ...formData,
-
-    requiredSkills: formData.requiredSkills.map(role => ({
-
-        skill: role.skill,
-
-        resources: role.resources,
-        roleCreatedAt:role.roleCreatedAt
-
-    })),
-
-};
-
-await createProject(payload);
+                await createProject(payload);
 
                 toast.success("Project added successfully");
 
             } else {
 
-               const payload = {
+                const payload = {
+                    ...formData,
+                    requiredSkills: formData.requiredSkills.map((role) => ({
+                        skill: role.skill,
+                        resources: role.resources,
+                        quantity:
+                            (Number(role.resources?.onshore) || 0) +
+                            (Number(role.resources?.offshore) || 0),
+                        roleCreatedAt: role.roleCreatedAt,
+                    })),
+                };
 
-    ...formData,
-
-    requiredSkills: formData.requiredSkills.map(role => ({
-
-        skill: role.skill,
-
-        resources: role.resources,
-        roleCreatedAt:role.roleCreatedAt
-    })),
-
-};
-
-await updateProject(project._id, payload);
+                await updateProject(project._id, payload);
 
                 toast.success("Project updated successfully");
 
@@ -1057,28 +1052,29 @@ await updateProject(project._id, payload);
                     <label>Client</label>
 
                     <Select
-    options={clientOptions}
-    placeholder="Select Client..."
-    value={
-        clientOptions.find(
-            option =>
-                option.value === formData.client
-        ) || null
-    }
-    onChange={(selected) =>
-        setFormData(prev => ({
-            ...prev,
-            client: selected
-                ? selected.value
-                : "",
-        }))
-    }
-    components={{
-        Option: ClientOption,
-        SingleValue: ClientSingleValue,
-    }}
-    isClearable
-/>
+                        classNamePrefix="react-select"
+                        options={clientOptions}
+                        placeholder="Select Client..."
+                        value={
+                            clientOptions.find(
+                                option =>
+                                    option.value === formData.client
+                            ) || null
+                        }
+                        onChange={(selected) =>
+                            setFormData(prev => ({
+                                ...prev,
+                                client: selected
+                                    ? selected.value
+                                    : "",
+                            }))
+                        }
+                        components={{
+                            Option: ClientOption,
+                            SingleValue: ClientSingleValue,
+                        }}
+                        isClearable
+                    />
 
                 </div>
                 <div className="form-group">
@@ -1769,11 +1765,11 @@ await updateProject(project._id, payload);
     ) : (
 
         <Select
+            classNamePrefix="react-select"
             options={availableSkillOptions}
             placeholder="Select Role..."
             value={null}
             onChange={(role) => {
-
                 if (!role) return;
 
                 setSelectedRole(role);
@@ -1781,7 +1777,6 @@ await updateProject(project._id, payload);
                 setEditingRoleIndex(null);
 
                 setRoleModalOpen(true);
-
             }}
         />
 
