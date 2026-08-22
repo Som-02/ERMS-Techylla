@@ -1,11 +1,9 @@
 import api from "./api";
 
 export const getProjects = async (filter = {}) => {
-
     const params = new URLSearchParams();
 
     Object.entries(filter).forEach(([key, value]) => {
-
         if (
             value === undefined ||
             value === null ||
@@ -14,31 +12,17 @@ export const getProjects = async (filter = {}) => {
             return;
         }
 
-        // Status is an array
-        if (key === "status" && Array.isArray(value)) {
-
-            value.forEach(status => {
-
-                if (status) {
-
-                    params.append(
-                        "status",
-                        status
-                    );
-
+        // Handle array parameters (status, name, client)
+        if (Array.isArray(value)) {
+            value.forEach(item => {
+                if (item !== undefined && item !== null && item !== "") {
+                    params.append(key, item);
                 }
-
             });
-
             return;
-
         }
 
-        params.append(
-            key,
-            value
-        );
-
+        params.append(key, value);
     });
 
     const response = await api.get(
@@ -49,7 +33,6 @@ export const getProjects = async (filter = {}) => {
     );
 
     return response.data;
-
 };
 export const getMyProjects = async()=>{
 
