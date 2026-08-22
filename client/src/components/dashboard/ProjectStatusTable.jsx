@@ -1,4 +1,5 @@
 import { FolderKanban } from "lucide-react";
+import ClientDisplay from "../client/ClientDisplay";
 
 const ProjectStatusTable = ({ title, projects }) => {
 
@@ -71,16 +72,8 @@ const ProjectStatusTable = ({ title, projects }) => {
                                         <tr key={project._id}>
 
                                             <td>
-    {project.client?.logo ? (
-        <img
-            src={project.client.logo}
-            alt={project.client.name || "Client"}
-            className="dashboard-client-logo"
-        />
-    ) : (
-        project.client?.name || "-"
-    )}
-</td>
+                                                <ClientDisplay client={project.client} logoOnly={true} />
+                                            </td>
 
                                             <td>
 

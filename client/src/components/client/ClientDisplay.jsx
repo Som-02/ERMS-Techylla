@@ -1,23 +1,23 @@
 const ClientDisplay = ({
     client,
     logoOnly = false,
+    showNameAlways = false,
 }) => {
-
     if (!client) {
-        return "-";
+        return <span className="client-display-fallback">-</span>;
     }
 
     const clientName =
         typeof client === "string"
             ? client
-            : client.name;
+            : client?.name || "";
 
     const logo =
         typeof client === "object"
-            ? client.logo
+            ? client?.logo
             : "";
 
-    // No logo → always show name
+    // If no logo is present, always fallback to text name
     if (!logo) {
         return (
             <span className="client-display-name">
@@ -26,32 +26,33 @@ const ClientDisplay = ({
         );
     }
 
-    // Logo only → used later in Project table / Dashboard
-    if (logoOnly) {
+    // Logo only mode (for Project table & Dashboard)
+    if (logoOnly && !showNameAlways) {
         return (
-            <img
-                src={logo}
-                alt={`${clientName || "Client"} logo`}
-                className="client-display-logo-only"
-                title={clientName}
-            />
+            <div className="client-logo-wrapper" title={clientName}>
+                <img
+                    src={logo}
+                    alt={`${clientName || "Client"} logo`}
+                    className="client-display-logo-img"
+                />
+            </div>
         );
     }
 
-    // Logo + name → Client page / Employee details / Employee portal
+    // Logo + name together (for Client page, Client details, etc.)
     return (
         <div className="client-display">
-
-            <img
-                src={logo}
-                alt={`${clientName || "Client"} logo`}
-                className="client-display-logo"
-            />
+            <div className="client-logo-wrapper" title={clientName}>
+                <img
+                    src={logo}
+                    alt={`${clientName || "Client"} logo`}
+                    className="client-display-logo-img"
+                />
+            </div>
 
             <span className="client-display-name">
                 {clientName || "-"}
             </span>
-
         </div>
     );
 };

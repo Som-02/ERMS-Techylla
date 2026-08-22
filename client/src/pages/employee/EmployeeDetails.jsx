@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Loader from "../../components/common/Loader";
+import ClientDisplay from "../../components/client/ClientDisplay";
 
 import {
     getMyEmployee
@@ -228,17 +229,7 @@ const EmployeeDetails = () => {
                                     <td style={{
     textAlign: "left",
 }}>
-    {assignment.client?.logo ? (
-        <img
-            src={assignment.client.logo}
-            alt={assignment.client.name || "Client"}
-            className="employee-client-logo"
-        />
-    ) : (
-        assignment.client?.name ||
-        assignment.clientName ||
-        "-"
-    )}
+    <ClientDisplay client={assignment.client || assignment.clientName} />
 </td>
 
 

@@ -144,43 +144,64 @@
         );
 }
 /* ==========================================
-   CLIENT DISPLAY
+   CLIENT DISPLAY & LOGO WRAPPER
 ========================================== */
 
 .client-display {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    vertical-align: middle;
 }
 
-.client-display-logo {
-    width: 60px;
-    height: 45px;
-    object-fit: contain;
-
-    border-radius: 8px;
-
+.client-logo-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 42px;
+    padding: 4px 8px;
+    border-radius: 9px;
     background: #ffffff;
-
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     flex-shrink: 0;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.client-display-logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    filter: contrast(1.05);
 }
 
 .client-display-name {
     font-weight: 600;
     color: #0d1015;
+    white-space: nowrap;
 }
 
-.client-display-logo-only {
-    width: 42px;
+/* Compatibility for direct img tags */
+.client-display-logo,
+.client-display-logo-only,
+.project-client-logo,
+.dashboard-client-logo,
+.employee-client-logo {
+    width: 68px;
     height: 42px;
-
     object-fit: contain;
-
-    border-radius: 8px;
-
+    border-radius: 9px;
     background: #ffffff;
-
-    display: block;
+    border: 1px solid #e2e8f0;
+    padding: 4px 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    mix-blend-mode: multiply;
+    filter: contrast(1.05);
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* ==========================================
@@ -216,9 +237,25 @@
     color: #e2e8f0;
 }
 
+[data-theme="dark"] .client-logo-wrapper,
 [data-theme="dark"] .client-display-logo,
-[data-theme="dark"] .client-display-logo-only {
-    background: #1e293b;
+[data-theme="dark"] .client-display-logo-only,
+[data-theme="dark"] .project-client-logo,
+[data-theme="dark"] .dashboard-client-logo,
+[data-theme="dark"] .employee-client-logo {
+    background: #f8fafc;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .client-display-logo-img,
+[data-theme="dark"] .client-display-logo,
+[data-theme="dark"] .client-display-logo-only,
+[data-theme="dark"] .project-client-logo,
+[data-theme="dark"] .dashboard-client-logo,
+[data-theme="dark"] .employee-client-logo {
+    mix-blend-mode: multiply;
+    filter: contrast(1.1) brightness(0.98);
 }
 
 /* Client Action & Form Buttons */

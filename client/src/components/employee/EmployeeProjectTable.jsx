@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { UserPlus } from "lucide-react";
 import { getStatusClass } from "../../utils/getStatusClass";
+import ClientDisplay from "../client/ClientDisplay";
 import "../project/project.css";
 
 const EmployeeProjectTable = ({ projects }) => {
@@ -50,19 +51,7 @@ const EmployeeProjectTable = ({ projects }) => {
                                 </td>
 
                                 <td>
-                                    {project.client?.logo ? (
-                                        <img
-                                            src={project.client.logo}
-                                            alt={project.client.name}
-                                            style={{
-                                                width: "60px",
-                                                height: "45px",
-                                                objectFit: "contain",
-                                            }}
-                                        />
-                                    ) : (
-                                        project.client?.name || "-"
-                                    )}
+                                    <ClientDisplay client={project.client} logoOnly={true} />
                                 </td>
 
                                 <td>

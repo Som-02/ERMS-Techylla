@@ -5,6 +5,7 @@ import {
     Trash2,
 } from "lucide-react";
 import { formatDate } from "../../utils/formatDate";
+import ClientDisplay from "../client/ClientDisplay";
 import "./project.css";
 
 const ProjectRow = ({
@@ -53,15 +54,7 @@ const ProjectRow = ({
             </td>
 
             <td>
-                {project.client?.logo ? (
-                    <img
-                        src={project.client.logo}
-                        alt={project.client.name || "Client"}
-                        className="project-client-logo"
-                    />
-                ) : (
-                    project.client?.name || "-"
-                )}
+                <ClientDisplay client={project.client} logoOnly={true} />
             </td>
 
             <td>
