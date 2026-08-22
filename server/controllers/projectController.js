@@ -533,38 +533,70 @@ const getProjects = async (req, res) => {
 
 
 // ============================
-// Project Name Filter
+// Project Name Filter (Single or Array)
 // ============================
 
+let names = [];
+
 if (req.query.name) {
+    if (Array.isArray(req.query.name)) {
+        names.push(...req.query.name);
+    } else {
+        names.push(req.query.name);
+    }
+}
 
+if (req.query["name[]"]) {
+    if (Array.isArray(req.query["name[]"])) {
+        names.push(...req.query["name[]"]);
+    } else {
+        names.push(req.query["name[]"]);
+    }
+}
+
+names = [...new Set(names.flat().filter(Boolean).map(n => String(n).trim()))];
+
+if (names.length > 0) {
     filter.name = {
-        $regex: req.query.name,
-        $options: "i"
+        $in: names.map(n => new RegExp(n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"))
     };
-
 }
 
 
 // ============================
-// Client Filter
+// Client Filter (Single or Array)
 // ============================
 
+let clientNames = [];
+
 if (req.query.client) {
+    if (Array.isArray(req.query.client)) {
+        clientNames.push(...req.query.client);
+    } else {
+        clientNames.push(req.query.client);
+    }
+}
 
+if (req.query["client[]"]) {
+    if (Array.isArray(req.query["client[]"])) {
+        clientNames.push(...req.query["client[]"]);
+    } else {
+        clientNames.push(req.query["client[]"]);
+    }
+}
+
+clientNames = [...new Set(clientNames.flat().filter(Boolean).map(c => String(c).trim()))];
+
+if (clientNames.length > 0) {
     const clients = await Client.find({
-
         name: {
-            $regex: req.query.client,
-            $options: "i"
+            $in: clientNames.map(c => new RegExp(c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"))
         }
-
     }).select("_id");
 
     filter.client = {
         $in: clients.map(client => client._id)
     };
-
 }
 
 
