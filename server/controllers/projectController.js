@@ -850,66 +850,55 @@ const getProject = async (req, res) => {
     }
 
 };
-const getMyProjects = async(req,res)=>{
+const getMyProjects = async (req, res) => {
+    try {
+        const employeeId = req.user.id;
 
-try{
+        const employee = await Employee.findById(employeeId);
 
-const employeeId = req.user.id;
+        if (!employee) {
+            return res.status(404).json({
+                message: "Employee not found",
+            });
+        }
 
+        // Get project ids assigned to employee
+        const projectIds = employee.assignments.map(
+            (assignment) => assignment.project
+        );
 
-const employee = await Employee.findById(employeeId);
+        const projects = await Project.find({
+            _id: {
+                $in: projectIds,
+            },
+        })
+            .populate("client")
+            .sort({
+                name: 1,
+            });
 
+        const projectsWithPermissions = projects.map((proj) => {
+            const isLead = employee.assignments.some(
+                (a) =>
+                    a.project.toString() === proj._id.toString() &&
+                    a.role?.name === "Project Lead"
+            );
+            return {
+                ...proj.toObject(),
+                canManageAssignments: isLead,
+            };
+        });
 
-if(!employee){
-
-return res.status(404).json({
-message:"Employee not found"
-});
-
-}
-
-
-// get project ids assigned to employee
-
-const projectIds =
-employee.assignments.map(
-assignment=>assignment.project
-);
-
-
-const projects = await Project.find({
-
-_id:{
-    $in:projectIds
-}
-
-})
-.populate("client")
-.sort({
-name:1
-});
-
-
-res.status(200).json({
-
-success:true,
-data:projects
-
-});
-
-
-}
-catch(error){
-
-res.status(500).json({
-
-success:false,
-message:error.message
-
-});
-
-}
-
+        res.status(200).json({
+            success: true,
+            data: projectsWithPermissions,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 // ============================
 // Get Project Staffing Plan
