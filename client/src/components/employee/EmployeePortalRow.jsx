@@ -33,27 +33,23 @@ const EmployeePortalRow = ({
 
         <tr className={rowClass}>
 
-            <td>
-                {employee.empId}
+            <td className="emp-id-cell" style={{ textAlign: "left", paddingLeft: "18px" }}>
+                <span className="emp-id">{employee.empId}</span>
             </td>
 
-            <td style={{textAlign:"left"}}>
+            <td className="emp-name-cell" style={{ textAlign: "left" }}>
                 {employee.name}
             </td>
 
-            <td style={{textAlign:"left"}}>
+            <td className="emp-position-cell" style={{ textAlign: "left" }}>
                 {employee.position || "-"}
             </td>
 
-            <td
-                style={{
-                    textAlign: "right"
-                }}
-            >
+            <td style={{ textAlign: "right" }}>
                 {employee.totalProjects}
             </td>
 
-            <td style={{textAlign:"left"}}>
+            <td style={{ textAlign: "left" }}>
                 {employee.lowestStartDate
                     ? formatDate(
                         employee.lowestStartDate
@@ -61,7 +57,7 @@ const EmployeePortalRow = ({
                     : "-"}
             </td>
 
-            <td style={{textAlign:"left"}}>
+            <td style={{ textAlign: "left" }}>
                 {employee.highestEndDate
                     ? formatDate(
                         employee.highestEndDate
@@ -69,11 +65,7 @@ const EmployeePortalRow = ({
                     : "-"}
             </td>
 
-            <td
-                style={{
-                    textAlign: "right"
-                }}
-            >
+            <td style={{ textAlign: "right" }}>
                 {employee.totalAllocation}%
             </td>
 

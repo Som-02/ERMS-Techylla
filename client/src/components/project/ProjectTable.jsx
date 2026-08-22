@@ -2,7 +2,18 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { getProjectStatuses } from "../../services/projectService";
 import ProjectRow from "./ProjectRow";
-import { ArrowUpAZ, ArrowDownAZ, Search } from "lucide-react";
+import {
+    ArrowUpAZ,
+    ArrowDownAZ,
+    Search,
+    Hash,
+    FolderKanban,
+    Building2,
+    Calendar,
+    CalendarCheck,
+    Activity,
+    SlidersHorizontal,
+} from "lucide-react";
 import "./project.css";
 
 const ProjectTable = ({
@@ -608,7 +619,10 @@ const ProjectTable = ({
 
                             <th className="filterable-header">
                                 <div className="header-content">
-                                    <span className="header-text">Project</span>
+                                    <span className="header-text">
+                                        <FolderKanban size={14} />
+                                        <span>Project</span>
+                                    </span>
                                     {renderFilterButton("name")}
                                 </div>
                                 {renderFilterOverlay("name")}
@@ -616,7 +630,10 @@ const ProjectTable = ({
 
                             <th className="filterable-header">
                                 <div className="header-content">
-                                    <span className="header-text">Client</span>
+                                    <span className="header-text">
+                                        <Building2 size={14} />
+                                        <span>Client</span>
+                                    </span>
                                     {renderFilterButton("client")}
                                 </div>
                                 {renderFilterOverlay("client")}
@@ -624,7 +641,10 @@ const ProjectTable = ({
 
                             <th className="filterable-header">
                                 <div className="header-content">
-                                    <span className="header-text">Start Date</span>
+                                    <span className="header-text">
+                                        <Calendar size={14} />
+                                        <span>Start Date</span>
+                                    </span>
                                     {renderFilterButton("startDate")}
                                 </div>
                                 {renderFilterOverlay("startDate")}
@@ -632,7 +652,10 @@ const ProjectTable = ({
 
                             <th className="filterable-header">
                                 <div className="header-content">
-                                    <span className="header-text">End Date</span>
+                                    <span className="header-text">
+                                        <CalendarCheck size={14} />
+                                        <span>End Date</span>
+                                    </span>
                                     {renderFilterButton("endDate")}
                                 </div>
                                 {renderFilterOverlay("endDate")}
@@ -640,13 +663,21 @@ const ProjectTable = ({
 
                             <th className="filterable-header">
                                 <div className="header-content">
-                                    <span className="header-text">Status</span>
+                                    <span className="header-text">
+                                        <Activity size={14} />
+                                        <span>Status</span>
+                                    </span>
                                     {renderFilterButton("status")}
                                 </div>
                                 {renderFilterOverlay("status")}
                             </th>
 
-                            <th>Actions</th>
+                            <th style={{ textAlign: "center" }}>
+                                <div className="th-content" style={{ justifyContent: "center" }}>
+                                    <SlidersHorizontal size={14} />
+                                    <span>Actions</span>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
 

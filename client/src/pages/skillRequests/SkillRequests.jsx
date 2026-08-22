@@ -7,6 +7,14 @@ import {
     X,
     RefreshCw,
     Eye,
+    User,
+    IdCard,
+    Award,
+    Tag,
+    Star,
+    Calendar,
+    FileText,
+    SlidersHorizontal,
 } from "lucide-react";
 
 import Loader from "../../components/common/Loader";
@@ -684,40 +692,57 @@ style={{
                                 <tr>
 
                                     <th>
-                                        Employee
+                                        <div className="th-content">
+                                            <User size={15} />
+                                            <span>Employee</span>
+                                        </div>
                                     </th>
 
                                     <th>
-                                        Employee ID
+                                        <div className="th-content">
+                                            <IdCard size={15} />
+                                            <span>Employee ID</span>
+                                        </div>
                                     </th>
 
                                     <th>
-                                        Role
+                                        <div className="th-content">
+                                            <Award size={15} />
+                                            <span>Role</span>
+                                        </div>
                                     </th>
 
                                     <th>
-                                        Request
+                                        <div className="th-content">
+                                            <Tag size={15} />
+                                            <span>Request</span>
+                                        </div>
                                     </th>
 
                                     <th>
-                                        Rating
+                                        <div className="th-content">
+                                            <Star size={15} />
+                                            <span>Rating</span>
+                                        </div>
                                     </th>
 
                                     <th>
-                                        Requested On
+                                        <div className="th-content">
+                                            <Calendar size={15} />
+                                            <span>Requested On</span>
+                                        </div>
                                     </th>
                                     <th>
-                                        Reason
+                                        <div className="th-content">
+                                            <FileText size={15} />
+                                            <span>Reason</span>
+                                        </div>
                                     </th>
-                                    <th
-                                        style={{
-                                            textAlign:
-                                                "center",
-                                            paddingRight:
-                                                "40px"
-                                        }}
-                                    >
-                                        Actions
+                                    <th style={{ textAlign: "center" }}>
+                                        <div className="th-content" style={{ justifyContent: "center" }}>
+                                            <SlidersHorizontal size={15} />
+                                            <span>Actions</span>
+                                        </div>
                                     </th>
 
                                 </tr>

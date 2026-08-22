@@ -1,4 +1,6 @@
+import { Award, TrendingUp, BarChart2, Star } from "lucide-react";
 import "../employee/employeeTable.css";
+
 const SkillMatrixTable = ({
 
     matrix,
@@ -10,26 +12,40 @@ const SkillMatrixTable = ({
     return (
 
         <div className="employee-table-card">
-
-            <table className="employee-table">
+            <div className="employee-table-scroll">
+                <table className="employee-table">
 
                 <thead>
 
                     <tr>
 
-                        <th>Roles</th>
+                        <th style={{ textAlign: "left" }}>
+                            <div className="th-content">
+                                <Award size={14} />
+                                <span>Roles</span>
+                            </div>
+                        </th>
 
-                        <th style={{
-        textAlign: "right",
-    }}>Beginner</th>
+                        <th style={{ textAlign: "left" }}>
+                            <div className="th-content">
+                                <TrendingUp size={14} />
+                                <span>Beginner</span>
+                            </div>
+                        </th>
 
-                        <th style={{
-        textAlign: "right",
-    }}>Intermediate</th>
+                        <th style={{ textAlign: "left" }}>
+                            <div className="th-content">
+                                <BarChart2 size={14} />
+                                <span>Intermediate</span>
+                            </div>
+                        </th>
 
-                        <th style={{
-        textAlign: "right",
-    }}>Expert</th>
+                        <th style={{ textAlign: "left" }}>
+                            <div className="th-content">
+                                <Star size={14} />
+                                <span>Expert</span>
+                            </div>
+                        </th>
 
                     </tr>
 
@@ -43,17 +59,13 @@ const SkillMatrixTable = ({
 
                             <tr key={row.skill}>
 
-                                <td style={{
-        textAlign: "left",
-    }}>
+                                <td style={{ textAlign: "left" }}>
 
                                     {row.skill}
 
                                 </td>
 
-                                <td style={{
-        textAlign: "right",
-    }}>
+                                <td style={{ textAlign: "left" }}>
 
                                     <button
 
@@ -65,7 +77,7 @@ const SkillMatrixTable = ({
 
                                                 open: true,
 
-                                                title: `${row.skill} - Junior`,
+                                                title: `${row.skill} - Beginner`,
 
                                                 employees: row.junior
 
@@ -81,9 +93,7 @@ const SkillMatrixTable = ({
 
                                 </td>
 
-                                <td style={{
-        textAlign: "right",
-    }}>
+                                <td style={{ textAlign: "left" }}>
 
                                     <button
 
@@ -111,9 +121,7 @@ const SkillMatrixTable = ({
 
                                 </td>
 
-                                <td style={{
-        textAlign: "right",
-    }}>
+                                <td style={{ textAlign: "left" }}>
 
                                     <button
 
@@ -125,7 +133,7 @@ const SkillMatrixTable = ({
 
                                                 open: true,
 
-                                                title: `${row.skill} - Senior`,
+                                                title: `${row.skill} - Expert`,
 
                                                 employees: row.senior
 
@@ -150,11 +158,9 @@ const SkillMatrixTable = ({
                 </tbody>
 
             </table>
-
+            </div>
         </div>
-
     );
-
 };
 
 export default SkillMatrixTable;

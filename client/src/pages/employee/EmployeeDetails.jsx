@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
+import {
+    Building2,
+    FolderKanban,
+    Award,
+    MapPin,
+    Calendar,
+    CalendarCheck,
+    Clock,
+} from "lucide-react";
 import Loader from "../../components/common/Loader";
 import ClientDisplay from "../../components/client/ClientDisplay";
 
@@ -85,7 +94,7 @@ const EmployeeDetails = () => {
                     Employee ID:
                 </strong>
 
-                {employee.empId}
+                <span className="emp-id">{employee.empId}</span>
             </p>
 
             <p>
@@ -181,25 +190,50 @@ const EmployeeDetails = () => {
             <table>
 
                 <thead>
-
                     <tr>
-
-                        <th>Client</th>
-
-                        <th>Project</th>
-
-                        <th>Role</th>
-
-                        <th>Location</th>
-
-                        <th>Start Date</th>
-
-                        <th>End Date</th>
-
-                        <th>Allocation</th>
-
+                        <th>
+                            <div className="th-content">
+                                <Building2 size={15} />
+                                <span>Client</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <FolderKanban size={15} />
+                                <span>Project</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <Award size={15} />
+                                <span>Role</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <MapPin size={15} />
+                                <span>Location</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <Calendar size={15} />
+                                <span>Start Date</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <CalendarCheck size={15} />
+                                <span>End Date</span>
+                            </div>
+                        </th>
+                        <th style={{ textAlign: "left" }}>
+                            <div className="th-content">
+                                <Clock size={14} />
+                                <span>Allocation</span>
+                            </div>
+                        </th>
                     </tr>
-
                 </thead>
 
                 <tbody>
@@ -226,29 +260,26 @@ const EmployeeDetails = () => {
 
                                 <tr key={index}>
 
-                                    <td style={{
-    textAlign: "left",
-}}>
-    <ClientDisplay client={assignment.client || assignment.clientName} />
-</td>
+                                    <td style={{ textAlign: "left" }}>
+                                        <ClientDisplay client={assignment.client || assignment.clientName} />
+                                    </td>
 
-
-                                    <td>
+                                    <td style={{ textAlign: "left" }}>
                                         {assignment.project?.name ||
                                             "-"}
                                     </td>
 
-                                    <td>
+                                    <td style={{ textAlign: "left" }}>
                                         {assignment.role?.name ||
                                             "-"}
                                     </td>
 
-                                    <td>
+                                    <td style={{ textAlign: "left" }}>
                                         {assignment.location ||
                                             "-"}
                                     </td>
 
-                                    <td>
+                                    <td style={{ textAlign: "left" }}>
                                         {assignment.startDate
                                             ? formatDate(
                                                 assignment.startDate
@@ -256,7 +287,7 @@ const EmployeeDetails = () => {
                                             : "-"}
                                     </td>
 
-                                    <td>
+                                    <td style={{ textAlign: "left" }}>
                                         {assignment.endDate
                                             ? formatDate(
                                                 assignment.endDate
@@ -264,7 +295,7 @@ const EmployeeDetails = () => {
                                             : "-"}
                                     </td>
 
-                                    <td style={{ textAlign: "right" }}>
+                                    <td style={{ textAlign: "left" }}>
                                         {assignment.allocation !== null &&
                                         assignment.allocation !== undefined &&
                                         assignment.allocation !== ""

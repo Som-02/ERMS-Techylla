@@ -28,59 +28,26 @@ const EmployeeRow = ({
 
         <tr className={rowClass}>
 
-            <td style={{
-        textAlign: "left",
-    }}>{employee.empId}</td>
+            <td className="emp-id-cell" style={{ textAlign: "left", paddingLeft: "18px" }}>
+                <span className="emp-id">{employee.empId}</span>
+            </td>
 
-            <td style={{
-        textAlign: "left",
-    }}>{employee.name}</td>
+            <td className="emp-name-cell" style={{ textAlign: "left" }}>{employee.name}</td>
 
-            <td style={{
-        textAlign: "left",
-    }}>{employee.position}</td>
+            <td className="emp-position-cell" style={{ textAlign: "left" }}>{employee.position}</td>
 
-            {/* <td>{employee.email}</td> */}
+            <td style={{ textAlign: "right" }}>{employee.totalProjects}</td>
+            <td style={{ textAlign: "left" }}>
+                {formatDate(employee.lowestStartDate)}
+            </td>
 
-            {/* <td>
+            <td style={{ textAlign: "left" }}>
+                {formatDate(employee.highestEndDate)}
+            </td>
 
-                {employee.experience} Years
-
-            </td> */}
-
-            {/* <td>
-
-                {employee.reportingManager?.name ||
-                    employee.reportingManager ||
-                    "-"}
-
-            </td> */}
-            <td style={{
-        textAlign: "right",
-    }}>{employee.totalProjects}</td>
-            <td
-    style={{
-        textAlign: "left",
-    }}
->
-    {formatDate(employee.lowestStartDate)}
-</td>
-
-<td
-    style={{
-        textAlign: "left",
-    }}
->
-    {formatDate(employee.highestEndDate)}
-</td>
-
-<td
-    style={{
-        textAlign: "right",
-    }}
->
-    {employee.totalAllocation}%
-</td>
+            <td style={{ textAlign: "right" }}>
+                {employee.totalAllocation}%
+            </td>
             <td>
 
                 <div className="actions">

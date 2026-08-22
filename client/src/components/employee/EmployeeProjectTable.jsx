@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom";
-import { UserPlus } from "lucide-react";
+import {
+    UserPlus,
+    Hash,
+    FolderKanban,
+    Building2,
+    Calendar,
+    CalendarCheck,
+    Activity,
+    SlidersHorizontal,
+} from "lucide-react";
 import { getStatusClass } from "../../utils/getStatusClass";
 import ClientDisplay from "../client/ClientDisplay";
 import "../project/project.css";
@@ -21,12 +30,42 @@ const EmployeeProjectTable = ({ projects }) => {
                 <thead>
                     <tr>
                         <th>S.No</th>
-                        <th>Project</th>
-                        <th>Client</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Status</th>
-                        <th style={{ textAlign: "center" }}>Action</th>
+                        <th>
+                            <div className="th-content">
+                                <FolderKanban size={14} />
+                                <span>Project</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <Building2 size={14} />
+                                <span>Client</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <Calendar size={14} />
+                                <span>Start Date</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <CalendarCheck size={14} />
+                                <span>End Date</span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className="th-content">
+                                <Activity size={14} />
+                                <span>Status</span>
+                            </div>
+                        </th>
+                        <th style={{ textAlign: "center" }}>
+                            <div className="th-content" style={{ justifyContent: "center" }}>
+                                <SlidersHorizontal size={14} />
+                                <span>Action</span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
 

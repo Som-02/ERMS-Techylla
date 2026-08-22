@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import {
     LayoutDashboard,
+    IdCard,
+    User,
+    Briefcase,
+    MapPin,
 } from "lucide-react";
 
 import Loader from "../../components/common/Loader";
@@ -142,28 +146,27 @@ const Dashboard = () => {
 
                                     <tr>
 
+                                        <th>Employee ID</th>
+
                                         <th>
-
-                                            Employee ID
-
+                                            <div className="th-content">
+                                                <User size={14} />
+                                                <span>Name</span>
+                                            </div>
                                         </th>
 
                                         <th>
-
-                                            Name
-
-                                        </th>
-
-                                        <th>
-
-                                            Position
-
+                                            <div className="th-content">
+                                                <Briefcase size={14} />
+                                                <span>Position</span>
+                                            </div>
                                         </th>
                                         
                                         <th>
-
-                                            Location
-
+                                            <div className="th-content">
+                                                <MapPin size={14} />
+                                                <span>Location</span>
+                                            </div>
                                         </th>
                                     </tr>
 

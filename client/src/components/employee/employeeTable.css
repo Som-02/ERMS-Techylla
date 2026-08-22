@@ -1,85 +1,131 @@
 .employee-table-card {
-    background:#ffffff;
-    border-radius:12px;
-    border:none;
-    overflow-x:auto;
-    overflow-y:hidden;
-    width:100%;
-    max-width:100%;
-    box-shadow:0 3px 12px rgba(0,0,0,.05);
+    background: #ffffff;
+    border-radius: 12px;
+    border: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .05);
 }
 
 .employee-table {
-    width:100%;
-    border-collapse:collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.employee-table thead{
-    background:#a0c8f0;
+.employee-table thead {
+    background: #f1f5f9;
 }
-.employee-table thead th{
-    text-align: left;
+
+.employee-table thead th:first-child {
+    border-top-left-radius: 13px;
 }
-.employee-table th{
-    text-align:left;
-    color:#18191b;
-    border:none;
-    padding:16px;
-    font-size:14px;
-}
-.employee-table th:last-child{
+
+.employee-table thead th:last-child {
+    border-top-right-radius: 13px;
     text-align: center;
 }
 
-.employee-table td{
-    text-align:left;
-    vertical-align:middle;
-    padding:18px 16px;
-    border:none;
-    border-top:1px solid var(--border);
+.employee-table th {
+    text-align: left;
+    color: #334155;
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.employee-table th .th-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    vertical-align: middle;
+}
+
+.employee-table th .th-content svg {
+    flex-shrink: 0;
+    color: #64748b;
+}
+
+.employee-table td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 12px 14px;
+    font-size: 0.83rem;
+    border-top: 1px solid #f1f5f9;
     background: #ffffff;
     transition: background 0.2s ease;
 }
+
+.employee-table td.emp-id-cell,
+.employee-table td.emp-name-cell,
+.employee-table td.emp-position-cell {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 0.86rem;
+}
+
+.emp-id {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.83rem;
+    letter-spacing: 0.3px;
+    text-align: center;
+    background: #eff6ff;
+    color: #2563eb;
+    box-sizing: border-box;
+}
+
 .employee-table tbody tr:not(.employee-underutilized):not(.employee-overloaded):hover td {
     background: #f8fafc;
 }
-.employee-table tbody tr:hover{
-    background:#f8fafc;
+
+.employee-table tbody tr:hover {
+    background: #f8fafc;
 }
 
-.empty-state{
+.empty-state {
 
-    padding:50px;
+    padding: 50px;
 
-    text-align:center;
+    text-align: center;
 
-    color:var(--muted);
+    color: var(--muted);
 
 }
-.actions{
-    display:flex;
-    gap:8px;
-    align-items:center;
-    text-align:center;
+
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
     justify-content: center;
 }
 
-.action-btn{
-   display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    min-width:70px;
-    height:42px;
-    padding:0 16px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    text-decoration:none;
-    font-weight:600;
-    transition:.2s;
-    box-sizing:border-box;
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 70px;
+    height: 42px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: .2s;
+    box-sizing: border-box;
 }
+
 .view-btn {
     background: #ecfdf5;
     color: #22a316;
@@ -88,6 +134,7 @@
 .view-btn:hover {
     background: #dcfce7;
 }
+
 .employee-view-btn {
     background: #ecfdf5;
     color: #22a316;
@@ -105,6 +152,7 @@
 .employee-edit-btn:hover {
     background: #dbeafe;
 }
+
 .skill-edit-btn {
     background: #eff6ff;
     color: #546488;
@@ -113,6 +161,7 @@
 .skill-edit-btn:hover {
     background: #dbeafe;
 }
+
 .delete-btn {
     background: #fef2f2;
     color: #dc2626;
@@ -122,32 +171,34 @@
     background: #fee2e2;
 }
 
-.action-btn:hover{
-    opacity:.9;
-}
-.employee-underutilized td{
-
-    background:#8cdab0;
-
+.action-btn:hover {
+    opacity: .9;
 }
 
-.employee-underutilized:hover td{
+.employee-underutilized td {
 
-    background:#d1fae5;
+    background: #8cdab0;
 
 }
 
-.employee-overloaded td{
+.employee-underutilized:hover td {
 
-    background:#ef8888;
+    background: #d1fae5;
+
+}
+
+.employee-overloaded td {
+
+    background: #ef8888;
 
 }
 
-.employee-overloaded:hover td{
+.employee-overloaded:hover td {
 
-    background:#e7a6a6;
+    background: #e7a6a6;
 
 }
+
 /* ==========================================
    RESPONSIVE EMPLOYEE TABLE
 ========================================== */
@@ -158,6 +209,7 @@
     }
 
 }
+
 @media (max-width: 768px) {
 
     .employee-table-card {
@@ -196,7 +248,7 @@
 
 [data-theme="dark"] .employee-table-card {
     background: #0e1526;
-    border-color: #1e293b;
+    border: none;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -205,12 +257,30 @@
 }
 
 [data-theme="dark"] .employee-table th {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .employee-table th .th-content svg {
     color: #94a3b8;
 }
 
 [data-theme="dark"] .employee-table td {
     color: #cbd5e1;
-    border-top-color: #1e293b;
+    border-top: 1px solid #1e293b;
+}
+
+[data-theme="dark"] .employee-table td.emp-id-cell,
+[data-theme="dark"] .employee-table td.emp-name-cell,
+[data-theme="dark"] .employee-table td.emp-position-cell {
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .emp-id {
+    background: #162544;
+    color: #60a5fa;
+    border: none;
 }
 
 /* Normal Rows */

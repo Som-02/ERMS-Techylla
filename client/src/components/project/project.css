@@ -2,14 +2,14 @@
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 14px;
-    overflow: visible;
+    overflow: hidden;
     box-shadow: 0 3px 12px rgba(0,0,0,.05);
     position: relative;
 }
 .project-table-scroll {
     width: 100%;
     overflow-x: auto;
-    overflow-y: visible;
+    border-radius: 13px;
     -webkit-overflow-scrolling: touch;
 }
 .project-info{
@@ -36,24 +36,42 @@
 }
 
 .project-table thead{
-    background:#f8fafc;
+    background:#f1f5f9;
 }
-
-.project-table th{
-    vertical-align:left;
-    text-align:left;
-    padding:16px 22px;
-    font-size:.9rem;
-    font-weight:700;
-    color:#0f1115;
+.project-table thead th:first-child {
+    border-top-left-radius: 13px;
 }
-.project-table thead th:last-child{
+.project-table thead th:last-child {
+    border-top-right-radius: 13px;
     text-align: center;
 }
+.project-table th{
+    vertical-align:middle;
+    text-align:left;
+    padding:12px 14px;
+    font-size:0.78rem;
+    font-weight:700;
+    color:#334155;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.project-table th .th-content,
+.project-table th .header-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    vertical-align: middle;
+}
+.project-table th .th-content svg,
+.project-table th .header-text svg {
+    flex-shrink: 0;
+    color: #64748b;
+}
 .project-table td{
-    color:#0f1115;
-    vertical-align:left;
-    padding:16px 22px;
+    color:#1e293b;
+    vertical-align:middle;
+    padding:12px 14px;
+    font-size:0.83rem;
     border-top:1px solid #f1f5f9;
 }
 
@@ -2164,4 +2182,37 @@ background:linear-gradient(
 [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.8);
     cursor: pointer;
+}
+
+/* ==========================================
+   DARK MODE OVERRIDES - PROJECT TABLE
+========================================== */
+
+[data-theme="dark"] .project-table-wrapper {
+    background: #0e1526;
+    border-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .project-table thead {
+    background: #0b101d;
+}
+
+[data-theme="dark"] .project-table th {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .project-table th .th-content svg,
+[data-theme="dark"] .project-table th .header-text svg {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .project-table td {
+    color: #cbd5e1;
+    border-top-color: #1e293b;
+}
+
+[data-theme="dark"] .project-table tbody tr:hover {
+    background: #131c30;
 }

@@ -1,4 +1,4 @@
-import { FolderKanban } from "lucide-react";
+import { Building2, FolderKanban, Activity, Clock } from "lucide-react";
 import ClientDisplay from "../client/ClientDisplay";
 
 const ProjectStatusTable = ({ title, projects }) => {
@@ -42,24 +42,34 @@ const ProjectStatusTable = ({ title, projects }) => {
                             <thead>
 
                                 <tr>
+                                    <th style={{ width: "25%" }}>
+                                        <div className="th-content">
+                                            <Building2 size={15} />
+                                            <span>Client</span>
+                                        </div>
+                                    </th>
 
-    <th style={{ width: "25%" }}>
-        Client
-    </th>
+                                    <th style={{ width: "40%" }}>
+                                        <div className="th-content">
+                                            <FolderKanban size={15} />
+                                            <span>Project</span>
+                                        </div>
+                                    </th>
 
-    <th style={{ width: "40%" }}>
-        Project
-    </th>
+                                    <th style={{ width: "20%" }}>
+                                        <div className="th-content">
+                                            <Activity size={15} />
+                                            <span>Status</span>
+                                        </div>
+                                    </th>
 
-    <th style={{ width: "20%" }}>
-        Status
-    </th>
-
-    <th style={{ width: "15%" }}>
-        Project Aging
-    </th>
-
-</tr>
+                                    <th style={{ width: "15%" }}>
+                                        <div className="th-content">
+                                            <Clock size={15} />
+                                            <span>Project Aging</span>
+                                        </div>
+                                    </th>
+                                </tr>
 
                             </thead>
 

@@ -111,20 +111,34 @@
 }
 
 .dashboard-table thead {
-    background: #f8fafc;
+    background: #f1f5f9;
 }
 
 .dashboard-table th {
     text-align: left;
-    padding: 16px 22px;
-    color: #374151;
+    padding: 12px 14px;
+    color: #334155;
     font-weight: 700;
-    font-size: .9rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.dashboard-table th .th-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    vertical-align: middle;
+}
+
+.dashboard-table th .th-content svg {
+    flex-shrink: 0;
+    color: #64748b;
 }
 
 .dashboard-table td {
-    
-    padding: 16px 22px;
+    padding: 12px 14px;
+    font-size: 0.83rem;
     border-top: 1px solid #f1f5f9;
 }
 .dashboard-table td,
@@ -164,12 +178,19 @@
 }
 
 .emp-id {
-    background: #eff6ff;
-    color: #2b53ab;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
     padding: 4px 10px;
     border-radius: 6px;
     font-weight: 600;
-    font-size: .85rem;
+    font-size: 0.83rem;
+    letter-spacing: 0.3px;
+    text-align: center;
+    background: #eff6ff;
+    color: #2563eb;
+    box-sizing: border-box;
 }
 
 .status {
@@ -290,8 +311,13 @@ font-size:.85rem;
 }
 
 [data-theme="dark"] .dashboard-table th {
-    color: #94a3b8;
+    color: #e2e8f0;
+    font-weight: 600;
     border-bottom: 1px solid #1e293b;
+}
+
+[data-theme="dark"] .dashboard-table th .th-content svg {
+    color: #94a3b8;
 }
 
 [data-theme="dark"] .dashboard-table td {

@@ -12,25 +12,38 @@
 }
 
 .client-table thead{
-    background:#f8fafc;
+    background:#f1f5f9;
 }
 .client-table thead th:last-child{
     text-align: center;
 }
 .client-table th{
     text-align:left;
-    vertical-align:left;
-    padding:16px 22px;
-    color:#0f1115;
+    vertical-align:middle;
+    padding:12px 14px;
+    color:#334155;
     font-weight:700;
-    font-size:.9rem;
+    font-size:0.78rem;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.client-table th .th-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    vertical-align: middle;
+}
+.client-table th .th-content svg {
+    flex-shrink: 0;
+    color: #64748b;
 }
 
 .client-table td{
-    color:#0f1115;
+    color:#1e293b;
     text-align:left;
-    vertical-align:left;
-    padding:16px 22px;
+    vertical-align:middle;
+    padding:12px 14px;
+    font-size:0.83rem;
     border-top:1px solid #f1f5f9;
 }
 
@@ -220,6 +233,11 @@
 }
 
 [data-theme="dark"] .client-table th {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .client-table th .th-content svg {
     color: #94a3b8;
 }
 

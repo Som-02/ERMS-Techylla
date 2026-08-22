@@ -1,3 +1,4 @@
+import { Building2, SlidersHorizontal } from "lucide-react";
 import ClientRow from "./ClientRow";
 import "./client.css";
 
@@ -11,8 +12,18 @@ const ClientTable = ({
             <table className="client-table">
                 <thead>
                     <tr>
-                        <th>Client</th>
-                        <th style={{width:"270px"}}>Actions</th>
+                        <th>
+                            <div className="th-content">
+                                <Building2 size={15} />
+                                <span>Client</span>
+                            </div>
+                        </th>
+                        <th style={{ width: "270px", textAlign: "center" }}>
+                            <div className="th-content" style={{ justifyContent: "center" }}>
+                                <SlidersHorizontal size={15} />
+                                <span>Actions</span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

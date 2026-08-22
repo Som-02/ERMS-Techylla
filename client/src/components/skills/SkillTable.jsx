@@ -1,3 +1,4 @@
+import { Award, SlidersHorizontal } from "lucide-react";
 import SkillRow from "./SkillRow";
 
 import "../employee/employeeTable.css";
@@ -13,16 +14,26 @@ const SkillTable = ({
     return (
 
         <div className="employee-table-card">
-
-            <table className="employee-table">
+            <div className="employee-table-scroll">
+                <table className="employee-table">
 
                 <thead>
 
                     <tr>
 
-                        <th>Roles</th>
+                        <th style={{ textAlign: "left" }}>
+                            <div className="th-content">
+                                <Award size={14} />
+                                <span>Roles</span>
+                            </div>
+                        </th>
 
-                        <th>Actions</th>
+                        <th style={{ textAlign: "center" }}>
+                            <div className="th-content" style={{ justifyContent: "center" }}>
+                                <SlidersHorizontal size={14} />
+                                <span>Actions</span>
+                            </div>
+                        </th>
 
                     </tr>
 
@@ -32,51 +43,49 @@ const SkillTable = ({
 
                     {
 
-                        skills.length===0 ?
+                        skills.length === 0 ?
 
-                        (
+                            (
 
-                            <tr>
+                                <tr>
 
-                                <td
-                                    colSpan="2"
-                                    className="empty-state"
-                                >
+                                    <td
+                                        colSpan="2"
+                                        className="empty-state"
+                                    >
 
-                                    No Skills Found
+                                        No Skills Found
 
-                                </td>
+                                    </td>
 
-                            </tr>
+                                </tr>
 
-                        )
+                            )
 
-                        :
+                            :
 
-                        skills.map(skill=>(
+                            skills.map(skill => (
 
-                            <SkillRow
+                                <SkillRow
 
-                                key={skill._id}
+                                    key={skill._id}
 
-                                skill={skill}
+                                    skill={skill}
 
-                                onDelete={onDelete}
+                                    onDelete={onDelete}
 
-                            />
+                                />
 
-                        ))
+                            ))
 
                     }
 
                 </tbody>
 
             </table>
-
+            </div>
         </div>
-
     );
-
 };
 
 export default SkillTable;
